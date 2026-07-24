@@ -1,0 +1,406 @@
+---
+import "../styles/global.css";
+import { categories } from "../data/categories";
+
+const categoriesJson = JSON.stringify(
+  categories.map((c) => ({ id: c.id, name: c.name }))
+);
+---
+
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin - Antalya Çiçek</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+</head>
+<body class="bg-neutral-100 font-sans min-h-screen">
+
+<div id="app" class="min-h-screen flex flex-col">
+  <!-- Login Screen -->
+  <div id="login-screen" class="flex-1 flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-xl p-8">
+      <div class="text-center mb-8">
+        <span class="text-4xl">🌸</span>
+        <h1 class="text-2xl font-display font-bold text-neutral-900 mt-3">Admin Panel</h1>
+        <p class="text-sm text-neutral-500 mt-1">Ürün yönetim paneline hoş geldiniz</p>
+      </div>
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Şifre</label>
+          <input
+            id="password-input"
+            type="password"
+            required
+            placeholder="Admin şifrenizi girin"
+            class="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-50 outline-none transition-all text-sm"
+          />
+        </div>
+        <button
+          type="submit"
+          class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-semibold rounded-xl transition-all shadow-lg shadow-rose-500/20 text-sm"
+        >
+          Giriş Yap
+        </button>
+        <p id="login-error" class="text-red-500 text-xs text-center hidden"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Dashboard Screen -->
+  <div id="dashboard-screen" class="hidden">
+    <header class="bg-white border-b border-neutral-200 sticky top-0 z-40">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">🌸</span>
+          <h1 class="font-display font-bold text-lg text-neutral-900">Ürün Yönetimi</h1>
+        </div>
+        <div class="flex items-center gap-4">
+          <button id="add-product-btn" class="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white text-sm font-semibold rounded-xl transition-all shadow-md shadow-rose-500/20">
+            + Yeni Ürün
+          </button>
+          <button id="logout-btn" class="text-sm text-neutral-500 hover:text-red-500 transition-colors">
+            Çıkış
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-6xl px-4 sm:px-6 py-8">
+      <div id="product-count" class="text-sm text-neutral-500 mb-4"></div>
+      <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </main>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div id="product-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="modal-backdrop"></div>
+    <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 lg:p-8">
+      <h2 id="modal-title-text" class="text-xl font-display font-bold text-neutral-900 mb-6">Yeni Ürün</h2>
+      
+      <form id="product-form" class="space-y-5">
+        <input type="hidden" id="edit-id" value="" />
+
+        <div>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Ürün Adı</label>
+          <input id="input-name" type="text" required class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-50 outline-none transition-all text-sm" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Kategori</label>
+          <select id="input-category" required class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-50 outline-none transition-all text-sm bg-white">
+            <option value="">Seçiniz</option>
+            {categories.map((c) => <option value={c.id}>{c.name}</option>)}
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Açıklama</label>
+          <textarea id="input-desc" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-50 outline-none transition-all text-sm resize-none"></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Fiyat (TL)</label>
+            <input id="input-price" type="number" step="0.01" min="0" required class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-50 outline-none transition-all text-sm" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Eski Fiyat (TL)</label>
+            <input id="input-oldprice" type="number" step="0.01" min="0" placeholder="İndirim yoksa boş bırak" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-50 outline-none transition-all text-sm" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Marka</label>
+            <input id="input-brand" type="text" value="Antalya Çiçek" required class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-50 outline-none transition-all text-sm" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Stok Durumu</label>
+            <select id="input-availability" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-50 outline-none transition-all text-sm bg-white">
+              <option value="InStock">Stokta Var</option>
+              <option value="OutOfStock">Stokta Yok</option>
+              <option value="PreOrder">Ön Sipariş</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Etiketler (virgülle ayır)</label>
+          <input id="input-tags" type="text" placeholder="gül, kırmızı, popüler" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-50 outline-none transition-all text-sm" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-neutral-700 mb-1.5">GTIN (opsiyonel)</label>
+            <input id="input-gtin" type="text" placeholder="8681234567890" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-50 outline-none transition-all text-sm" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-neutral-700 mb-1.5">MPN (opsiyonel)</label>
+            <input id="input-mpn" type="text" placeholder="AC-001" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-50 outline-none transition-all text-sm" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Görseller</label>
+          <div id="images-preview" class="flex flex-wrap gap-3 mb-3"></div>
+          <label class="inline-flex items-center gap-2 px-5 py-2.5 bg-neutral-100 hover:bg-neutral-200 rounded-xl cursor-pointer transition-all text-sm font-medium text-neutral-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            Görsel Yükle
+            <input type="file" id="input-images" multiple accept="image/*" class="hidden" />
+          </label>
+          <span id="upload-status" class="text-xs text-neutral-500 ml-3"></span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <input type="checkbox" id="input-featured" class="w-4 h-4 rounded border-neutral-300 text-rose-500 focus:ring-rose-400" />
+          <label for="input-featured" class="text-sm text-neutral-700">Öne çıkan ürün (ana sayfada göster)</label>
+        </div>
+
+        <div class="flex gap-3 pt-4">
+          <button type="submit" class="flex-1 py-3 bg-rose-500 hover:bg-rose-600 text-white font-semibold rounded-xl transition-all shadow-lg shadow-rose-500/20 text-sm">
+            Kaydet
+          </button>
+          <button type="button" id="modal-cancel" class="px-6 py-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 font-semibold rounded-xl transition-all text-sm">
+            İptal
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="categories-data" data-categories={categoriesJson} class="hidden"></div>
+
+<script is:inline>
+var CATEGORIES = JSON.parse(document.getElementById('categories-data').dataset.categories);
+
+var products = [];
+var currentImages = [];
+var editingId = null;
+
+function $id(id) { return document.getElementById(id); }
+
+$id('login-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  var pw = $id('password-input').value;
+  var res = await fetch('/api/auth', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({password: pw}),
+  });
+  if (res.ok) {
+    $id('login-screen').classList.add('hidden');
+    $id('dashboard-screen').classList.remove('hidden');
+    loadProducts();
+  } else {
+    $id('login-error').classList.remove('hidden');
+    $id('login-error').textContent = 'Geçersiz şifre!';
+  }
+});
+
+$id('logout-btn').addEventListener('click', function() {
+  document.cookie = 'admin_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+  location.reload();
+});
+
+async function loadProducts() {
+  var res = await fetch('/api/products');
+  products = await res.json();
+  renderList();
+}
+
+function renderList() {
+  var container = $id('product-list');
+  var count = $id('product-count');
+  count.textContent = products.length + ' ürün bulundu';
+
+  if (products.length === 0) {
+    container.innerHTML = '<p class="col-span-full text-center text-neutral-400 py-12">Henüz ürün eklenmedi.</p>';
+    return;
+  }
+
+  container.innerHTML = products.map(function(p) {
+    var cat = CATEGORIES.find(function(c) { return c.id === p.categoryId; });
+    var img = (p.images && p.images[0] && p.images[0].url) || 'https://placehold.co/400x500/f5f5f5/fda4af?text=No+Image';
+    var hasDiscount = p.oldPrice && p.oldPrice > p.price;
+    return '<div class="bg-white rounded-2xl shadow-sm border border-neutral-100 overflow-hidden group">'+
+      '<div class="aspect-[4/5] bg-neutral-50 overflow-hidden">'+
+        '<img src="'+img+'" alt="'+p.name+'" class="w-full h-full object-cover" />'+
+      '</div>'+
+      '<div class="p-4">'+
+        '<div class="flex gap-1 mb-2">'+
+          ((p.tags||[]).slice(0,3).map(function(t){return '<span class="text-[10px] px-2 py-0.5 bg-rose-50 text-rose-600 rounded-full">'+t+'</span>';}).join('') || '')+
+        '</div>'+
+        '<h3 class="text-sm font-semibold text-neutral-900 mb-1 line-clamp-2">'+p.name+'</h3>'+
+        '<p class="text-[11px] text-neutral-400 mb-2">'+(cat ? cat.name : 'Kategorisiz')+'</p>'+
+        '<div class="flex items-baseline gap-2 mb-1">'+
+          '<span class="text-base font-bold text-neutral-900">'+p.price.toLocaleString('tr-TR', {minimumFractionDigits: 2})+' ₺</span>'+
+          (hasDiscount ? '<span class="text-xs text-neutral-400 line-through">'+p.oldPrice.toLocaleString('tr-TR', {minimumFractionDigits: 2})+' ₺</span>' : '')+
+        '</div>'+
+        '<div class="flex gap-2 mt-3">'+
+          '<button onclick="editProduct(\''+p.id+'\')" class="flex-1 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 text-xs font-semibold rounded-lg transition-all">Düzenle</button>'+
+          '<button onclick="deleteProduct(\''+p.id+'\')" class="py-2 px-3 bg-red-50 hover:bg-red-100 text-red-500 text-xs font-semibold rounded-lg transition-all">Sil</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+var modal = $id('product-modal');
+var backdrop = $id('modal-backdrop');
+var cancelBtn = $id('modal-cancel');
+
+function openModal(title) {
+  $id('modal-title-text').textContent = title;
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  modal.classList.add('hidden');
+  document.body.style.overflow = '';
+  resetForm();
+}
+
+backdrop.addEventListener('click', closeModal);
+cancelBtn.addEventListener('click', closeModal);
+
+$id('add-product-btn').addEventListener('click', function() {
+  editingId = null;
+  currentImages = [];
+  openModal('Yeni Ürün');
+});
+
+$id('input-images').addEventListener('change', async function(e) {
+  var files = e.target.files;
+  if (!files || files.length === 0) return;
+
+  var status = $id('upload-status');
+  status.textContent = 'Yükleniyor...';
+
+  var formData = new FormData();
+  for (var f of files) formData.append('files', f);
+
+  try {
+    var res = await fetch('/api/upload', { method: 'POST', body: formData });
+    var data = await res.json();
+    if (data.urls) {
+      data.urls.forEach(function(url) { currentImages.push({ url: url, alt: '' }); });
+      renderImagePreviews();
+      status.textContent = data.urls.length + ' görsel yüklendi';
+    }
+  } catch (err) {
+    status.textContent = 'Yükleme başarısız!';
+  }
+  e.target.value = '';
+});
+
+function renderImagePreviews() {
+  var container = $id('images-preview');
+  container.innerHTML = currentImages.map(function(img, i) {
+    return '<div class="relative w-20 h-20 rounded-xl overflow-hidden border-2 border-neutral-100 group/img">'+
+      '<img src="'+img.url+'" alt="" class="w-full h-full object-cover" />'+
+      '<button onclick="removeImage('+i+')" class="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-[10px] opacity-0 group-hover/img:opacity-100 transition-opacity">&times;</button>'+
+    '</div>';
+  }).join('');
+}
+
+window.removeImage = function(i) {
+  currentImages.splice(i, 1);
+  renderImagePreviews();
+};
+
+$id('product-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  var nameVal = $id('input-name').value;
+  var oldPriceVal = $id('input-oldprice').value;
+
+  var data = {
+    name: nameVal,
+    slug: slugify(nameVal),
+    description: $id('input-desc').value,
+    price: parseFloat($id('input-price').value),
+    categoryId: $id('input-category').value,
+    images: currentImages,
+    tags: $id('input-tags').value.split(',').map(function(t) { return t.trim(); }).filter(Boolean),
+    brand: $id('input-brand').value,
+    availability: $id('input-availability').value,
+    condition: 'new',
+    featured: $id('input-featured').checked,
+    gtin: $id('input-gtin').value || '',
+    mpn: $id('input-mpn').value || '',
+  };
+
+  if (oldPriceVal) data.oldPrice = parseFloat(oldPriceVal);
+
+  var url = editingId ? '/api/products/' + editingId : '/api/products';
+  var method = editingId ? 'PUT' : 'POST';
+
+  var res = await fetch(url, {
+    method: method,
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data),
+  });
+
+  if (res.ok) {
+    closeModal();
+    loadProducts();
+  } else {
+    alert('Kaydetme başarısız!');
+  }
+});
+
+window.editProduct = function(id) {
+  var p = products.find(function(x) { return x.id === id; });
+  if (!p) return;
+  
+  editingId = id;
+  currentImages = (p.images || []).slice();
+  
+  $id('input-name').value = p.name;
+  $id('input-category').value = p.categoryId;
+  $id('input-desc').value = p.description;
+  $id('input-price').value = String(p.price);
+  $id('input-oldprice').value = p.oldPrice ? String(p.oldPrice) : '';
+  $id('input-tags').value = (p.tags || []).join(', ');
+  $id('input-brand').value = p.brand;
+  $id('input-availability').value = p.availability;
+  $id('input-featured').checked = p.featured;
+  $id('input-gtin').value = p.gtin || '';
+  $id('input-mpn').value = p.mpn || '';
+  
+  renderImagePreviews();
+  openModal('Ürünü Düzenle');
+};
+
+window.deleteProduct = async function(id) {
+  if (!confirm('Bu ürünü silmek istediğinize emin misiniz?')) return;
+  var res = await fetch('/api/products/' + id, { method: 'DELETE' });
+  if (res.ok) loadProducts();
+  else alert('Silme başarısız!');
+};
+
+function slugify(text) {
+  return text.toLowerCase()
+    .replace(/[ğ]/g, 'g').replace(/[ü]/g, 'u').replace(/[ş]/g, 's')
+    .replace(/[ı]/g, 'i').replace(/[ö]/g, 'o').replace(/[ç]/g, 'c')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+function resetForm() {
+  $id('product-form').reset();
+  currentImages = [];
+  editingId = null;
+  renderImagePreviews();
+  $id('upload-status').textContent = '';
+}
+</script>
+
+</body>
+</html>

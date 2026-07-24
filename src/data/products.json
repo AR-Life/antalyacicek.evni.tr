@@ -1,0 +1,1296 @@
+[
+  {
+    "id": "p-1",
+    "name": "Renkli Papatya Buketi ile Sıcacık Bir Gülümseme",
+    "slug": "renkli-papatya-buketi-ile-sicacik-bir-gulumseme",
+    "description": "Canlı renkleriyle içimizi ısıtan rengarenk papatyalardan oluşan özel tasarım buket. Sevdiklerinize sıcak bir gülümseme hediye edin.",
+    "price": 2099.0,
+    "categoryId": "cat-30",
+    "images": [
+      {
+        "url": "/images/thumb_renkli-papatya-buketi-ile-sicacik-bir-gulumseme-351.webp",
+        "alt": "Renkli Papatya Buketi ile Sıcacık Bir Gülümseme"
+      }
+    ],
+    "tags": [
+      "papatya",
+      "renkli",
+      "neşeli"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 2518.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-2",
+    "name": "Lila Saf Neşe Buketi",
+    "slug": "lila-saf-nese-buketi",
+    "description": "Eflatun tonlarında zarif çiçeklerden oluşan lila buket. Saflığı ve neşeyi bir arada sunan özel tasarım.",
+    "price": 1899.0,
+    "categoryId": "cat-28",
+    "images": [
+      {
+        "url": "/images/thumb_lila-saf-nese-buketi-354.webp",
+        "alt": "Lila Saf Neşe Buketi"
+      }
+    ],
+    "tags": [
+      "lila",
+      "premium",
+      "zarif"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 2278.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-3",
+    "name": "Beyaz Krizantemlerle Saf Zarafet Buketi",
+    "slug": "beyaz-krizantemlerle-saf-zarafet-buketi",
+    "description": "Beyaz krizantemlerin zarafetini yansıtan sade ve şık buket. Saflığın ve zarafetin simgesi.",
+    "price": 2299.0,
+    "categoryId": "cat-28",
+    "images": [
+      {
+        "url": "/images/thumb_beyaz-krizantemlerle-saf-zarafet-buketi-391.webp",
+        "alt": "Beyaz Krizantemlerle Saf Zarafet Buketi"
+      }
+    ],
+    "tags": [
+      "krizantem",
+      "beyaz",
+      "zarif"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 2758.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-4",
+    "name": "Beyaz Papatya Saflık Buketi",
+    "slug": "beyaz-papatya-saflik-buketi",
+    "description": "Beyaz papatyaların saf güzelliğini sunan klasik buket. Her ortama uyum sağlayan zamansız tasarım.",
+    "price": 2199.0,
+    "categoryId": "cat-30",
+    "images": [
+      {
+        "url": "/images/thumb_beyaz-papatya-saflik-buketi-350.webp",
+        "alt": "Beyaz Papatya Saflık Buketi"
+      }
+    ],
+    "tags": [
+      "papatya",
+      "beyaz",
+      "klasik"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 2638.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-5",
+    "name": "Beyaz & Lila Saflık Buketi",
+    "slug": "beyaz-lila-saflik-buketi",
+    "description": "Beyaz ve lila çiçeklerin uyumuyla oluşturulmuş zarif buket. İki rengin mükemmel dansı.",
+    "price": 1899.0,
+    "categoryId": "cat-28",
+    "images": [
+      {
+        "url": "/images/thumb_beyaz-lila-saflik-buketi-349.webp",
+        "alt": "Beyaz & Lila Saflık Buketi"
+      }
+    ],
+    "tags": [
+      "lila",
+      "beyaz",
+      "premium"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 2278.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-6",
+    "name": "Kırmızı Güllü Lüks Kutuda Sürpriz Hediye Seti",
+    "slug": "kirmizi-gullu-luks-kutuda-surpriz-hediye-seti",
+    "description": "Kırmızı güllerle süslenmiş lüks kutuda özel sürpriz hediye seti. İstiridye inci kolye hediyeli.",
+    "price": 999.0,
+    "categoryId": "cat-36",
+    "images": [
+      {
+        "url": "/images/thumb_kirmizi-gullu-luks-kutuda-surpriz-istiridye-inci-kolye-hediye-seti-403.webp",
+        "alt": "Kırmızı Güllü Lüks Kutuda Sürpriz Hediye Seti"
+      }
+    ],
+    "tags": [
+      "gül",
+      "kutu",
+      "hediye seti",
+      "lüks"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 1198.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-7",
+    "name": "Saf Huzur Beyaz Papatya Buketi",
+    "slug": "saf-huzur-beyaz-papatya-buketi",
+    "description": "Huzur veren beyaz papatyalardan oluşan sade tasarım. Sakin ve dingin bir hediye seçeneği.",
+    "price": 1799.0,
+    "categoryId": "cat-30",
+    "images": [
+      {
+        "url": "/images/thumb_saf-huzur-beyaz-papatya-buketi-357.webp",
+        "alt": "Saf Huzur Beyaz Papatya Buketi"
+      }
+    ],
+    "tags": [
+      "papatya",
+      "beyaz",
+      "huzur"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 2158.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-8",
+    "name": "Pastel Krizantem Buketi",
+    "slug": "pastel-krizantem-buketi",
+    "description": "Pastel tonlarda krizantemlerle hazırlanmış yumuşak ve romantik buket tasarımı.",
+    "price": 2099.0,
+    "categoryId": "cat-28",
+    "images": [
+      {
+        "url": "/images/thumb_pastel-krizantem-buketi-347.webp",
+        "alt": "Pastel Krizantem Buketi"
+      }
+    ],
+    "tags": [
+      "krizantem",
+      "pastel",
+      "romantik"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 2518.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-9",
+    "name": "Mor & Pembe Bahar Esintisi",
+    "slug": "mor-pembe-bahar-esintisi",
+    "description": "Mor ve pembe tonlarının uyumuyla baharı evinize getiren etkileyici çiçek aranjmanı.",
+    "price": 2799.0,
+    "categoryId": "cat-28",
+    "images": [
+      {
+        "url": "/images/thumb_mor-pembe-bahar-esintisi-348.webp",
+        "alt": "Mor & Pembe Bahar Esintisi"
+      }
+    ],
+    "tags": [
+      "mor",
+      "pembe",
+      "bahar",
+      "premium"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 3358.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-10",
+    "name": "Rengarenk Papatya Buketi",
+    "slug": "rengarenk-papatya-buketi",
+    "description": "Farklı renklerde papatyaların bir araya geldiği neşeli ve enerjik buket. Gününüzü renklendirsin.",
+    "price": 1899.0,
+    "categoryId": "cat-30",
+    "images": [
+      {
+        "url": "/images/thumb_rengarenk-papatya-buketi-314.webp",
+        "alt": "Rengarenk Papatya Buketi"
+      }
+    ],
+    "tags": [
+      "papatya",
+      "renkli",
+      "neşeli"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 2278.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-11",
+    "name": "Beyaz Papatyalar Zamansız Şıklık Buketi",
+    "slug": "beyaz-papatyalar-zamansiz-siklik-buketi",
+    "description": "Beyaz papatyalarla hazırlanmış zarif tasarım. Her zaman şık, her zaman etkileyici.",
+    "price": 2599.0,
+    "categoryId": "cat-30",
+    "images": [
+      {
+        "url": "/images/thumb_beyaz-papatyalar-zamansiz-siklik-buketi-393.webp",
+        "alt": "Beyaz Papatyalar Zamansız Şıklık Buketi"
+      }
+    ],
+    "tags": [
+      "papatya",
+      "beyaz",
+      "şık"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 3118.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-12",
+    "name": "Pembe & Beyaz Papatyalarla Zarif Buket",
+    "slug": "pembe-beyaz-papatyalarla-zarif-buket",
+    "description": "Pembe ve beyaz papatyaların zarif birleşimi. Romantik ve şık bir hediye alternatifi.",
+    "price": 2199.0,
+    "categoryId": "cat-30",
+    "images": [
+      {
+        "url": "/images/thumb_pembe-beyaz-papatyalarla-zarif-buket-392.webp",
+        "alt": "Pembe & Beyaz Papatyalarla Zarif Buket"
+      }
+    ],
+    "tags": [
+      "papatya",
+      "pembe",
+      "beyaz",
+      "zarif"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 2638.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-13",
+    "name": "Pembe Dokunuşlu Zarafet Buketi",
+    "slug": "pembe-dokunuslu-zarafet-buketi",
+    "description": "Pembe tonların ön planda olduğu, zarafeti ve şıklığı yansıtan özel buket tasarımı.",
+    "price": 1899.0,
+    "categoryId": "cat-28",
+    "images": [
+      {
+        "url": "/images/thumb_pembe-dokunuslu-zarafet-buketi-358.webp",
+        "alt": "Pembe Dokunuşlu Zarafet Buketi"
+      }
+    ],
+    "tags": [
+      "pembe",
+      "zarif",
+      "premium"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 2278.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-14",
+    "name": "41 Adet Kucak Dolusu İthal Güller 70cm",
+    "slug": "41-adet-kucak-dolusu-ithal-guller",
+    "description": "41 adet ithal 70 cm kırmızı gülden oluşan kucak dolusu muhteşem buket. Görkemli bir aşk ilanı.",
+    "price": 6199.0,
+    "categoryId": "cat-29",
+    "images": [
+      {
+        "url": "/images/thumb_41-adet-kucak-dolusu-ithal-guller-70cm-4.webp",
+        "alt": "41 Adet Kucak Dolusu İthal Güller 70cm"
+      }
+    ],
+    "tags": [
+      "gül",
+      "kırmızı",
+      "ithal",
+      "lüks",
+      "popüler"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 7438.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-15",
+    "name": "41 Adet Beyaz Gül",
+    "slug": "41-adet-beyaz-gul",
+    "description": "41 adet saf beyaz gülden oluşan nefes kesici buket. Saflığın ve asaletin zirvesi.",
+    "price": 6299.0,
+    "categoryId": "cat-29",
+    "images": [
+      {
+        "url": "/images/thumb_41-adet-beyaz-gul-285.webp",
+        "alt": "41 Adet Beyaz Gül"
+      }
+    ],
+    "tags": [
+      "gül",
+      "beyaz",
+      "lüks",
+      "popüler"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 7558.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-16",
+    "name": "41 Adet Kırmızı & Beyaz İthal Güller 70cm",
+    "slug": "41-adet-kirmizi-beyaz-ithal-guller",
+    "description": "Kırmızı ve beyaz ithal güllerin muhteşem uyumu. 41 adet 70 cm'lik premium güllerden oluşan özel buket.",
+    "price": 5999.0,
+    "categoryId": "cat-29",
+    "images": [
+      {
+        "url": "/images/thumb_41-adet-kirmizi-ve-beyaz-ithal-guller-70cm-335.webp",
+        "alt": "41 Adet Kırmızı & Beyaz İthal Güller 70cm"
+      }
+    ],
+    "tags": [
+      "gül",
+      "kırmızı",
+      "beyaz",
+      "lüks",
+      "popüler"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 7198.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-17",
+    "name": "Çift Dal Mavi Pembe Orkide",
+    "slug": "cift-dal-mavi-pembe-orkide",
+    "description": "Çift dal mavi ve pembe renkli özel orkide. Seramik saksıda uzun ömürlü zarif hediye.",
+    "price": 2799.0,
+    "categoryId": "cat-32",
+    "images": [
+      {
+        "url": "/images/thumb_cift-dal-mavi-pembe-orkide-404.webp",
+        "alt": "Çift Dal Mavi Pembe Orkide"
+      }
+    ],
+    "tags": [
+      "orkide",
+      "mavi",
+      "pembe",
+      "zarif"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 3358.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-18",
+    "name": "20 Adet Kırmızı Gül Buketi",
+    "slug": "20-adet-kirmizi-gul-buketi",
+    "description": "20 dal en taze kırmızı gülden oluşan klasik buket. Aşkınızı ifade etmenin en etkileyici yolu.",
+    "price": 3399.0,
+    "categoryId": "cat-29",
+    "images": [
+      {
+        "url": "/images/thumb_20-adet-kirmizi-gul-buketi-50.webp",
+        "alt": "20 Adet Kırmızı Gül Buketi"
+      }
+    ],
+    "tags": [
+      "gül",
+      "kırmızı",
+      "aşk",
+      "popüler"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 4078.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-19",
+    "name": "Karışık Renkli Gül Buketi",
+    "slug": "karisik-renkli-gul-buketi",
+    "description": "Farklı renklerde güllerin bir araya geldiği rengarenk buket. Canlı ve enerjik tasarım.",
+    "price": 3299.0,
+    "categoryId": "cat-29",
+    "images": [
+      {
+        "url": "/images/thumb_karisik-renkli-gul-322.webp",
+        "alt": "Karışık Renkli Gül Buketi"
+      }
+    ],
+    "tags": [
+      "gül",
+      "renkli",
+      "karışık"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 3958.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-20",
+    "name": "Papatya ve Tek Gül Buketi",
+    "slug": "papatya-ve-tek-gul-buketi",
+    "description": "Papatyalarla süslenmiş tek kırmızı gülün zarif birleşimi. Sade ama etkileyici hediye.",
+    "price": 1799.0,
+    "categoryId": "cat-29",
+    "images": [
+      {
+        "url": "/images/thumb_papatya-ve-tek-gul-buketi-77.webp",
+        "alt": "Papatya ve Tek Gül Buketi"
+      }
+    ],
+    "tags": [
+      "papatya",
+      "gül",
+      "sade",
+      "romantik"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 2158.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-21",
+    "name": "Beyaz Lilyum Zambak ve Papatya Buketi",
+    "slug": "beyaz-lilyum-zambak-ve-papatya-buketi",
+    "description": "Beyaz lilyum zambak ve papatyaların muhteşem birleşimi. Ferah ve zarif buket.",
+    "price": 2599.0,
+    "categoryId": "cat-31",
+    "images": [
+      {
+        "url": "/images/thumb_beyaz-lilyum-zambak-ve-papatya-buketi-334.webp",
+        "alt": "Beyaz Lilyum Zambak ve Papatya Buketi"
+      }
+    ],
+    "tags": [
+      "lilyum",
+      "zambak",
+      "beyaz",
+      "papatya"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 3118.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-22",
+    "name": "17 Gül ve Papatyalar Kucak Dolusu",
+    "slug": "17-gul-ve-papatyalar-kucak-dolusu",
+    "description": "17 gül ve papatyalardan oluşan kucak dolusu görkemli buket. Bolluk ve bereketin simgesi.",
+    "price": 4499.0,
+    "categoryId": "cat-29",
+    "images": [
+      {
+        "url": "/images/thumb_17-gul-ve-papatyalar-kucak-dolusu-80.webp",
+        "alt": "17 Gül ve Papatyalar Kucak Dolusu"
+      }
+    ],
+    "tags": [
+      "gül",
+      "papatya",
+      "lüks",
+      "popüler"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 5398.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-23",
+    "name": "Pembe Lilyum Zambak Buketi",
+    "slug": "pembe-lilyum-zambak-buketi",
+    "description": "Pembe lilyum zambaklarla hazırlanmış romantik ve etkileyici buket.",
+    "price": 1999.0,
+    "categoryId": "cat-31",
+    "images": [
+      {
+        "url": "/images/thumb_pembe-lilyum-zambak-buketi-329.webp",
+        "alt": "Pembe Lilyum Zambak Buketi"
+      }
+    ],
+    "tags": [
+      "lilyum",
+      "zambak",
+      "pembe",
+      "romantik"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 2398.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-24",
+    "name": "21 Adet Kırmızı ve Beyaz Gül Buketi",
+    "slug": "21-adet-kirmizi-ve-beyaz-gul-buketi",
+    "description": "21 dal kırmızı ve beyaz güllerden oluşan özel buket. Aşk ve saflığın mükemmel birleşimi.",
+    "price": 3499.0,
+    "categoryId": "cat-29",
+    "images": [
+      {
+        "url": "/images/thumb_21-adet-kirmizi-ve-beyaz-gul-buketi-330.webp",
+        "alt": "21 Adet Kırmızı ve Beyaz Gül Buketi"
+      }
+    ],
+    "tags": [
+      "gül",
+      "kırmızı",
+      "beyaz",
+      "popüler"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 4198.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-25",
+    "name": "Beyaz Lilyum Zambak ve Gül Buketi",
+    "slug": "beyaz-lilyum-zambak-ve-gul-buketi",
+    "description": "Beyaz lilyum zambak ve güllerle hazırlanmış asil ve lüks buket tasarımı.",
+    "price": 3299.0,
+    "categoryId": "cat-31",
+    "images": [
+      {
+        "url": "/images/thumb_beyaz-lilyum-zambak-ve-gul-buketi-366.webp",
+        "alt": "Beyaz Lilyum Zambak ve Gül Buketi"
+      }
+    ],
+    "tags": [
+      "lilyum",
+      "gül",
+      "beyaz",
+      "lüks"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 3958.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-26",
+    "name": "Mor Papatya Buketi",
+    "slug": "mor-papatya-buketi",
+    "description": "Mor papatyalarla hazırlanmış özel buket. Huzur veren renkleriyle etkileyici hediye.",
+    "price": 1599.0,
+    "categoryId": "cat-30",
+    "images": [
+      {
+        "url": "/images/thumb_mor-papatya-buketi-339.webp",
+        "alt": "Mor Papatya Buketi"
+      }
+    ],
+    "tags": [
+      "papatya",
+      "mor",
+      "huzur"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 1918.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-27",
+    "name": "Zarif Bahar Buketi",
+    "slug": "zarif-bahar-buketi",
+    "description": "Baharın taze enerjisini yansıtan renkli ve zarif çiçek aranjmanı.",
+    "price": 1699.0,
+    "categoryId": "cat-28",
+    "images": [
+      {
+        "url": "/images/thumb_zarif-bahar-buketi-341.webp",
+        "alt": "Zarif Bahar Buketi"
+      }
+    ],
+    "tags": [
+      "bahar",
+      "renkli",
+      "zarif"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 2038.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-28",
+    "name": "Pembe Benekli Orkide",
+    "slug": "pembe-benekli-orkide",
+    "description": "Pembe benekli özel orkide. Dekoratif saksıda uzun ömürlü zarif hediye.",
+    "price": 2399.0,
+    "categoryId": "cat-32",
+    "images": [
+      {
+        "url": "/images/thumb_pembe-benekli-orkide-217.webp",
+        "alt": "Pembe Benekli Orkide"
+      }
+    ],
+    "tags": [
+      "orkide",
+      "pembe",
+      "zarif"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 2878.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-29",
+    "name": "Çift Dallı Beyaz Orkide",
+    "slug": "cift-dalli-beyaz-orkide",
+    "description": "Çift dallı saf beyaz orkide. Zarafeti ve asaletiyle her ortamı güzelleştirir.",
+    "price": 2399.0,
+    "categoryId": "cat-32",
+    "images": [
+      {
+        "url": "/images/thumb_cift-dalli-beyaz-orkide-220.webp",
+        "alt": "Çift Dallı Beyaz Orkide"
+      }
+    ],
+    "tags": [
+      "orkide",
+      "beyaz",
+      "zarif"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 2878.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-30",
+    "name": "17 Adet Turuncu & Beyaz Gül Buketi",
+    "slug": "17-adet-turuncu-beyaz-gul-buketi",
+    "description": "Turuncu ve beyaz güllerin enerjik birleşimi. 17 dal gülden oluşan canlı buket.",
+    "price": 2899.0,
+    "categoryId": "cat-29",
+    "images": [
+      {
+        "url": "/images/thumb_17-adet-turuncu-beyaz-gul-buketi-401.webp",
+        "alt": "17 Adet Turuncu & Beyaz Gül Buketi"
+      }
+    ],
+    "tags": [
+      "gül",
+      "turuncu",
+      "beyaz",
+      "canlı"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 3478.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-31",
+    "name": "11 Adet Premium Gül Buketi",
+    "slug": "11-adet-premium-gul-buketi",
+    "description": "11 dal premium kalite gülden oluşan özel buket. Şıklığı ve zarafeti bir arada sunar.",
+    "price": 2199.0,
+    "categoryId": "cat-29",
+    "images": [
+      {
+        "url": "/images/thumb_11-adet-premium-gul-buketi-399.webp",
+        "alt": "11 Adet Premium Gül Buketi"
+      }
+    ],
+    "tags": [
+      "gül",
+      "premium",
+      "şık"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 2638.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-32",
+    "name": "25 Adet Beyaz İthal Güller",
+    "slug": "25-adet-beyaz-ithal-guller",
+    "description": "25 adet ithal beyaz gülden oluşan etkileyici buket. Saflığın ve asaletin ifadesi.",
+    "price": 4899.0,
+    "categoryId": "cat-29",
+    "images": [
+      {
+        "url": "/images/thumb_25-adet-beyaz-ithal-guller-395.webp",
+        "alt": "25 Adet Beyaz İthal Güller"
+      }
+    ],
+    "tags": [
+      "gül",
+      "beyaz",
+      "ithal",
+      "lüks"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 5878.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-33",
+    "name": "101 Adet Kırmızı İthal Güller 70cm",
+    "slug": "101-adet-kirmizi-ithal-guller",
+    "description": "101 adet ithal 70 cm kırmızı gül. Gösterişli ve büyüleyici bir aşk ilanı.",
+    "price": 12999.0,
+    "categoryId": "cat-29",
+    "images": [
+      {
+        "url": "/images/thumb_101-adet-kirmizi-ithal-guller-70cm-378.webp",
+        "alt": "101 Adet Kırmızı İthal Güller 70cm"
+      }
+    ],
+    "tags": [
+      "gül",
+      "kırmızı",
+      "ithal",
+      "lüks",
+      "özel"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 15598.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-34",
+    "name": "51 Adet Pembe İthal Güller 70cm",
+    "slug": "51-adet-pembe-ithal-guller",
+    "description": "51 adet ithal 70 cm pembe gül. Romantizmin ve zerafetin görkemli buluşması.",
+    "price": 7199.0,
+    "categoryId": "cat-29",
+    "images": [
+      {
+        "url": "/images/thumb_51-adet-pembe-ithal-guller-70cm-369.webp",
+        "alt": "51 Adet Pembe İthal Güller 70cm"
+      }
+    ],
+    "tags": [
+      "gül",
+      "pembe",
+      "ithal",
+      "lüks"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 8638.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-35",
+    "name": "101 Adet Beyaz İthal Güller 70cm",
+    "slug": "101-adet-beyaz-ithal-guller",
+    "description": "101 adet ithal beyaz gül. Saflığın ve asaletin en görkemli ifadesi.",
+    "price": 12999.0,
+    "categoryId": "cat-29",
+    "images": [
+      {
+        "url": "/images/thumb_101-adet-beyaz-ithal-guller-70cm-376.webp",
+        "alt": "101 Adet Beyaz İthal Güller 70cm"
+      }
+    ],
+    "tags": [
+      "gül",
+      "beyaz",
+      "ithal",
+      "lüks",
+      "özel"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 15598.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-36",
+    "name": "51 Adet Kırmızı İthal Güller 70cm",
+    "slug": "51-adet-kirmizi-ithal-guller",
+    "description": "51 adet ithal kırmızı gülden oluşan nefes kesici buket. Büyük aşklar için özel tasarım.",
+    "price": 7199.0,
+    "categoryId": "cat-29",
+    "images": [
+      {
+        "url": "/images/thumb_31-adet-kirmizi-ithal-guller-70cm-368.webp",
+        "alt": "51 Adet Kırmızı İthal Güller 70cm"
+      }
+    ],
+    "tags": [
+      "gül",
+      "kırmızı",
+      "ithal",
+      "lüks"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 8638.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-37",
+    "name": "Örgülü Benjamin Ficus İthal Büyük Boy",
+    "slug": "orgulu-benjamin-ficus-ithal",
+    "description": "İthal büyük boy örgülü Benjamin Ficus bitkisi. Ev ve ofis için etkileyici dekoratif bitki.",
+    "price": 5499.0,
+    "categoryId": "cat-33",
+    "images": [
+      {
+        "url": "/images/thumb_orgulu-benjami-n-fi-cus-ithal-buyuk-boy-437.webp",
+        "alt": "Örgülü Benjamin Ficus İthal Büyük Boy"
+      }
+    ],
+    "tags": [
+      "bitki",
+      "ithal",
+      "ofis",
+      "dekorasyon"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 6598.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-38",
+    "name": "15 Adet Kırmızı Gül ve Papatya Buketi",
+    "slug": "15-adet-kirmizi-gul-papatya-buketi",
+    "description": "15 kırmızı gül ve papatyanın uyumu. Aşkın ve samimiyetin mükemmel birleşimi.",
+    "price": 3199.0,
+    "categoryId": "cat-29",
+    "images": [
+      {
+        "url": "/images/thumb_15-adet-kirmizi-gul-ve-papatya-buketi-askin-ve-samimiyetin-uyumu-362.webp",
+        "alt": "15 Adet Kırmızı Gül ve Papatya Buketi"
+      }
+    ],
+    "tags": [
+      "gül",
+      "papatya",
+      "kırmızı",
+      "aşk"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 3838.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-39",
+    "name": "Renkli Lisiantus Buketi",
+    "slug": "renkli-lisiantus-buketi",
+    "description": "Farklı renklerde lisiantus çiçeklerinden oluşan zarif ve uzun ömürlü buket.",
+    "price": 2299.0,
+    "categoryId": "cat-28",
+    "images": [
+      {
+        "url": "/images/thumb_renkli-li-syantus-buketi-123.webp",
+        "alt": "Renkli Lisiantus Buketi"
+      }
+    ],
+    "tags": [
+      "lisiantus",
+      "renkli",
+      "zarif"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 2758.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-40",
+    "name": "Cam Vazoda Büyük Beyaz Lilyum",
+    "slug": "cam-vazoda-buyuk-beyaz-lilyum",
+    "description": "Cam vazoda büyük boy beyaz lilyumlar. Asaleti ve zarafetiyle etkileyici hediye.",
+    "price": 2299.0,
+    "categoryId": "cat-31",
+    "images": [
+      {
+        "url": "/images/thumb_cam-vazoda-buyuk-beyaz-lilyum-284.webp",
+        "alt": "Cam Vazoda Büyük Beyaz Lilyum"
+      }
+    ],
+    "tags": [
+      "lilyum",
+      "beyaz",
+      "vazo",
+      "asalet"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 2758.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-41",
+    "name": "Cam Vazoda Büyük Pembe Lilyum Zambak",
+    "slug": "cam-vazoda-buyuk-pembe-lilyum",
+    "description": "Cam vazoda büyük pembe lilyum zambak. Romantik ve etkileyici hediye seçeneği.",
+    "price": 2399.0,
+    "categoryId": "cat-31",
+    "images": [
+      {
+        "url": "/images/thumb_cam-vazoda-buyuk-pembe-lilyum-zambak-283.webp",
+        "alt": "Cam Vazoda Büyük Pembe Lilyum Zambak"
+      }
+    ],
+    "tags": [
+      "lilyum",
+      "pembe",
+      "vazo",
+      "romantik"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 2878.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-42",
+    "name": "Beyaz Kutuda Güller",
+    "slug": "beyaz-kutuda-guller",
+    "description": "Şık beyaz kutuda özenle yerleştirilmiş kırmızı güller. Modern ve lüks hediye.",
+    "price": 4399.0,
+    "categoryId": "cat-36",
+    "images": [
+      {
+        "url": "/images/thumb_beyaz-ruya-buketi-324.webp",
+        "alt": "Beyaz Kutuda Güller"
+      }
+    ],
+    "tags": [
+      "gül",
+      "kutu",
+      "lüks",
+      "modern"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 5278.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-43",
+    "name": "Kutuda 41 Adet Kırmızı Gül ve Ferrero Rocher Çikolata",
+    "slug": "kutuda-41-kirmizi-gul-ferrero",
+    "description": "41 kırmızı gül ve Ferrero Rocher çikolatalarla hazırlanmış lüks hediye seti.",
+    "price": 8199.0,
+    "categoryId": "cat-36",
+    "images": [
+      {
+        "url": "/images/thumb_kutuda-41-adet-kirmizi-gul-ve-ferrero-rocher-cikolata-298.webp",
+        "alt": "Kutuda 41 Adet Kırmızı Gül ve Ferrero Rocher Çikolata"
+      }
+    ],
+    "tags": [
+      "gül",
+      "kutu",
+      "çikolata",
+      "lüks",
+      "özel"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 9838.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-44",
+    "name": "101 Adet Pembe Gül VIP Buketi",
+    "slug": "101-adet-pembe-gul-vip",
+    "description": "101 adet pembe gülden oluşan VIP buket. Görkemli ve unutulmaz bir hediye deneyimi.",
+    "price": 13599.0,
+    "categoryId": "cat-29",
+    "images": [
+      {
+        "url": "/images/thumb_101-adet-pembe-gul-vip-buketi-276.webp",
+        "alt": "101 Adet Pembe Gül VIP Buketi"
+      }
+    ],
+    "tags": [
+      "gül",
+      "pembe",
+      "lüks",
+      "özel",
+      "vip"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 16318.8,
+    "gtin": "",
+    "mpn": ""
+  },
+  {
+    "id": "p-45",
+    "name": "101 Adet İthal Güller 70cm",
+    "slug": "101-adet-ithal-guller",
+    "description": "101 adet ithal 70 cm karışık renk güllerden oluşan görkemli buket.",
+    "price": 12499.0,
+    "categoryId": "cat-29",
+    "images": [
+      {
+        "url": "/images/thumb_101-adet-ithal-guller-70cm-3.webp",
+        "alt": "101 Adet İthal Güller 70cm"
+      }
+    ],
+    "tags": [
+      "gül",
+      "ithal",
+      "lüks",
+      "özel"
+    ],
+    "brand": "Antalya Çiçek",
+    "availability": "InStock",
+    "condition": "new",
+    "featured": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "oldPrice": 14998.8,
+    "gtin": "",
+    "mpn": ""
+  }
+]

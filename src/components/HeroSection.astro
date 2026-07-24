@@ -1,0 +1,100 @@
+---
+import { SITE } from "../data/site.config";
+---
+
+<section class="relative overflow-hidden bg-gradient-to-br from-rose-50 via-white to-rose-100/50">
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(251,113,133,0.08),transparent_50%)]" />
+
+  <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[85vh] lg:min-h-[90vh] py-16 lg:py-0">
+      <div class="space-y-8 text-center lg:text-left">
+        <span class="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-rose-600 text-sm font-semibold shadow-sm border border-rose-100">
+          <span class="flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+          Aynı Gün Teslimat
+        </span>
+
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display font-bold text-neutral-900 leading-[1.1] tracking-tight">
+          Antalya'nın En
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-rose-600">
+            Taze Çiçekleri
+          </span>
+        </h1>
+
+        <p class="text-lg lg:text-xl text-neutral-500 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+          Doğum günü, yıl dönümü ve tüm özel anlarınız için el yapımı çiçek aranjmanları. WhatsApp ile 3 adımda anında sipariş.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+          <a
+            href="#urunler"
+            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-rose-500 hover:bg-rose-600 text-white font-semibold rounded-full transition-all duration-300 shadow-xl shadow-rose-500/25 hover:shadow-2xl hover:shadow-rose-500/30 text-sm lg:text-base"
+          >
+            Ürünleri Keşfet
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </a>
+          <a
+            href={`https://wa.me/${SITE.phoneDigits}?text=Merhaba, hızlı sipariş vermek istiyorum.`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-full transition-all duration-300 shadow-xl shadow-green-500/25 hover:shadow-2xl hover:shadow-green-500/30 text-sm lg:text-base"
+          >
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+            </svg>
+            WhatsApp Sipariş
+          </a>
+        </div>
+
+        <div class="flex items-center justify-center lg:justify-start gap-8 pt-4">
+          {[
+            { value: "5000+", label: "Mutlu Müşteri" },
+            { value: "24 Saat", label: "Teslimat" },
+            { value: "100%", label: "Taze Çiçek" },
+          ].map((stat) => (
+            <div class="text-center">
+              <p class="text-2xl lg:text-3xl font-display font-bold text-neutral-900">{stat.value}</p>
+              <p class="text-xs lg:text-sm text-neutral-500">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="hidden lg:block relative">
+        <div class="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl shadow-rose-200/50">
+          <img
+            src="/images/hero-buket.svg"
+            alt="Antalya Çiçek Premium Çiçek Aranjmanı"
+            width="600"
+            height="750"
+            class="w-full h-full object-cover"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
+        </div>
+
+        <div class="absolute -bottom-8 -left-8 bg-white rounded-2xl shadow-xl p-5 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs text-neutral-500">WhatsApp ile</p>
+            <p class="text-sm font-bold text-neutral-900">Anında Sipariş</p>
+          </div>
+        </div>
+
+        <div class="absolute -top-6 -right-6 bg-white rounded-2xl shadow-xl p-4 flex items-center gap-3">
+          <span class="text-3xl">⭐</span>
+          <div>
+            <p class="text-xs font-semibold text-neutral-900">4.9 Puan</p>
+            <p class="text-[11px] text-neutral-500">Google Yorumları</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+</section>

@@ -1,0 +1,67 @@
+---
+import { SITE } from "../data/site.config";
+
+export interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: "website" | "article" | "product";
+  canonicalURL?: string;
+}
+
+const {
+  title = SITE.title,
+  description = SITE.description,
+  image = `${SITE.url}/images/og-default.svg`,
+  type = "website",
+  canonicalURL = SITE.url,
+} = Astro.props;
+---
+
+<meta name="description" content={description} />
+
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content={type} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:image" content={image} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content={SITE.locale} />
+<meta property="og:site_name" content={SITE.name} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={image} />
+
+<link rel="canonical" href={canonicalURL} />
+
+<script type="application/ld+json" set:html={`{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "${SITE.name}",
+  "description": "${SITE.description}",
+  "url": "${SITE.url}",
+  "telephone": "${SITE.phone}",
+  "priceRange": "${SITE.priceRange}",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "${SITE.address.street}",
+    "addressLocality": "${SITE.address.city}",
+    "addressRegion": "${SITE.address.region}",
+    "postalCode": "${SITE.address.postalCode}",
+    "addressCountry": "${SITE.address.country}"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": ${SITE.geo.latitude},
+    "longitude": ${SITE.geo.longitude}
+  },
+  "openingHours": ${JSON.stringify(SITE.openingHours.map((h) => h.opens))},
+  "sameAs": [
+    "${SITE.social.instagram}",
+    "${SITE.social.facebook}"
+  ],
+  "image": "${SITE.url}/images/store-front.svg"
+}`} />

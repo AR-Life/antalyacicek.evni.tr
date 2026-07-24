@@ -1,0 +1,274 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getProductBySlug, readProducts } from "../../lib/products-store";
+import { products as hardcodedProducts } from "../../data/products";
+import { categories } from "../../data/categories";
+import { SITE } from "../../data/site.config";
+
+const { slug } = Astro.params;
+
+let product: any = getProductBySlug(slug!);
+
+if (!product) {
+  product = hardcodedProducts.find((p: any) => p.slug === slug);
+}
+
+if (!product) {
+  return Astro.redirect("/404");
+}
+
+const category = categories.find((c) => c.id === product.categoryId);
+const mainImage = product.images?.[0]?.url || product.image || "https://placehold.co/800x1000/f5f5f5/fda4af?text=No+Image";
+const hasDiscount = product.oldPrice && product.oldPrice > product.price;
+const whatsappMessage = encodeURIComponent(`Merhaba, "${product.name}" siparişi vermek istiyorum.`);
+const whatsappUrl = `https://wa.me/${SITE.phoneDigits}?text=${whatsappMessage}`;
+
+const productTitle = `${product.name} - ${SITE.name}`;
+const productDescription = `${product.description} | ${product.price.toLocaleString("tr-TR")} TL | ${SITE.name} - Aynı Gün Teslimat`;
+const canonicalUrl = `${SITE.url}/urun/${product.slug}`;
+
+const galleryImages = product.images?.length ? product.images : (product.image ? [{ url: product.image, alt: product.name }] : [{ url: mainImage, alt: product.name }]);
+---
+
+<BaseLayout
+  title={productTitle}
+  description={productDescription}
+  image={mainImage}
+  type="product"
+  canonicalURL={canonicalUrl}
+>
+  <script type="application/ld+json" set:html={`{
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "${product.name}",
+    "description": "${product.description}",
+    "sku": "${product.id}",
+    "mpn": "${product.mpn || product.id}",
+    "gtin13": "${product.gtin || ''}",
+    "brand": {
+      "@type": "Brand",
+      "name": "${product.brand}"
+    },
+    "image": ${JSON.stringify(product.images?.map(i => i.url) || [mainImage])},
+    "offers": {
+      "@type": "Offer",
+      "url": "${canonicalUrl}",
+      "priceCurrency": "TRY",
+      "price": "${product.price}",
+      "priceValidUntil": "${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}",
+      "availability": "https://schema.org/${product.availability}",
+      "itemCondition": "https://schema.org/NewCondition",
+      "hasMerchantReturnPolicy": {
+        "@type": "MerchantReturnPolicy",
+        "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+        "merchantReturnDays": 14
+      },
+      "shippingDetails": {
+        "@type": "OfferShippingDetails",
+        "shippingRate": {
+          "@type": "MonetaryAmount",
+          "value": "0",
+          "currency": "TRY"
+        },
+        "shippingDestination": {
+          "@type": "DefinedRegion",
+          "addressCountry": "TR",
+          "addressRegion": ["Antalya"]
+        },
+        "deliveryTime": {
+          "@type": "ShippingDeliveryTime",
+          "handlingTime": { "@type": "QuantitativeValue", "minValue": 0, "maxValue": 1, "unitCode": "DAY" },
+          "transitTime": { "@type": "QuantitativeValue", "minValue": 0, "maxValue": 1, "unitCode": "DAY" }
+        }
+      }
+    },
+    "category": "${category?.name || 'Çiçek'}",
+    "isRelatedTo": {
+      "@type": "Product",
+      "name": "${product.name}",
+      "offers": {
+        "@type": "Offer",
+        "availability": "https://schema.org/InStock",
+        "price": "${product.price}",
+        "priceCurrency": "TRY"
+      }
+    }
+  }`} />
+
+  <section class="py-8 lg:py-12 bg-white">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <nav class="flex items-center gap-2 text-sm text-neutral-400 mb-8" aria-label="Breadcrumb">
+        <a href="/" class="hover:text-rose-500 transition-colors">Ana Sayfa</a>
+        <span>/</span>
+        <a href={`/#urunler`} class="hover:text-rose-500 transition-colors">Ürünler</a>
+        <span>/</span>
+        <span class="text-neutral-600">{product.name}</span>
+      </nav>
+
+      <div class="grid lg:grid-cols-2 gap-10 lg:gap-16">
+        <div>
+          <div class="relative aspect-[4/5] rounded-3xl overflow-hidden bg-neutral-50 shadow-lg mb-4">
+            <img
+              id="main-gallery-image"
+              src={mainImage}
+              alt={product.name}
+              class="w-full h-full object-cover transition-opacity duration-300"
+            />
+            {hasDiscount && (
+              <span class="absolute top-4 left-4 px-3 py-1.5 bg-rose-500 text-white text-sm font-bold rounded-full shadow-lg shadow-rose-500/30">
+                %{Math.round(((product.oldPrice! - product.price) / product.oldPrice!) * 100)} İndirim
+              </span>
+            )}
+          </div>
+
+          {product.images && product.images.length > 1 && (
+            <div class="flex gap-3 overflow-x-auto scrollbar-hide">
+              {product.images.map((img, i) => (
+                <button
+                  type="button"
+                  onclick={`document.getElementById('main-gallery-image')?.setAttribute('src','${img.url}')`}
+                  class={`flex-none w-16 h-20 lg:w-20 lg:h-24 rounded-xl overflow-hidden border-2 transition-all ${i === 0 ? 'border-rose-500' : 'border-transparent hover:border-rose-300'}`}
+                >
+                  <img src={img.url} alt={img.alt || product.name} class="w-full h-full object-cover" loading="lazy" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div class="flex flex-col">
+          <div class="flex flex-wrap gap-2 mb-4">
+            {product.tags?.map((tag) => (
+              <span class="text-xs px-2.5 py-1 bg-rose-50 text-rose-600 font-medium rounded-full">
+                {tag}
+              </span>
+            ))}
+          </div>
+
+          <h1 class="text-2xl lg:text-3xl font-display font-bold text-neutral-900 leading-tight mb-4">
+            {product.name}
+          </h1>
+
+          <p class="text-neutral-500 leading-relaxed mb-6">
+            {product.description}
+          </p>
+
+          <div class="flex items-baseline gap-3 mb-6">
+            <span class="text-3xl lg:text-4xl font-bold text-neutral-900">
+              {product.price.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₺
+            </span>
+            {hasDiscount && (
+              <span class="text-lg text-neutral-400 line-through">
+                {product.oldPrice!.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₺
+              </span>
+            )}
+          </div>
+
+          <div class="space-y-3 mb-8">
+            <div class="flex items-center gap-2 text-sm text-green-600">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span class="font-medium">Aynı Gün Teslimat</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-neutral-500">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>2 saat içinde teslimat</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-neutral-500">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>En taze çiçekler ile hazırlanır</span>
+            </div>
+          </div>
+
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center justify-center gap-3 w-full px-8 py-4 bg-green-500 hover:bg-green-600 text-white text-base lg:text-lg font-bold rounded-2xl transition-all duration-300 shadow-xl shadow-green-500/20 hover:shadow-2xl hover:shadow-green-500/30"
+          >
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+            </svg>
+            WhatsApp ile Hızlı Sipariş Ver
+          </a>
+
+          <div class="mt-8 pt-8 border-t border-neutral-100 grid grid-cols-2 gap-4">
+            <div class="text-center p-4 bg-rose-50 rounded-2xl">
+              <span class="text-2xl">🚀</span>
+              <p class="text-xs text-neutral-600 mt-1 font-medium">Aynı Gün</p>
+              <p class="text-xs text-neutral-400">Teslimat</p>
+            </div>
+            <div class="text-center p-4 bg-green-50 rounded-2xl">
+              <span class="text-2xl">💐</span>
+              <p class="text-xs text-neutral-600 mt-1 font-medium">%100 Taze</p>
+              <p class="text-xs text-neutral-400">Çiçek Garantisi</p>
+            </div>
+            <div class="text-center p-4 bg-amber-50 rounded-2xl">
+              <span class="text-2xl">📱</span>
+              <p class="text-xs text-neutral-600 mt-1 font-medium">WhatsApp</p>
+              <p class="text-xs text-neutral-400">Anında Sipariş</p>
+            </div>
+            <div class="text-center p-4 bg-blue-50 rounded-2xl">
+              <span class="text-2xl">🎁</span>
+              <p class="text-xs text-neutral-600 mt-1 font-medium">Özel Paket</p>
+              <p class="text-xs text-neutral-400">Hediye Ambalajı</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {
+        category && (
+          <div class="mt-16">
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h2 class="text-xl lg:text-2xl font-display font-bold text-neutral-900">Benzer Ürünler</h2>
+                <p class="text-sm text-neutral-500 mt-1">{category.name} kategorisinden diğer ürünler</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {readProducts()
+                .filter((p) => p.categoryId === category.id && p.id !== product.id)
+                .slice(0, 4)
+                .map((related) => {
+                  const relImg = related.images?.[0]?.url || "https://placehold.co/400x500/f5f5f5/fda4af?text=No+Image";
+                  return (
+                    <a href={`/urun/${related.slug}`} class="group block bg-white rounded-2xl shadow-sm hover:shadow-lg border border-neutral-100 hover:border-rose-200 transition-all duration-300 overflow-hidden">
+                      <div class="aspect-[4/5] bg-neutral-50 overflow-hidden">
+                        <img src={relImg} alt={related.name} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />
+                      </div>
+                      <div class="p-3">
+                        <h3 class="text-sm font-semibold text-neutral-900 line-clamp-2 group-hover:text-rose-600 transition-colors">{related.name}</h3>
+                        <span class="text-sm font-bold text-neutral-900 mt-1 block">{related.price.toLocaleString("tr-TR", { minimumFractionDigits: 2 })} ₺</span>
+                      </div>
+                    </a>
+                  );
+                })}
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <script>
+    document.querySelectorAll('[onclick]').forEach((el) => {
+      const attr = el.getAttribute('onclick');
+      if (attr?.includes('setAttribute')) {
+        el.addEventListener('click', () => {
+          document.querySelectorAll('.border-rose-500').forEach(b => {
+            b.classList.remove('border-rose-500');
+            b.classList.add('border-transparent');
+          });
+          el.classList.add('border-rose-500');
+          el.classList.remove('border-transparent');
+        });
+      }
+    });
+  </script>
+</BaseLayout>

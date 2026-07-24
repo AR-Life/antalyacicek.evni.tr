@@ -1,0 +1,114 @@
+---
+import { SITE } from "../data/site.config";
+import type { Category } from "../data/categories";
+import { getProductsByCategory } from "../data/products";
+
+interface Props {
+  category: Category;
+}
+
+const { category } = Astro.props;
+const products = getProductsByCategory(category.id);
+---
+
+<section class="mb-12">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h3 class="text-xl lg:text-2xl font-display font-bold text-neutral-900">
+        {category.name}
+      </h3>
+      <p class="text-sm text-neutral-500 mt-1">{category.description}</p>
+    </div>
+  </div>
+
+  <div class="relative">
+    <div
+      class="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-smooth pb-2"
+      data-category-slider
+    >
+      {products.length > 0 ? (
+        products.map((product) => {
+          const whatsappMessage = encodeURIComponent(
+            `Merhaba, "${product.name}" siparişi vermek istiyorum.`
+          );
+          const whatsappUrl = `https://wa.me/${SITE.phoneDigits}?text=${whatsappMessage}`;
+          const hasDiscount = product.oldPrice !== undefined;
+          const imageUrl = product.images?.[0]?.url || product.image || "";
+          const productSlug = product.slug;
+
+          return (
+            <div class="flex-none w-[200px] sm:w-[220px] lg:w-[260px] snap-start">
+              <article class="group bg-white rounded-2xl shadow-sm hover:shadow-lg border border-neutral-100 hover:border-rose-200 transition-all duration-300 overflow-hidden h-full flex flex-col">
+                <a
+                  href={`/urun/${productSlug}`}
+                  class="block w-full cursor-pointer"
+                  aria-label={`${product.name} - Detayları gör`}
+                >
+                  <div class="aspect-[4/5] overflow-hidden bg-neutral-50">
+                    <img
+                      src={imageUrl}
+                      alt={product.name}
+                      loading="lazy"
+                      width="260"
+                      height="325"
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                  </div>
+                </a>
+
+                <div class="p-3 lg:p-4 flex flex-col flex-1">
+                  {hasDiscount && (
+                    <span class="text-[10px] font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded-full mb-2 self-start">
+                      %{Math.round(((product.oldPrice! - product.price) / product.oldPrice!) * 100)} İndirim
+                    </span>
+                  )}
+
+                  <h4 class="text-sm lg:text-base font-semibold text-neutral-900 line-clamp-2 mb-1 group-hover:text-rose-600 transition-colors duration-300">
+                    {product.name}
+                  </h4>
+
+                  <div class="mt-auto pt-2">
+                    <div class="flex items-baseline gap-2 mb-2">
+                      <span class="text-base lg:text-lg font-bold text-neutral-900">
+                        {product.price.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₺
+                      </span>
+                      {hasDiscount && (
+                        <span class="text-xs text-neutral-400 line-through">
+                          {product.oldPrice!.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₺
+                        </span>
+                      )}
+                    </div>
+
+                    <a
+                      href={whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="flex items-center justify-center gap-1.5 w-full px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold rounded-xl transition-all duration-300 shadow-md shadow-green-500/20"
+                    >
+                      <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+                      </svg>
+                      Sipariş Ver
+                    </a>
+                  </div>
+                </div>
+              </article>
+            </div>
+          );
+        })
+      ) : (
+        <p class="text-sm text-neutral-400 italic">Bu kategoride henüz ürün yok.</p>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  [data-category-slider] {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  [data-category-slider]::-webkit-scrollbar {
+    display: none;
+  }
+</style>
