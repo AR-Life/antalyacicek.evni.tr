@@ -9,9 +9,10 @@ interface Props {
 
 const { category } = Astro.props;
 const products = getProductsByCategory(category.id);
+const sliderId = `slider-${category.slug}`;
 ---
 
-<section class="mb-12">
+<section class="mb-4">
   <div class="flex items-center justify-between mb-6">
     <div>
       <h3 class="text-xl lg:text-2xl font-display font-bold text-neutral-900">
@@ -19,89 +20,289 @@ const products = getProductsByCategory(category.id);
       </h3>
       <p class="text-sm text-neutral-500 mt-1">{category.description}</p>
     </div>
+
+    <div class="hidden lg:flex items-center gap-2">
+      <button
+        type="button"
+        data-slider-prev={sliderId}
+        class="w-10 h-10 rounded-full bg-white border border-neutral-200 shadow-sm hover:bg-forest-50 hover:border-forest-300 flex items-center justify-center transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+        aria-label="Önceki"
+      >
+        <svg
+          class="w-4 h-4 text-neutral-600"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          ><path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 19l-7-7 7-7"></path></svg
+        >
+      </button>
+      <button
+        type="button"
+        data-slider-next={sliderId}
+        class="w-10 h-10 rounded-full bg-white border border-neutral-200 shadow-sm hover:bg-forest-50 hover:border-forest-300 flex items-center justify-center transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+        aria-label="Sonraki"
+      >
+        <svg
+          class="w-4 h-4 text-neutral-600"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          ><path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 5l7 7-7 7"></path></svg
+        >
+      </button>
+    </div>
   </div>
 
-  <div class="relative">
+  <div class="relative group/slider" data-slider-container={sliderId}>
     <div
-      class="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-smooth pb-2"
+      id={sliderId}
+      class="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-smooth pb-4"
       data-category-slider
     >
-      {products.length > 0 ? (
-        products.map((product) => {
-          const whatsappMessage = encodeURIComponent(
-            `Merhaba, "${product.name}" siparişi vermek istiyorum.`
-          );
-          const whatsappUrl = `https://wa.me/${SITE.phoneDigits}?text=${whatsappMessage}`;
-          const hasDiscount = product.oldPrice !== undefined;
-          const imageUrl = product.images?.[0]?.url || product.image || "";
-          const productSlug = product.slug;
+      {
+        products.length > 0 ? (
+          products.map((product, index) => {
+            const hasDiscount =
+              product.oldPrice !== undefined &&
+              product.oldPrice > product.price;
+            const imageUrl = product.images?.[0]?.url || product.image || "";
+            const productSlug = product.slug;
+            const discountPercentage = hasDiscount
+              ? Math.round(((product.oldPrice! - product.price) / product.oldPrice!) * 100)
+              : 0;
 
-          return (
-            <div class="flex-none w-[200px] sm:w-[220px] lg:w-[260px] snap-start">
-              <article class="group bg-white rounded-2xl shadow-sm hover:shadow-lg border border-neutral-100 hover:border-rose-200 transition-all duration-300 overflow-hidden h-full flex flex-col">
+            return (
+              <div class="flex-none w-[200px] sm:w-[220px] lg:w-[260px] snap-start">
                 <a
                   href={`/urun/${productSlug}`}
-                  class="block w-full cursor-pointer"
-                  aria-label={`${product.name} - Detayları gör`}
+                  class="group bg-white rounded-3xl shadow-sm hover:shadow-2xl border border-neutral-100/50 hover:border-forest-200/50 transition-all duration-500 overflow-hidden h-full flex flex-col relative hover:-translate-y-2"
                 >
-                  <div class="aspect-[4/5] overflow-hidden bg-neutral-50">
+                  {hasDiscount && (
+                    <span class="absolute top-4 left-4 z-10 px-3 py-1.5 bg-gradient-to-r from-forest-600 to-forest-700 text-white text-[10px] font-bold rounded-full shadow-lg shadow-forest-700/30">
+                      %{discountPercentage} İndirim
+                    </span>
+                  )}
+
+                  <div class="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-neutral-50 to-neutral-100">
                     <img
                       src={imageUrl}
                       alt={product.name}
                       loading="lazy"
                       width="260"
                       height="325"
-                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                     />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    
+                    <div class="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 ease-out">
+                      <button
+                        type="button"
+                        data-order={JSON.stringify({
+                          name: product.name,
+                          price: product.price,
+                          image: imageUrl,
+                        })}
+                        onclick="event.stopPropagation();"
+                        class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white/95 backdrop-blur-sm hover:bg-white text-forest-800 text-sm font-bold rounded-2xl transition-all duration-300 shadow-xl"
+                      >
+                        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+                        </svg>
+                        Sipariş Ver
+                      </button>
+                    </div>
                   </div>
-                </a>
 
-                <div class="p-3 lg:p-4 flex flex-col flex-1">
-                  {hasDiscount && (
-                    <span class="text-[10px] font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded-full mb-2 self-start">
-                      %{Math.round(((product.oldPrice! - product.price) / product.oldPrice!) * 100)} İndirim
-                    </span>
-                  )}
-
-                  <h4 class="text-sm lg:text-base font-semibold text-neutral-900 line-clamp-2 mb-1 group-hover:text-rose-600 transition-colors duration-300">
-                    {product.name}
-                  </h4>
-
-                  <div class="mt-auto pt-2">
-                    <div class="flex items-baseline gap-2 mb-2">
-                      <span class="text-base lg:text-lg font-bold text-neutral-900">
-                        {product.price.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₺
-                      </span>
-                      {hasDiscount && (
-                        <span class="text-xs text-neutral-400 line-through">
-                          {product.oldPrice!.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₺
+                  <div class="p-4 lg:p-5 flex flex-col flex-1">
+                    <div class="flex flex-wrap gap-1.5 mb-3">
+                      {(product.tags || []).slice(0, 2).map((tag) => (
+                        <span class="text-[10px] px-2.5 py-1 bg-forest-50 text-forest-700 font-medium rounded-full">
+                          {tag}
                         </span>
-                      )}
+                      ))}
                     </div>
 
-                    <a
-                      href={whatsappUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="flex items-center justify-center gap-1.5 w-full px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold rounded-xl transition-all duration-300 shadow-md shadow-green-500/20"
-                    >
-                      <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
-                      </svg>
-                      Sipariş Ver
-                    </a>
+                    <h4 class="text-sm lg:text-base font-semibold text-neutral-900 mb-2 line-clamp-2 group-hover:text-forest-800 transition-colors duration-300">
+                      {product.name}
+                    </h4>
+
+                    <p class="text-xs text-neutral-500 mb-4 line-clamp-2 leading-relaxed">
+                      {product.description}
+                    </p>
+
+                    <div class="mt-auto pt-3 border-t border-neutral-100">
+                      <div class="flex items-baseline gap-2">
+                        <span class="text-base lg:text-lg font-bold text-neutral-900">
+                          {product.price.toLocaleString("tr-TR", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })} ₺
+                        </span>
+                        {hasDiscount && (
+                          <span class="text-xs text-neutral-400 line-through">
+                            {product.oldPrice!.toLocaleString("tr-TR", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })} ₺
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </article>
-            </div>
-          );
-        })
-      ) : (
-        <p class="text-sm text-neutral-400 italic">Bu kategoride henüz ürün yok.</p>
-      )}
+                </a>
+              </div>
+            );
+          })
+        ) : (
+          <p class="text-sm text-neutral-400 italic">
+            Bu kategoride henüz ürün yok.
+          </p>
+        )
+      }
+    </div>
+
+    <!-- Mobile swipe hint -->
+    <div
+      class="lg:hidden pointer-events-none absolute right-1 z-10 swipe-hint"
+      style="top:32%"
+      data-swipe-hint={sliderId}
+    >
+      <svg
+        class="w-14 h-14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        style="color: #f472b6; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+      </svg>
+    </div>
+
+    <!-- Gradient fades -->
+    <div
+      class="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white to-transparent pointer-events-none hidden lg:block"
+    >
+    </div>
+    <div
+      class="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent pointer-events-none hidden lg:block"
+    >
     </div>
   </div>
 </section>
+
+<script is:inline>
+  document
+    .querySelectorAll("[data-category-slider]")
+    .forEach(function (slider) {
+      var container = slider.closest("[data-slider-container]");
+      var sliderId = container
+        ? container.getAttribute("data-slider-container")
+        : "";
+      var section = slider.closest("section");
+
+      var prevBtn = section
+        ? section.querySelector('[data-slider-prev="' + sliderId + '"]')
+        : null;
+      var nextBtn = section
+        ? section.querySelector('[data-slider-next="' + sliderId + '"]')
+        : null;
+      var swipeHint = container
+        ? container.querySelector("[data-swipe-hint]")
+        : null;
+
+      var scrollAmount = 280;
+
+      if (prevBtn) {
+        prevBtn.addEventListener("click", function () {
+          slider.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+        });
+      }
+      if (nextBtn) {
+        nextBtn.addEventListener("click", function () {
+          slider.scrollBy({ left: scrollAmount, behavior: "smooth" });
+        });
+      }
+
+      function update() {
+        if (prevBtn) prevBtn.disabled = slider.scrollLeft <= 10;
+        if (nextBtn)
+          nextBtn.disabled =
+            slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 10;
+      }
+
+      slider.addEventListener("scroll", update);
+      update();
+    });
+
+  // Mobile swipe hint
+  document.querySelectorAll(".swipe-hint").forEach(function (el) {
+    if (window.innerWidth >= 1024) {
+      el.remove();
+      return;
+    }
+
+    var container = el.closest("[data-slider-container]");
+    var slider = container?.querySelector("[data-category-slider]");
+    if (!slider) return;
+
+    el.style.transition = "opacity 0.4s ease-out, transform 0.4s ease-out";
+    el.style.opacity = "0";
+
+    var shown = false;
+
+    function showHint() {
+      if (shown) return;
+      if (slider.scrollWidth <= slider.clientWidth + 2) return;
+      shown = true;
+
+      var pulse = 0;
+      var interval = setInterval(function () {
+        el.style.transform =
+          "translateX(" + (pulse % 2 === 0 ? "-14px" : "0px") + ")";
+        el.style.opacity = String(
+          pulse < 5 ? 1 : Math.max(0, 1 - (pulse - 5) * 0.3),
+        );
+        pulse++;
+        if (pulse > 8) {
+          clearInterval(interval);
+          el.style.opacity = "0";
+        }
+      }, 380);
+    }
+
+    var observer = new IntersectionObserver(
+      function (entries) {
+        if (entries[0].isIntersecting) {
+          setTimeout(showHint, 300);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 },
+    );
+
+    observer.observe(container);
+
+    slider.addEventListener(
+      "scroll",
+      function () {
+        if (shown) el.style.opacity = "0";
+      },
+      { once: true },
+    );
+  });
+</script>
 
 <style>
   [data-category-slider] {

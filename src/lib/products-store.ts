@@ -17,6 +17,7 @@ export interface ProductData {
   categoryId: string;
   images: ProductImage[];
   tags: string[];
+  occasions: string[];
   brand: string;
   gtin?: string;
   mpn?: string;

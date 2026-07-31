@@ -1,0 +1,166 @@
+---
+import type { Category } from "../data/categories";
+import { getProductsByCategory } from "../data/products";
+
+interface Props {
+  categories: Category[];
+}
+
+const { categories } = Astro.props;
+const nonEmptyCategories = categories.filter((c) => getProductsByCategory(c.id).length > 0);
+---
+
+<section class="py-16 lg:py-24 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-10 lg:mb-14">
+      <h2 class="text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-3">
+        Kategorilere Göre Ürünler
+      </h2>
+      <p class="text-neutral-500 max-w-xl mx-auto text-sm lg:text-base">
+        Her kategoriye özel en taze çiçekler ve aranjmanlar
+      </p>
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-2 mb-8 lg:mb-10" id="category-tabs">
+      {nonEmptyCategories.map((category, index) => (
+        <button
+          type="button"
+          data-tab={category.slug}
+          class={`tab-btn px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
+            index === 0
+              ? 'bg-forest-700 text-white shadow-lg shadow-forest-700/20'
+              : 'bg-forest-50 text-forest-800 hover:bg-forest-100'
+          }`}
+        >
+          {category.name}
+        </button>
+      ))}
+    </div>
+
+    <div id="category-content" class="min-h-[400px]">
+      {nonEmptyCategories.map((category, index) => {
+        const products = getProductsByCategory(category.id).slice(0, 8);
+        return (
+          <div
+            id={`tab-${category.slug}`}
+            class={`tab-content ${index === 0 ? 'block' : 'hidden'}`}
+          >
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+              {products.map((product) => {
+                const hasDiscount = product.oldPrice !== undefined && product.oldPrice > product.price;
+                const imageUrl = product.images?.[0]?.url || product.image || "";
+                const discountPercentage = hasDiscount
+                  ? Math.round(((product.oldPrice! - product.price) / product.oldPrice!) * 100)
+                  : 0;
+
+                return (
+                  <a
+                    href={`/urun/${product.slug}`}
+                    class="group relative bg-white rounded-3xl shadow-sm hover:shadow-2xl border border-neutral-100/50 hover:border-forest-200/50 transition-all duration-500 overflow-hidden flex flex-col hover:-translate-y-2"
+                  >
+                    {hasDiscount && (
+                      <span class="absolute top-4 left-4 z-10 px-3 py-1.5 bg-gradient-to-r from-forest-600 to-forest-700 text-white text-[10px] font-bold rounded-full shadow-lg shadow-forest-700/30">
+                        %{discountPercentage} İndirim
+                      </span>
+                    )}
+
+                    <div class="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-neutral-50 to-neutral-100">
+                      <img
+                        src={imageUrl}
+                        alt={product.name}
+                        loading="lazy"
+                        width="400"
+                        height="500"
+                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                      />
+                      <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      
+                      <div class="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 ease-out">
+                        <button
+                          type="button"
+                          data-order={JSON.stringify({
+                            name: product.name,
+                            price: product.price,
+                            image: imageUrl,
+                          })}
+                          onclick="event.preventDefault(); event.stopPropagation();"
+                          class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white/95 backdrop-blur-sm hover:bg-white text-forest-800 text-sm font-bold rounded-2xl transition-all duration-300 shadow-xl"
+                        >
+                          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+                          </svg>
+                          Sipariş Ver
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="flex flex-col flex-1 p-5">
+                      <div class="flex flex-wrap gap-1.5 mb-3">
+                        {(product.tags || []).slice(0, 2).map((tag) => (
+                          <span class="text-[10px] px-2.5 py-1 bg-forest-50 text-forest-700 font-medium rounded-full">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      <h3 class="text-sm lg:text-base font-semibold text-neutral-900 mb-2 leading-snug line-clamp-2 group-hover:text-forest-800 transition-colors duration-300">
+                        {product.name}
+                      </h3>
+
+                      <p class="text-xs text-neutral-500 mb-4 line-clamp-2 leading-relaxed">
+                        {product.description}
+                      </p>
+
+                      <div class="mt-auto pt-3 border-t border-neutral-100">
+                        <div class="flex items-baseline gap-2">
+                          <span class="text-lg lg:text-xl font-bold text-neutral-900">
+                            {product.price.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₺
+                          </span>
+                          {hasDiscount && (
+                            <span class="text-xs text-neutral-400 line-through">
+                              {product.oldPrice!.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₺
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+(function() {
+  var tabs = document.querySelectorAll('.tab-btn');
+  var contents = document.querySelectorAll('.tab-content');
+
+  tabs.forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      var targetSlug = this.getAttribute('data-tab');
+
+      tabs.forEach(function(t) {
+        t.classList.remove('bg-forest-700', 'text-white', 'shadow-lg', 'shadow-forest-700/20');
+        t.classList.add('bg-forest-50', 'text-forest-800', 'hover:bg-forest-100');
+      });
+      this.classList.remove('bg-forest-50', 'text-forest-800', 'hover:bg-forest-100');
+      this.classList.add('bg-forest-700', 'text-white', 'shadow-lg', 'shadow-forest-700/20');
+
+      contents.forEach(function(content) {
+        content.classList.add('hidden');
+        content.classList.remove('block');
+      });
+      var targetContent = document.getElementById('tab-' + targetSlug);
+      if (targetContent) {
+        targetContent.classList.remove('hidden');
+        targetContent.classList.add('block');
+      }
+    });
+  });
+})();
+</script>

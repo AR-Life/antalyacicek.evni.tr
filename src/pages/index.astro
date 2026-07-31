@@ -1,90 +1,123 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import HeroSection from "../components/HeroSection.astro";
-import CategorySlider from "../components/CategorySlider.astro";
+import CategoryTabs from "../components/CategoryTabs.astro";
 import ProductCard from "../components/ProductCard.astro";
 import Steps from "../components/Steps.astro";
 import { categories } from "../data/categories";
+import { occasions } from "../data/occasions";
 import { products, getBestSellers, getProductsByCategory, getAllProducts } from "../data/products";
+import { contactInfo } from "../data/contact-info";
 
 const allProducts = getAllProducts();
-const bestSellers = getBestSellers();
+const featuredProducts = allProducts.slice(0, 8);
 const nonEmptyCategories = categories.filter((c) => getProductsByCategory(c.id).length > 0);
+
+const categoryColors = [
+  "bg-rose-50 hover:bg-rose-100 border-rose-200/50",
+  "bg-forest-50 hover:bg-forest-100 border-forest-200/50",
+  "bg-gold-50 hover:bg-gold-100 border-gold-200/50",
+  "bg-green-50 hover:bg-green-100 border-green-200/50",
+  "bg-rose-50 hover:bg-rose-100 border-rose-200/50",
+  "bg-forest-50 hover:bg-forest-100 border-forest-200/50",
+  "bg-gold-50 hover:bg-gold-100 border-gold-200/50",
+  "bg-green-50 hover:bg-green-100 border-green-200/50",
+];
+
+const categoryIcons: Record<string, string> = {
+  "premium-buketler": "💐",
+  "guller": "🌹",
+  "papatyalar": "🌼",
+  "lilyum-zambak": "🪷",
+  "orkide-saksi-cicekleri": "🪻",
+  "kutuda-cicekler": "🎁",
+  "celenk": "🕊️",
+  "ev-ofis-bitkileri": "🌿",
+};
 ---
 
 <BaseLayout>
   <HeroSection />
 
-  <section id="kategoriler" class="py-16 lg:py-20 bg-white">
+  <section id="kategoriler" class="py-16 lg:py-24 bg-gradient-to-b from-white to-forest-50/30">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12 lg:mb-16">
-        <h2 class="text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-4">
+      <div class="text-center mb-10 lg:mb-14">
+        <h2 class="text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-3">
           Kategoriler
         </h2>
         <p class="text-neutral-500 max-w-xl mx-auto text-sm lg:text-base">
-          Her anı özel kılan el yapımı çiçek aranjmanları ve buket seçenekleri.
+          Her anı özel kılan el yapımı çiçek aranjmanları
         </p>
       </div>
 
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
-        {nonEmptyCategories.map((category) => (
+      <div class="flex flex-wrap justify-center gap-3 lg:gap-4">
+        {nonEmptyCategories.map((category, index) => (
           <a
             href={`#cat-${category.slug}`}
-            class="group relative aspect-[4/5] rounded-2xl overflow-hidden bg-neutral-50 shadow-sm hover:shadow-lg transition-all duration-300"
+            class={`group inline-flex items-center gap-2.5 px-5 py-3 ${categoryColors[index % categoryColors.length]} border rounded-full transition-all duration-300 hover:-translate-y-1 hover:shadow-lg`}
           >
-            <img
-              src={category.image}
-              alt={category.name}
-              loading="lazy"
-              width="300"
-              height="375"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-            />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-            <div class="absolute bottom-0 left-0 right-0 p-4">
-              <h3 class="text-white font-semibold text-sm lg:text-base">
-                {category.name}
-              </h3>
-            </div>
+            <span class="text-xl">{categoryIcons[category.slug] || "🌸"}</span>
+            <span class="text-sm font-semibold text-neutral-800">{category.name}</span>
           </a>
         ))}
+      </div>
+
+      <div class="mt-10 pt-8 border-t border-forest-200/30">
+        <h3 class="text-center text-lg font-semibold text-neutral-700 mb-6">Özel Günler</h3>
+        <div class="flex flex-wrap justify-center gap-3 lg:gap-4">
+          {occasions.map((occasion) => (
+            <a
+              href={`/firsatlar/${occasion.slug}`}
+              class="group inline-flex items-center gap-2.5 px-5 py-3 bg-amber-50 hover:bg-amber-100 border border-amber-200/50 rounded-full transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+            >
+              <span class="text-xl">{occasion.icon}</span>
+              <span class="text-sm font-semibold text-neutral-800">{occasion.name}</span>
+            </a>
+          ))}
+        </div>
       </div>
     </div>
   </section>
 
-  {nonEmptyCategories.map((category) => (
-    <div id={`cat-${category.slug}`} class="bg-neutral-50/50">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        <CategorySlider category={category} />
-      </div>
-    </div>
-  ))}
+  <CategoryTabs categories={categories} />
 
-  <section id="urunler" class="py-16 lg:py-20 bg-white">
+  <section id="one-cikanlar" class="py-16 lg:py-24 bg-gradient-to-b from-forest-50/30 to-white">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12 lg:mb-16">
-        <span class="text-rose-500 text-sm font-semibold uppercase tracking-wider">
-          Hızlı Teslimat
+      <div class="text-center mb-10 lg:mb-14">
+        <span class="inline-block text-xs uppercase tracking-widest text-forest-600 font-bold mb-2">
+          En Çok Tercih Edilenler
         </span>
-        <h2 class="text-3xl lg:text-4xl font-display font-bold text-neutral-900 mt-2 mb-4">
-          Tüm Ürünler
+        <h2 class="text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-3">
+          Öne Çıkan Ürünler
         </h2>
         <p class="text-neutral-500 max-w-xl mx-auto text-sm lg:text-base">
-          En taze çiçeklerden el yapımı aranjmanlar. Her biri özenle hazırlanır, aynı gün teslim edilir.
+          Müşterilerimizin en çok beğendiği çiçek aranjmanları
         </p>
       </div>
 
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-        {allProducts.map((product) => (
+        {featuredProducts.map((product) => (
           <ProductCard product={product} />
         ))}
+      </div>
+
+      <div class="text-center mt-10 lg:mt-14">
+        <a
+          href="/#urunler"
+          class="inline-flex items-center gap-2 px-8 py-4 bg-forest-700 hover:bg-forest-800 text-white font-semibold rounded-full transition-all duration-300 shadow-lg shadow-forest-700/20 hover:shadow-xl hover:shadow-forest-700/30 hover:-translate-y-0.5"
+        >
+          Tüm Ürünleri Gör
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
       </div>
     </div>
   </section>
 
   <Steps />
 
-  <section class="py-16 lg:py-20 bg-gradient-to-br from-rose-50 to-white">
+  <section class="py-16 lg:py-24 bg-gradient-to-br from-forest-50 via-white to-rose-50/30">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
       <h2 class="text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-4">
         Siparişinizi Hemen Verin
@@ -93,10 +126,10 @@ const nonEmptyCategories = categories.filter((c) => getProductsByCategory(c.id).
         WhatsApp üzerinden siparişinizi iletin, çiçekleriniz aynı gün kapınızda olsun.
       </p>
       <a
-        href="https://wa.me/905001234567?text=Merhaba, sipariş vermek istiyorum."
+        href={`https://wa.me/${contactInfo.whatsapp}?text=${encodeURIComponent(contactInfo.whatsappMessage)}`}
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center gap-2.5 px-8 py-4 bg-green-500 hover:bg-green-600 text-white text-base font-semibold rounded-full transition-all duration-300 shadow-xl shadow-green-500/25 hover:shadow-2xl hover:shadow-green-500/30"
+        class="inline-flex items-center gap-2.5 px-8 py-4 bg-green-500 hover:bg-green-600 text-white text-base font-semibold rounded-full transition-all duration-300 shadow-xl shadow-green-500/25 hover:shadow-2xl hover:shadow-green-500/30 hover:-translate-y-1"
       >
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>

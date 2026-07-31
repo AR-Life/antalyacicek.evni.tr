@@ -1,0 +1,197 @@
+---
+import { SITE } from "../data/site.config";
+---
+
+<div
+  id="order-modal"
+  class="fixed inset-0 z-[100] hidden items-center justify-center"
+  role="dialog"
+  aria-modal="true"
+>
+  <div id="order-backdrop" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+  <div id="order-content" class="relative bg-white rounded-3xl shadow-2xl w-[calc(100%-2rem)] max-w-lg max-h-[92vh] overflow-y-auto m-4">
+    <button
+      id="order-close"
+      class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center transition-colors"
+      aria-label="Kapat"
+    >
+      <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+
+    <div class="p-6 lg:p-8">
+      <div class="text-center mb-6">
+        <span class="text-3xl">💐</span>
+        <h2 class="text-xl font-display font-bold text-neutral-900 mt-2">Siparişini Tamamla</h2>
+        <p class="text-sm text-neutral-500 mt-1">Bilgilerini doldur, siparişini anında ilet</p>
+      </div>
+
+      <div id="order-product-preview" class="bg-forest-50 rounded-2xl p-4 mb-6 flex gap-4 items-center">
+        <img id="order-product-image" src="" alt="" class="w-16 h-20 rounded-xl object-cover" />
+        <div class="flex-1 min-w-0">
+          <h3 id="order-product-name" class="font-semibold text-sm text-neutral-900 line-clamp-2"></h3>
+          <span id="order-product-price" class="text-lg font-bold text-forest-800 mt-1 block"></span>
+        </div>
+      </div>
+
+      <form id="order-form" class="space-y-4" data-phone={SITE.phoneDigits}>
+        <div>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1">Alıcı Adı Soyadı *</label>
+          <input type="text" id="order-recipient" required placeholder="Çiçek kime gidecek?" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1">Alıcı Telefonu *</label>
+          <input type="tel" id="order-recipient-phone" required placeholder="05XX XXX XX XX" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1">Teslimat Adresi *</label>
+          <textarea id="order-address" required rows="2" placeholder="Açık adres, mahalle, cadde, apartman no..." class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm resize-none"></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm font-semibold text-neutral-700 mb-1">Teslimat Tarihi</label>
+            <input type="date" id="order-date" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-neutral-700 mb-1">Tercih Edilen Saat</label>
+            <select id="order-time" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm bg-white">
+              <option value="">Müsait olduğunda</option>
+              <option value="09:00 - 12:00">09:00 - 12:00</option>
+              <option value="12:00 - 15:00">12:00 - 15:00</option>
+              <option value="15:00 - 18:00">15:00 - 18:00</option>
+              <option value="18:00 - 21:00">18:00 - 21:00</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1">Kart Mesajı</label>
+          <textarea id="order-message" rows="2" placeholder="Sevgililer günün kutlu olsun aşkım... (opsiyonel)" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm resize-none"></textarea>
+        </div>
+
+        <div class="border-t border-neutral-100 pt-4">
+          <p class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">Gönderen Bilgileri</p>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-sm font-semibold text-neutral-700 mb-1">Adınız Soyadınız *</label>
+              <input type="text" id="order-sender-name" required placeholder="Adınız" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-neutral-700 mb-1">Telefonunuz *</label>
+              <input type="tel" id="order-sender-phone" required placeholder="05XX XXX XX XX" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" />
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          class="flex items-center justify-center gap-2.5 w-full py-4 bg-green-500 hover:bg-green-600 text-white text-base font-bold rounded-2xl transition-all duration-300 shadow-xl shadow-green-500/20 hover:shadow-2xl hover:shadow-green-500/30 mt-2"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+          </svg>
+          WhatsApp ile Gönder
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    var modal = document.getElementById('order-modal');
+    var backdrop = document.getElementById('order-backdrop');
+    var closeBtn = document.getElementById('order-close');
+    var form = document.getElementById('order-form');
+
+    function openOrderModal(data) {
+      document.getElementById('order-product-image').src = data.image;
+      document.getElementById('order-product-image').alt = data.name;
+      document.getElementById('order-product-name').textContent = data.name;
+      document.getElementById('order-product-price').textContent = data.price.toLocaleString('tr-TR', { minimumFractionDigits: 2 }) + ' ₺';
+      form.setAttribute('data-product-name', data.name);
+      form.setAttribute('data-product-price', String(data.price));
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeOrderModal() {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.style.overflow = '';
+      form.reset();
+    }
+
+    backdrop.addEventListener('click', closeOrderModal);
+    closeBtn.addEventListener('click', closeOrderModal);
+    
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) closeOrderModal();
+    });
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var name = document.getElementById('order-recipient').value.trim();
+      var phone = document.getElementById('order-recipient-phone').value.trim();
+      var address = document.getElementById('order-address').value.trim();
+      var date = document.getElementById('order-date').value;
+      var time = document.getElementById('order-time').value;
+      var message = document.getElementById('order-message').value.trim();
+      var senderName = document.getElementById('order-sender-name').value.trim();
+      var senderPhone = document.getElementById('order-sender-phone').value.trim();
+
+      if (!name || !phone || !address || !senderName || !senderPhone) {
+        alert('Lütfen zorunlu alanları doldurun (*)');
+        return;
+      }
+
+      var productName = form.getAttribute('data-product-name') || '';
+      var productPrice = form.getAttribute('data-product-price') || '';
+
+      var text = [
+        '🌸 *Yeni Sipariş* 🌸',
+        '',
+        '📦 *Ürün:* ' + productName,
+        '💰 *Fiyat:* ' + Number(productPrice).toLocaleString('tr-TR', { minimumFractionDigits: 2 }) + ' ₺',
+        '',
+        '👤 *Alıcı Bilgileri*',
+        'İsim: ' + name,
+        'Telefon: ' + phone,
+        '📍 *Adres:* ' + address,
+      ];
+
+      if (date) text.push('📅 *Tarih:* ' + new Date(date).toLocaleDateString('tr-TR'));
+      if (time) text.push('⏰ *Saat:* ' + time);
+      if (message) text.push('💌 *Mesaj:* ' + message);
+
+      text.push('');
+      text.push('📞 *Gönderen:* ' + senderName + ' | ' + senderPhone);
+
+      var phone = form.getAttribute('data-phone');
+      var whatsappUrl = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(text.join('\n'));
+      window.open(whatsappUrl, '_blank');
+      closeOrderModal();
+    });
+
+    document.addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-order]');
+      if (!btn) return;
+      e.preventDefault();
+      try {
+        var data = JSON.parse(btn.getAttribute('data-order'));
+        openOrderModal(data);
+      } catch (err) {
+        console.error('Order data parse error:', err);
+      }
+    });
+
+    window.openOrderModal = openOrderModal;
+    window.closeOrderModal = closeOrderModal;
+  })();
+</script>

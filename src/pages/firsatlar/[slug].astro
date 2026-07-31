@@ -1,0 +1,90 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProductCard from "../../components/ProductCard.astro";
+import { occasions, type Occasion } from "../../data/occasions";
+import { getProductsByOccasion } from "../../data/products";
+import { SITE } from "../../data/site.config";
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+const occasion = occasions.find((o) => o.slug === slug);
+
+if (!occasion) {
+  return Astro.redirect("/404");
+}
+
+const products = getProductsByOccasion(occasion.slug);
+const canonicalUrl = `${SITE.url}/firsatlar/${occasion.slug}`;
+---
+
+<BaseLayout
+  title={`${occasion.name} - Aynı Gün Teslimat | Antalya Çiçek`}
+  description={occasion.description}
+  canonicalURL={canonicalUrl}
+>
+  <div class="pt-28">
+    <section class="bg-gradient-to-br from-forest-50 via-white to-rose-50/30 py-12 lg:py-16">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+          <span class="text-4xl mb-4 block">{occasion.icon}</span>
+          <h1 class="text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-3">
+            {occasion.name}
+          </h1>
+          <p class="text-neutral-500 max-w-xl mx-auto text-sm lg:text-base">
+            {occasion.description}. Aynı gün teslimat ile sevdiklerinize ulaşın.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-12 lg:py-16 bg-white">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {products.length > 0 ? (
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+            {products.map((product) => (
+              <ProductCard product={product} />
+            ))}
+          </div>
+        ) : (
+          <div class="text-center py-16">
+            <span class="text-5xl mb-4 block">🌸</span>
+            <h2 class="text-xl font-display font-bold text-neutral-900 mb-2">
+              Bu kategori için henüz ürün yok
+            </h2>
+            <p class="text-neutral-500 text-sm mb-6">
+              Çok yakında bu sayfa için özel ürünler eklenecek.
+            </p>
+            <a
+              href="/"
+              class="inline-flex items-center gap-2 px-6 py-3 bg-forest-700 hover:bg-forest-800 text-white text-sm font-semibold rounded-xl transition-all"
+            >
+              Ana Sayfaya Dön
+            </a>
+          </div>
+        )}
+      </div>
+    </section>
+
+    <section class="py-12 bg-forest-50/50">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <h2 class="text-lg font-display font-bold text-neutral-900 mb-6 text-center">
+          Diğer Fırsatlar
+        </h2>
+        <div class="flex flex-wrap justify-center gap-3">
+          {occasions
+            .filter((o) => o.slug !== occasion.slug)
+            .map((o) => (
+              <a
+                href={`/firsatlar/${o.slug}`}
+                class="inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-forest-50 border border-forest-200/30 hover:border-forest-300 rounded-full text-sm font-medium text-neutral-700 hover:text-forest-800 transition-all shadow-sm"
+              >
+                <span>{o.icon}</span>
+                {o.name}
+              </a>
+            ))}
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

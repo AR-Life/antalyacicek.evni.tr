@@ -1,16 +1,38 @@
 @import "tailwindcss";
 
 @theme {
-  --color-rose-50: #fff1f2;
-  --color-rose-100: #ffe4e6;
-  --color-rose-200: #fecdd3;
-  --color-rose-300: #fda4af;
-  --color-rose-400: #fb7185;
-  --color-rose-500: #f43f5e;
-  --color-rose-600: #e11d48;
-  --color-rose-700: #be123c;
-  --color-rose-800: #9f1239;
-  --color-rose-900: #881337;
+  --color-forest-50: #f2f6f2;
+  --color-forest-100: #e0ebe0;
+  --color-forest-200: #c2d7c2;
+  --color-forest-300: #9ab89a;
+  --color-forest-400: #6e956e;
+  --color-forest-500: #4a7a4a;
+  --color-forest-600: #366036;
+  --color-forest-700: #2a4a2a;
+  --color-forest-800: #1e3320;
+  --color-forest-900: #152218;
+
+  --color-rose-50: #faf5f5;
+  --color-rose-100: #f5eaea;
+  --color-rose-200: #e8d4d4;
+  --color-rose-300: #d4b0b0;
+  --color-rose-400: #c49090;
+  --color-rose-500: #b07474;
+  --color-rose-600: #9c5c5c;
+  --color-rose-700: #7a4848;
+  --color-rose-800: #5c3838;
+  --color-rose-900: #3c2828;
+
+  --color-gold-50: #fdf8f0;
+  --color-gold-100: #faf0dc;
+  --color-gold-200: #f4e0b8;
+  --color-gold-300: #ecc985;
+  --color-gold-400: #e0b060;
+  --color-gold-500: #c4a040;
+  --color-gold-600: #a08030;
+  --color-gold-700: #7a6028;
+  --color-gold-800: #5c4820;
+  --color-gold-900: #3c3018;
 
   --color-green-50: #f0fdf4;
   --color-green-100: #dcfce7;
@@ -33,9 +55,26 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-
   body {
     @apply bg-white text-neutral-900 font-sans;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-forest-600);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

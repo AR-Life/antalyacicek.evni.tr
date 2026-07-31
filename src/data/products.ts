@@ -8,6 +8,7 @@ export interface Product {
   categoryId: string;
   image: string;
   tags: string[];
+  occasions: string[];
   delivery: string;
 }
 
@@ -22,6 +23,7 @@ export const products: Product[] = [
     categoryId: "cat-30",
     image: "/images/thumb_renkli-papatya-buketi-ile-sicacik-bir-gulumseme-351.webp",
     tags: ["papatya", "renkli", "neşeli"],
+    occasions: ["dogum-gunu-cicekleri", "tebrik-cicekleri"],
     delivery: "Aynı gün teslimat",
   },
   {
@@ -178,6 +180,7 @@ export const products: Product[] = [
     categoryId: "cat-29",
     image: "/images/thumb_41-adet-kucak-dolusu-ithal-guller-70cm-4.webp",
     tags: ["gül", "kırmızı", "ithal", "lüks", "popüler"],
+    occasions: ["sevgiliye-cicek", "yil-donumu-cicegi"],
     delivery: "Aynı gün teslimat",
   },
   {
@@ -226,6 +229,7 @@ export const products: Product[] = [
     categoryId: "cat-29",
     image: "/images/thumb_20-adet-kirmizi-gul-buketi-50.webp",
     tags: ["gül", "kırmızı", "aşk", "popüler"],
+    occasions: ["sevgiliye-cicek", "yil-donumu-cicegi"],
     delivery: "Aynı gün teslimat",
   },
   {
@@ -559,6 +563,11 @@ export function getProductsByCategory(categoryId: string): Product[] {
   return all.filter((p: any) => p.categoryId === categoryId);
 }
 
+export function getProductsByOccasion(occasionSlug: string): Product[] {
+  const all = getAllProducts();
+  return all.filter((p: any) => p.occasions?.includes(occasionSlug));
+}
+
 export function getBestSellers(): Product[] {
   const all = getAllProducts();
   return all.filter((p: any) => p.tags?.includes("popüler"));
@@ -592,6 +601,7 @@ function getAllProducts(): any[] {
           image: p.images?.[0]?.url || p.image || "",
           images: p.images,
           tags: p.tags || [],
+          occasions: p.occasions || [],
           delivery: "Aynı gün teslimat",
         }));
       }
