@@ -1,6 +1,13 @@
 ---
 import { SITE } from "../data/site.config";
 import { contactInfo } from "../data/contact-info";
+import { type Locale, localePath } from "../i18n/config";
+import { t } from "../i18n/translations";
+
+interface Props {
+  locale?: Locale;
+}
+const { locale = (Astro.locals.locale as Locale) || "tr" } = Astro.props;
 
 const waHref = `https://wa.me/${contactInfo.whatsapp}?text=${encodeURIComponent(contactInfo.whatsappMessage)}`;
 
@@ -29,6 +36,8 @@ const extendedPurposes = [
   { value: 'cenaze-celenk', label: 'Cenaze & Çelenk Siparişi' },
   { value: 'icimden-geldi', label: 'İçimden Geldi (Neden Gerekmez) 😊' },
 ];
+
+const isTR = locale === "tr";
 ---
 
 <section class="relative overflow-x-hidden pt-16 lg:pt-20" aria-labelledby="hero-heading">
@@ -48,36 +57,37 @@ const extendedPurposes = [
   </div>
 
   <div class="relative mx-auto flex max-w-7xl flex-col gap-8 px-4 py-12 sm:px-6 sm:py-16 lg:flex-row lg:items-center lg:gap-14 lg:px-8 lg:py-24">
-    <!-- Sol: Manşet -->
+    <!-- Sol/Merkez: Manşet -->
     <div class="flex-1 text-center lg:text-left">
       <!-- Badge -->
       <span class="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-bold tracking-wider text-white/90 uppercase ring-1 ring-white/20 backdrop-blur-sm sm:mb-5 sm:text-sm">
         <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-gold-400"></span>
-        45 Dakika VIP Teslimat
+        {t(locale, "ui.hero_badge", "45 Dakika VIP Teslimat")}
       </span>
 
       <h1
         id="hero-heading"
         class="text-2xl font-display font-extrabold leading-[1.15] tracking-tight text-white sm:text-4xl md:text-5xl lg:text-[3.25rem]"
       >
-        Antalya'da Aşkı Başlatın:
-        <span class="mt-1 block bg-gradient-to-r from-gold-300 via-gold-400 to-rose-400 bg-clip-text text-transparent">
-          45 Dakikada Lüks Çiçek Teslimatı 🌹
-        </span>
+        <>
+          {t(locale, "ui.hero_title_line1", "Antalya'da Aşkı Başlatın:")}
+          <span class="mt-1 block bg-gradient-to-r from-gold-300 via-gold-400 to-rose-400 bg-clip-text text-transparent">
+            {t(locale, "ui.hero_title_line2", "45 Dakikada Lüks Çiçek Teslimatı 🌹")}
+          </span>
+        </>
       </h1>
 
       <p class="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-white/75 sm:mt-5 sm:text-base lg:mx-0 lg:text-lg">
-        Taze kesim güller, Hollanda orkideleri ve el yapımı VIP aranjmanlar.
-        Muratpaşa, Lara, Konyaaltı ve Kundu'ya motorlu kurye ile aynı gün kapınızda.
+        {t(locale, "ui.hero_desc", "Taze kesim güller, Hollanda orkideleri ve el yapımı VIP aranjmanlar. Muratpaşa, Lara, Konyaaltı ve Kundu'ya motorlu kurye ile aynı gün kapınızda.")}
       </p>
 
       <!-- CTA Buttons -->
       <div class="mt-6 flex flex-wrap items-center justify-center gap-2.5 sm:mt-8 sm:gap-3 lg:justify-start">
         <a
-          href="#urunler"
+          href={localePath(locale, "/cicekler")}
           class="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-gold-400 to-gold-500 px-6 py-3 text-sm font-bold text-forest-900 shadow-xl shadow-gold-500/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-gold-500/35 sm:px-8 sm:py-3.5 sm:text-base"
         >
-          Koleksiyonu Keşfet
+          {t(locale, "ui.all_flowers", "Koleksiyonu Keşfet")}
           <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 sm:h-4 sm:w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6" />
           </svg>
@@ -89,90 +99,90 @@ const extendedPurposes = [
           class="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-4 py-2.5 text-xs font-semibold text-white backdrop-blur-sm transition-all duration-300 hover:bg-white/20 sm:gap-2 sm:px-6 sm:py-3 sm:text-sm"
         >
           <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
-          Hemen WhatsApp
+          {t(locale, "ui.order_btn", "Hemen WhatsApp")}
         </a>
       </div>
     </div>
 
     <!-- Sağ: Super Kategori Seçici -->
     <div class="mx-auto w-full max-w-md shrink-0 lg:mx-0">
-      <div class="rounded-2xl border border-white/20 bg-white/95 p-4 shadow-2xl backdrop-blur-xl sm:rounded-3xl sm:p-6">
-        <div class="mb-4 flex items-center gap-2">
-          <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-forest-700 text-sm font-bold text-white sm:h-8 sm:w-8">⚡</span>
-          <h2 class="text-base font-bold text-neutral-900 sm:text-lg">Kimin İçin / Ne İçin?</h2>
-        </div>
-
-        <form id="quick-order-form" class="space-y-4 sm:space-y-5" action="#urunler">
-          <!-- Popüler 6 hap -->
-          <fieldset>
-            <div class="grid grid-cols-3 gap-1.5 sm:gap-2" role="radiogroup" aria-label="Gönderim amacı">
-              {popularPurposes.map((p, i) => (
-                <label class="group cursor-pointer">
-                  <input
-                    type="radio"
-                    name="purpose"
-                    value={p.value}
-                    class="peer sr-only"
-                    checked={i === 0}
-                  />
-                  <span class="flex min-h-[40px] items-center justify-center rounded-xl border-2 border-forest-200/50 bg-forest-50/50 px-1.5 py-2 text-center text-[10px] leading-tight font-semibold text-neutral-600 transition-all duration-200 peer-checked:border-forest-700 peer-checked:bg-forest-700 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-gold-400 sm:min-h-[52px] sm:rounded-2xl sm:text-xs">
-                    {p.label}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
-
-          <!-- +14 Diğer Accordion -->
-          <details class="group cursor-pointer">
-            <summary class="flex list-none items-center justify-between rounded-xl border-2 border-dashed border-forest-300/30 bg-forest-50/40 px-3 py-2.5 text-xs font-semibold text-neutral-500 transition-all duration-200 hover:border-forest-400/50 marker:content-none sm:px-4 sm:py-3 sm:text-sm [&::-webkit-details-marker]:hidden">
-              <span>+ 14 Diğer Gönderim Amacı</span>
-              <span class="flex h-5 w-5 items-center justify-center rounded-full bg-forest-100 text-forest-700 transition-transform duration-200 group-open:rotate-180 sm:h-6 sm:w-6">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-3.5 sm:w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
-                </svg>
-              </span>
-            </summary>
-            <div class="mt-2 grid grid-cols-2 gap-1.5 sm:gap-2" role="radiogroup" aria-label="Diğer gönderim amaçları">
-              {extendedPurposes.map((p) => (
-                <label class="group cursor-pointer">
-                  <input
-                    type="radio"
-                    name="purpose"
-                    value={p.value}
-                    class="peer sr-only"
-                  />
-                  <span class="flex min-h-[36px] items-center justify-center rounded-lg border border-forest-200/40 bg-forest-50/30 px-1.5 py-1.5 text-center text-[9px] leading-tight font-medium text-neutral-500 transition-all duration-200 peer-checked:border-forest-700 peer-checked:bg-forest-700 peer-checked:text-white sm:min-h-[42px] sm:rounded-xl sm:text-[11px]">
-                    {p.label}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </details>
-
-          <!-- Teslimat garantisi rozeti -->
-          <div class="flex items-center gap-2 rounded-xl bg-forest-50 px-3 py-2.5 ring-1 ring-forest-200/50 sm:gap-3 sm:px-4 sm:py-3">
-            <span class="text-base sm:text-xl">⚡</span>
-            <p class="text-[11px] font-semibold leading-snug text-forest-700 sm:text-sm">
-              Tüm Antalya'da 45 Dakika VIP Kurye Teslimatı Garantilidir
-            </p>
+        <div class="rounded-2xl border border-white/20 bg-white/95 p-4 shadow-2xl backdrop-blur-xl sm:rounded-3xl sm:p-6">
+          <div class="mb-4 flex items-center gap-2">
+            <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-forest-700 text-sm font-bold text-white sm:h-8 sm:w-8">⚡</span>
+            <h2 class="text-base font-bold text-neutral-900 sm:text-lg">{t(locale, "ui.hero_form_title", "Kimin İçin / Ne İçin?")}</h2>
           </div>
 
-          <button
-            type="submit"
-            class="group w-full inline-flex items-center justify-center gap-2 rounded-full bg-forest-700 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-forest-700/25 transition-all duration-300 hover:bg-forest-800 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-forest-700/35 sm:py-3.5 sm:text-base"
-          >
-            Sevimli Sürprizi Bul & Sipariş Ver 💐
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform group-hover:translate-x-0.5 sm:h-5 sm:w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </button>
-        </form>
+          <form id="quick-order-form" class="space-y-4 sm:space-y-5" action="/cicekler" method="get">
+            <!-- Popüler 6 hap -->
+            <fieldset>
+              <div class="grid grid-cols-3 gap-1.5 sm:gap-2" role="radiogroup" aria-label="Gönderim amacı">
+                {popularPurposes.map((p, i) => (
+                  <label class="group cursor-pointer">
+                    <input
+                      type="radio"
+                      name="purpose"
+                      value={p.value}
+                      class="peer sr-only"
+                      checked={i === 0}
+                    />
+                    <span class="flex min-h-[40px] items-center justify-center rounded-xl border-2 border-forest-200/50 bg-forest-50/50 px-1.5 py-2 text-center text-[10px] leading-tight font-semibold text-neutral-600 transition-all duration-200 peer-checked:border-forest-700 peer-checked:bg-forest-700 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-gold-400 sm:min-h-[52px] sm:rounded-2xl sm:text-xs">
+                      {t(locale, `occasion.${p.value}`, p.label)}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
 
-        <p class="mt-3 text-center text-[10px] text-neutral-400 sm:text-xs">
-          Ücretsiz kart notu · Motorlu kurye · %100 tazelik
-        </p>
+            <!-- +14 Diğer Accordion -->
+            <details class="group cursor-pointer">
+              <summary class="flex list-none items-center justify-between rounded-xl border-2 border-dashed border-forest-300/30 bg-forest-50/40 px-3 py-2.5 text-xs font-semibold text-neutral-500 transition-all duration-200 hover:border-forest-400/50 marker:content-none sm:px-4 sm:py-3 sm:text-sm [&::-webkit-details-marker]:hidden">
+                <span>+ 14 {t(locale, "ui.other_purposes", "Diğer Gönderim Amacı")}</span>
+                <span class="flex h-5 w-5 items-center justify-center rounded-full bg-forest-100 text-forest-700 transition-transform duration-200 group-open:rotate-180 sm:h-6 sm:w-6">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-3.5 sm:w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                  </svg>
+                </span>
+              </summary>
+              <div class="mt-2 grid grid-cols-2 gap-1.5 sm:gap-2" role="radiogroup" aria-label="Diğer gönderim amaçları">
+                {extendedPurposes.map((p) => (
+                  <label class="group cursor-pointer">
+                    <input
+                      type="radio"
+                      name="purpose"
+                      value={p.value}
+                      class="peer sr-only"
+                    />
+                    <span class="flex min-h-[36px] items-center justify-center rounded-lg border border-forest-200/40 bg-forest-50/30 px-1.5 py-1.5 text-center text-[9px] leading-tight font-medium text-neutral-500 transition-all duration-200 peer-checked:border-forest-700 peer-checked:bg-forest-700 peer-checked:text-white sm:min-h-[42px] sm:rounded-xl sm:text-[11px]">
+                      {t(locale, `occasion.${p.value}`, p.label)}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </details>
+
+            <!-- Teslimat garantisi rozeti -->
+            <div class="flex items-center gap-2 rounded-xl bg-forest-50 px-3 py-2.5 ring-1 ring-forest-200/50 sm:gap-3 sm:px-4 sm:py-3">
+              <span class="text-base sm:text-xl">⚡</span>
+              <p class="text-[11px] font-semibold leading-snug text-forest-700 sm:text-sm">
+                {t(locale, "ui.hero_delivery_guarantee", "Tüm Antalya'da 45 Dakika VIP Kurye Teslimatı Garantilidir")}
+              </p>
+            </div>
+
+            <button
+              type="submit"
+              class="group w-full inline-flex items-center justify-center gap-2 rounded-full bg-forest-700 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-forest-700/25 transition-all duration-300 hover:bg-forest-800 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-forest-700/35 sm:py-3.5 sm:text-base"
+            >
+              {t(locale, "ui.hero_find_surprise", "Sevimli Sürprizi Bul & Sipariş Ver 💐")}
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform group-hover:translate-x-0.5 sm:h-5 sm:w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </button>
+          </form>
+
+          <p class="mt-3 text-center text-[10px] text-neutral-400 sm:text-xs">
+            {t(locale, "ui.hero_features", "Ücretsiz kart notu · Motorlu kurye · %100 tazelik")}
+          </p>
+        </div>
       </div>
-    </div>
   </div>
 </section>

@@ -1,0 +1,134 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import HeroSection from "../../components/HeroSection.astro";
+import CategoryTabs from "../../components/CategoryTabs.astro";
+import ProductCard from "../../components/ProductCard.astro";
+import Steps from "../../components/Steps.astro";
+import { categories } from "../../data/categories";
+import { occasions } from "../../data/occasions";
+import { getProductsByCategory, getAllProducts } from "../../data/products";
+import { contactInfo } from "../../data/contact-info";
+import { isValidLocale, type Locale, localePath, LOCALE_NAMES } from "../../i18n/config";
+import { t } from "../../i18n/translations";
+
+const { lang } = Astro.params;
+if (!isValidLocale(lang || "") || lang === "tr") {
+  return Astro.redirect("/", 302);
+}
+const locale = lang as Locale;
+
+const allProducts = getAllProducts();
+const featuredProducts = allProducts.slice(0, 8);
+const nonEmptyCategories = categories.filter((c) => getProductsByCategory(c.id).length > 0);
+
+const categoryColors = [
+  "bg-rose-50 hover:bg-rose-100 border-rose-200/50",
+  "bg-forest-50 hover:bg-forest-100 border-forest-200/50",
+  "bg-gold-50 hover:bg-gold-100 border-gold-200/50",
+  "bg-green-50 hover:bg-green-100 border-green-200/50",
+  "bg-rose-50 hover:bg-rose-100 border-rose-200/50",
+  "bg-forest-50 hover:bg-forest-100 border-forest-200/50",
+  "bg-gold-50 hover:bg-gold-100 border-gold-200/50",
+  "bg-green-50 hover:bg-green-100 border-green-200/50",
+];
+
+const categoryIcons: Record<string, string> = {
+  "premium-buketler": "💐",
+  "guller": "🌹",
+  "papatyalar": "🌼",
+  "lilyum-zambak": "🪷",
+  "orkide-saksi-cicekleri": "🪻",
+  "kutuda-cicekler": "🎁",
+  "celenk": "🕊️",
+  "ev-ofis-bitkileri": "🌿",
+};
+
+const waMsg = `Hello, I would like to order flowers in Antalya (${LOCALE_NAMES[locale]} support requested).`;
+const waUrl = `https://wa.me/${contactInfo.whatsapp}?text=${encodeURIComponent(waMsg)}`;
+---
+
+<BaseLayout locale={locale}>
+  <HeroSection locale={locale} />
+
+  <section id="kategoriler" class="py-16 lg:py-24 bg-gradient-to-b from-white to-forest-50/30">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-10 lg:mb-14">
+        <h2 class="text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-3">
+          {t(locale, "ui.category", "Kategoriler")}
+        </h2>
+        <p class="text-neutral-500 max-w-xl mx-auto text-sm lg:text-base">
+          {t(locale, "ui.collection_desc", "Sevdiklerinize en uygun, taze ve lüks tasarımları keşfedin.")}
+        </p>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-3 lg:gap-4">
+        {nonEmptyCategories.map((category, index) => (
+          <a
+            href={`#cat-${category.slug}`}
+            class={`group inline-flex items-center gap-2.5 px-5 py-3 ${categoryColors[index % categoryColors.length]} border rounded-full transition-all duration-300 hover:-translate-y-1 hover:shadow-lg`}
+          >
+            <span class="text-xl">{categoryIcons[category.slug] || "🌸"}</span>
+            <span class="text-sm font-semibold text-neutral-800">{t(locale, `category.${category.id}`, category.name)}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CategoryTabs categories={categories} locale={locale} />
+
+  <section id="one-cikanlar" class="py-16 lg:py-24 bg-gradient-to-b from-forest-50/30 to-white">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-10 lg:mb-14">
+        <span class="inline-block text-xs uppercase tracking-widest text-forest-600 font-bold mb-2">
+          {t(locale, "ui.collection_title", "Çiçek Koleksiyonumuz")}
+        </span>
+        <h2 class="text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-3">
+          {t(locale, "ui.all_flowers", "Tüm Çiçeklerimiz")}
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+        {featuredProducts.map((product) => (
+          <ProductCard product={product} locale={locale} />
+        ))}
+      </div>
+
+      <div class="text-center mt-10 lg:mt-14">
+        <a
+          href={localePath(locale, "/cicekler")}
+          class="inline-flex items-center gap-2 px-8 py-4 bg-forest-700 hover:bg-forest-800 text-white font-semibold rounded-full transition-all duration-300 shadow-lg shadow-forest-700/20 hover:shadow-xl hover:shadow-forest-700/30 hover:-translate-y-0.5"
+        >
+          {t(locale, "ui.all_flowers", "Tüm Çiçeklerimiz")}
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <Steps locale={locale} />
+
+  <section class="py-16 lg:py-24 bg-gradient-to-br from-forest-50 via-white to-rose-50/30">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-4">
+        {t(locale, "ui.whatsapp_order", "Siparişinizi Hemen Verin")}
+      </h2>
+      <p class="text-neutral-500 max-w-xl mx-auto mb-8 text-sm lg:text-base">
+        {t(locale, "ui.whatsapp_desc", "WhatsApp üzerinden sipariş verebilirsiniz.")}
+      </p>
+      <a
+        href={waUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2.5 px-8 py-4 bg-green-500 hover:bg-green-600 text-white text-base font-semibold rounded-full transition-all duration-300 shadow-xl shadow-green-500/25 hover:shadow-2xl hover:shadow-green-500/30 hover:-translate-y-1"
+      >
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+        </svg>
+        {t(locale, "ui.order_btn", "WhatsApp ile Sipariş Ver")}
+      </a>
+    </div>
+  </section>
+</BaseLayout>

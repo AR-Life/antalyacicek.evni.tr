@@ -25,7 +25,7 @@ const whatsappUrl = `https://wa.me/${SITE.phoneDigits}?text=${whatsappMessage}`;
 
 const productTitle = `${product.name} - ${SITE.name}`;
 const productDescription = `${product.description} | ${product.price.toLocaleString("tr-TR")} TL | ${SITE.name} - Aynı Gün Teslimat`;
-const canonicalUrl = `${SITE.url}/urun/${product.slug}`;
+const canonicalUrl = `${SITE.url}/cicek/${product.slug}`;
 
 const galleryImages = product.images?.length ? product.images : (product.image ? [{ url: product.image, alt: product.name }] : [{ url: mainImage, alt: product.name }]);
 ---
@@ -42,7 +42,7 @@ const galleryImages = product.images?.length ? product.images : (product.image ?
     "@type": "BreadcrumbList",
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Ana Sayfa", "item": "${SITE.url}" },
-      { "@type": "ListItem", "position": 2, "name": "Ürünler", "item": "${SITE.url}/#urunler" },
+      { "@type": "ListItem", "position": 2, "name": "Çiçekler", "item": "${SITE.url}/cicekler" },
       { "@type": "ListItem", "position": 3, "name": "${product.name}", "item": "${canonicalUrl}" }
     ]
   }`} />
@@ -110,7 +110,7 @@ const galleryImages = product.images?.length ? product.images : (product.image ?
       <nav class="flex items-center gap-2 text-sm text-neutral-400 mb-8" aria-label="Breadcrumb">
         <a href="/" class="hover:text-forest-700 transition-colors">Ana Sayfa</a>
         <span>/</span>
-        <a href={`/#urunler`} class="hover:text-forest-700 transition-colors">Ürünler</a>
+        <a href="/cicekler" class="hover:text-forest-700 transition-colors">Çiçekler</a>
         <span>/</span>
         <span class="text-neutral-600">{product.name}</span>
       </nav>
@@ -247,7 +247,7 @@ const galleryImages = product.images?.length ? product.images : (product.image ?
                 .map((related) => {
                   const relImg = related.images?.[0]?.url || "https://placehold.co/400x500/f5f5f5/fda4af?text=No+Image";
                   return (
-                    <a href={`/urun/${related.slug}`} class="group block bg-white rounded-2xl shadow-sm hover:shadow-lg border border-neutral-100 hover:border-forest-200 transition-all duration-300 overflow-hidden">
+                    <a href={`/cicek/${related.slug}`} class="group block bg-white rounded-2xl shadow-sm hover:shadow-lg border border-neutral-100 hover:border-forest-200 transition-all duration-300 overflow-hidden">
                       <div class="aspect-[4/5] bg-neutral-50 overflow-hidden">
                         <img src={relImg} alt={related.name} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />
                       </div>

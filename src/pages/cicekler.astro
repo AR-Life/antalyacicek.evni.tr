@@ -1,0 +1,419 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ProductCard from "../components/ProductCard.astro";
+import { categories } from "../data/categories";
+import { occasions } from "../data/occasions";
+import { getAllProducts } from "../data/products";
+import { SITE } from "../data/site.config";
+
+const allProducts = getAllProducts();
+
+// Build category lookup map
+const categoryMap = Object.fromEntries(categories.map((c) => [c.id, c]));
+
+// Price range for slider
+const prices = allProducts.map((p: any) => p.price);
+const minPrice = Math.floor(Math.min(...prices) / 100) * 100;
+const maxPrice = Math.ceil(Math.max(...prices) / 100) * 100;
+
+// SEO
+const pageTitle = "Tüm Çiçek Tasarımları | Antalya Çiçek Sipariş - Aynı Gün Teslimat";
+const pageDescription = `${allProducts.length}+ el yapımı çiçek aranjmanı, gül buketi, orkide, papatya ve daha fazlası. Antalya genelinde aynı gün teslimat. Sevgiliye, doğum günü, yıldönümü ve tüm özel günler için çiçek gönder.`;
+const canonicalURL = `${SITE.url}/cicekler`;
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonicalURL={canonicalURL}
+>
+  <div class="pt-20 lg:pt-24 pb-16 lg:pb-24 bg-gradient-to-b from-forest-50/30 to-white min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <!-- Breadcrumb + Page Title -->
+      <div class="mb-8 lg:mb-12 border-b border-forest-200/30 pb-6 lg:pb-8">
+        <nav aria-label="Breadcrumb" class="text-xs uppercase tracking-widest text-neutral-400 mb-3">
+          <ol class="flex items-center gap-1.5" itemscope itemtype="https://schema.org/BreadcrumbList">
+            <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+              <a href="/" itemprop="item" class="hover:text-forest-700 transition-colors">
+                <span itemprop="name">Ana Sayfa</span>
+              </a>
+              <meta itemprop="position" content="1" />
+            </li>
+            <li class="text-neutral-300">/</li>
+            <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+              <span itemprop="name" class="text-forest-700 font-medium">Tüm Çiçeklerimiz</span>
+              <meta itemprop="position" content="2" />
+            </li>
+          </ol>
+        </nav>
+        <h1 class="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-900 mb-2">
+          Çiçek Koleksiyonumuz
+        </h1>
+        <p class="text-neutral-500 text-sm lg:text-base font-light max-w-2xl">
+          Sevdiklerinize en uygun, taze ve lüks tasarımları keşfedin. {allProducts.length} farklı aranjman seçeneği ile her özel güne özel çiçek.
+        </p>
+      </div>
+
+      <!-- Main Grid: Sidebar + Products -->
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
+
+        <!-- Filters Sidebar -->
+        <aside class="space-y-6 bg-white p-5 lg:p-6 rounded-2xl border border-forest-100/50 shadow-sm h-fit lg:sticky lg:top-28">
+
+          <!-- Search -->
+          <div>
+            <h2 class="font-display text-base font-bold text-neutral-900 mb-3">Arama</h2>
+            <div class="relative">
+              <div class="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                <svg class="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+              </div>
+              <input
+                type="text"
+                id="search-filter"
+                placeholder="Çiçek adı ara..."
+                class="w-full border border-forest-200/50 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-forest-400 focus:ring-2 focus:ring-forest-100 bg-forest-50/30 text-neutral-700 placeholder:text-neutral-400 transition-all"
+              />
+            </div>
+          </div>
+
+          <!-- Category Filter -->
+          <div>
+            <h2 class="font-display text-base font-bold text-neutral-900 mb-3">Çiçek Tipi</h2>
+            <div class="space-y-2">
+              {categories.map((cat) => (
+                <label class="flex items-center gap-2.5 text-sm text-neutral-600 cursor-pointer select-none group hover:text-neutral-900 transition-colors py-0.5">
+                  <input
+                    type="checkbox"
+                    value={cat.id}
+                    class="category-checkbox accent-forest-600 w-4 h-4 rounded border-forest-300/50 cursor-pointer"
+                  />
+                  <span class="group-hover:font-medium transition-all">{cat.name}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <!-- Occasion / Purpose Filter -->
+          <div>
+            <h2 class="font-display text-base font-bold text-neutral-900 mb-3">Gönderim Amacı</h2>
+            <div class="space-y-2 max-h-48 overflow-y-auto scrollbar-hide">
+              {occasions.map((occ) => (
+                <label class="flex items-center gap-2.5 text-sm text-neutral-600 cursor-pointer select-none group hover:text-neutral-900 transition-colors py-0.5">
+                  <input
+                    type="checkbox"
+                    value={occ.slug}
+                    class="occasion-checkbox accent-forest-600 w-4 h-4 rounded border-forest-300/50 cursor-pointer"
+                  />
+                  <span class="text-base leading-none">{occ.icon}</span>
+                  <span class="group-hover:font-medium transition-all">{occ.name}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <!-- Price Slider -->
+          <div>
+            <h2 class="font-display text-base font-bold text-neutral-900 mb-3">Maksimum Fiyat</h2>
+            <div class="space-y-2.5">
+              <input
+                type="range"
+                id="price-filter"
+                min={minPrice}
+                max={maxPrice}
+                step="100"
+                value={maxPrice}
+                class="w-full accent-forest-600 cursor-pointer"
+              />
+              <div class="flex justify-between text-xs text-neutral-400 font-medium">
+                <span>{minPrice.toLocaleString("tr-TR")} ₺</span>
+                <span id="price-display" class="text-forest-700 font-bold">{maxPrice.toLocaleString("tr-TR")} ₺</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sort -->
+          <div>
+            <h2 class="font-display text-base font-bold text-neutral-900 mb-3">Sıralama</h2>
+            <select
+              id="sort-select"
+              class="w-full border border-forest-200/50 rounded-xl px-3 py-2.5 text-sm bg-forest-50/30 text-neutral-700 focus:outline-none focus:border-forest-400 focus:ring-2 focus:ring-forest-100 cursor-pointer transition-all"
+            >
+              <option value="default">Varsayılan</option>
+              <option value="price-asc">Fiyat: Düşükten Yükseğe</option>
+              <option value="price-desc">Fiyat: Yüksekten Düşüğe</option>
+              <option value="name-asc">İsim: A-Z</option>
+              <option value="name-desc">İsim: Z-A</option>
+              <option value="discount">İndirim Oranı</option>
+            </select>
+          </div>
+
+          <!-- Reset -->
+          <button
+            id="reset-filters-btn"
+            class="w-full py-2.5 bg-forest-50 hover:bg-forest-100 text-forest-700 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors duration-200 cursor-pointer border border-forest-200/30"
+          >
+            Filtreleri Temizle
+          </button>
+        </aside>
+
+        <!-- Products Grid -->
+        <section class="lg:col-span-3 space-y-6">
+          <!-- Stats bar -->
+          <div class="flex items-center justify-between text-xs tracking-wider uppercase text-neutral-400 font-medium bg-white/60 rounded-xl px-4 py-3 border border-forest-100/30">
+            <span>
+              Toplam <span id="matching-count" class="text-forest-700 font-bold text-sm">{allProducts.length}</span> ürün bulunuyor
+            </span>
+            <span id="active-filters-info" class="text-forest-600 font-semibold hidden">
+              Filtre aktif
+            </span>
+          </div>
+
+          <!-- Grid Container -->
+          <div id="shop-products-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
+            {allProducts.map((product: any) => (
+              <div
+                class="product-item-wrapper transition-all duration-300"
+                data-category={product.categoryId}
+                data-price={product.price}
+                data-old-price={product.oldPrice || ""}
+                data-name={product.name.toLowerCase()}
+                data-occasions={JSON.stringify(product.occasions || [])}
+              >
+                <ProductCard product={product} />
+              </div>
+            ))}
+          </div>
+
+          <!-- Empty state -->
+          <div id="no-products-msg" class="hidden text-center py-20 space-y-4">
+            <span class="text-5xl block">🥀</span>
+            <h3 class="font-display text-xl font-bold text-neutral-900">Eşleşen Ürün Bulunamadı</h3>
+            <p class="text-sm text-neutral-500 max-w-sm mx-auto">Lütfen filtreleri sıfırlamayı veya arama teriminizi değiştirmeyi deneyin.</p>
+            <button
+              id="empty-reset-btn"
+              class="inline-flex items-center gap-2 px-6 py-2.5 bg-forest-700 hover:bg-forest-800 text-white text-sm font-semibold rounded-full transition-all duration-200 mt-2 cursor-pointer"
+            >
+              Filtreleri Temizle
+            </button>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- CollectionPage JSON-LD for SEO -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Çiçek Koleksiyonumuz",
+    "description": pageDescription,
+    "url": canonicalURL,
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": SITE.name,
+      "url": SITE.url,
+    },
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Ana Sayfa", "item": SITE.url },
+        { "@type": "ListItem", "position": 2, "name": "Tüm Çiçeklerimiz", "item": canonicalURL },
+      ],
+    },
+    "mainEntity": {
+      "@type": "ItemList",
+      "numberOfItems": allProducts.length,
+      "itemListElement": allProducts.slice(0, 20).map((p: any, i: number) => ({
+        "@type": "ListItem",
+        "position": i + 1,
+        "item": {
+          "@type": "Product",
+          "name": p.name,
+          "url": `${SITE.url}/cicek/${p.slug}`,
+          "image": p.images?.[0]?.url || p.image,
+          "description": p.description,
+          "offers": {
+            "@type": "Offer",
+            "price": p.price,
+            "priceCurrency": "TRY",
+            "availability": "https://schema.org/InStock",
+          },
+        },
+      })),
+    },
+  })} />
+</BaseLayout>
+
+<script is:inline>
+(function () {
+  var searchInput = document.getElementById("search-filter");
+  var priceSlider = document.getElementById("price-filter");
+  var priceDisplay = document.getElementById("price-display");
+  var categoryCheckboxes = document.querySelectorAll(".category-checkbox");
+  var occasionCheckboxes = document.querySelectorAll(".occasion-checkbox");
+  var sortSelect = document.getElementById("sort-select");
+  var items = Array.from(document.querySelectorAll(".product-item-wrapper"));
+  var gridContainer = document.getElementById("shop-products-grid");
+  var matchingCountSpan = document.getElementById("matching-count");
+  var noProductsMsg = document.getElementById("no-products-msg");
+  var activeFiltersInfo = document.getElementById("active-filters-info");
+  var resetBtn = document.getElementById("reset-filters-btn");
+  var emptyResetBtn = document.getElementById("empty-reset-btn");
+
+  // Read URL params for initial filter state (from Hero purpose selector)
+  var urlParams = new URLSearchParams(window.location.search);
+  var initialPurpose = urlParams.get("purpose");
+  if (initialPurpose) {
+    // Map Hero purpose values to occasion slugs
+    var purposeToOccasion = {
+      "sevgili": "sevgiliye-cicek",
+      "dogum-gunu": "dogum-gunu-cicekleri",
+      "is-terfi": "tebrik-cicekleri",
+      "ozur-af": "ozur-cicekleri",
+      "anne": "anneye-cicek",
+      "yildonumu": "yil-donumu-cicegi",
+      "gelin-düğün": "dugun-nisan-soz",
+      "hasta-ziyareti": "gecmis-olsun-cicekleri",
+      "yeni-bebek": "bebek-dogum-cicekleri",
+      "arkadas-surpriz": "tebrik-cicekleri",
+      "soz-nisan": "dugun-nisan-soz",
+      "cenaze-celenk": "",
+      "mezuniyet": "tebrik-cicekleri",
+      "icimden-geldi": "",
+    };
+    var mappedSlug = purposeToOccasion[initialPurpose] || initialPurpose;
+    if (mappedSlug) {
+      occasionCheckboxes.forEach(function (cb) {
+        if (cb.value === mappedSlug) cb.checked = true;
+      });
+    }
+  }
+
+  function filterAndSort() {
+    var searchQuery = (searchInput && searchInput.value.toLowerCase()) || "";
+    var maxPriceVal = Number(priceSlider && priceSlider.value) || 999999;
+
+    // Update price display
+    if (priceDisplay) {
+      priceDisplay.innerText = maxPriceVal.toLocaleString("tr-TR") + " ₺";
+    }
+
+    // Checked categories
+    var checkedCategories = [];
+    categoryCheckboxes.forEach(function (cb) {
+      if (cb.checked) checkedCategories.push(cb.value);
+    });
+
+    // Checked occasions
+    var checkedOccasions = [];
+    occasionCheckboxes.forEach(function (cb) {
+      if (cb.checked) checkedOccasions.push(cb.value);
+    });
+
+    var hasFilters = searchQuery || checkedCategories.length > 0 || checkedOccasions.length > 0 || maxPriceVal < Number(priceSlider.max);
+
+    // Filter items
+    var visibleItems = [];
+    items.forEach(function (item) {
+      var itemCategory = item.dataset.category;
+      var itemPrice = Number(item.dataset.price);
+      var itemName = item.dataset.name;
+      var itemOccasions = [];
+      try { itemOccasions = JSON.parse(item.dataset.occasions || "[]"); } catch (e) {}
+
+      var matchesSearch = !searchQuery || itemName.includes(searchQuery);
+      var matchesPrice = itemPrice <= maxPriceVal;
+      var matchesCategory = checkedCategories.length === 0 || checkedCategories.includes(itemCategory);
+      var matchesOccasion = checkedOccasions.length === 0 || checkedOccasions.some(function (o) {
+        return itemOccasions.includes(o);
+      });
+
+      if (matchesSearch && matchesPrice && matchesCategory && matchesOccasion) {
+        item.classList.remove("hidden");
+        item.style.opacity = "1";
+        item.style.transform = "";
+        visibleItems.push(item);
+      } else {
+        item.classList.add("hidden");
+        item.style.opacity = "0";
+        item.style.transform = "scale(0.95)";
+      }
+    });
+
+    // Sort visible items
+    var sortValue = sortSelect ? sortSelect.value : "default";
+    if (sortValue !== "default") {
+      visibleItems.sort(function (a, b) {
+        switch (sortValue) {
+          case "price-asc":
+            return Number(a.dataset.price) - Number(b.dataset.price);
+          case "price-desc":
+            return Number(b.dataset.price) - Number(a.dataset.price);
+          case "name-asc":
+            return a.dataset.name.localeCompare(b.dataset.name, "tr");
+          case "name-desc":
+            return b.dataset.name.localeCompare(a.dataset.name, "tr");
+          case "discount":
+            var discA = a.dataset.oldPrice ? ((Number(a.dataset.oldPrice) - Number(a.dataset.price)) / Number(a.dataset.oldPrice)) : 0;
+            var discB = b.dataset.oldPrice ? ((Number(b.dataset.oldPrice) - Number(b.dataset.price)) / Number(b.dataset.oldPrice)) : 0;
+            return discB - discA;
+          default:
+            return 0;
+        }
+      });
+      // Re-append sorted items
+      visibleItems.forEach(function (item) {
+        gridContainer.appendChild(item);
+      });
+    }
+
+    // Update count
+    if (matchingCountSpan) matchingCountSpan.innerText = String(visibleItems.length);
+
+    // Toggle empty state
+    if (visibleItems.length === 0) {
+      noProductsMsg && noProductsMsg.classList.remove("hidden");
+    } else {
+      noProductsMsg && noProductsMsg.classList.add("hidden");
+    }
+
+    // Toggle active filters badge
+    if (activeFiltersInfo) {
+      if (hasFilters) {
+        activeFiltersInfo.classList.remove("hidden");
+      } else {
+        activeFiltersInfo.classList.add("hidden");
+      }
+    }
+  }
+
+  function resetFilters() {
+    if (searchInput) searchInput.value = "";
+    if (priceSlider) priceSlider.value = priceSlider.max;
+    if (sortSelect) sortSelect.value = "default";
+    categoryCheckboxes.forEach(function (cb) { cb.checked = false; });
+    occasionCheckboxes.forEach(function (cb) { cb.checked = false; });
+    // Clear URL params
+    if (window.history.replaceState) {
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+    filterAndSort();
+  }
+
+  // Event listeners
+  if (searchInput) searchInput.addEventListener("input", filterAndSort);
+  if (priceSlider) priceSlider.addEventListener("input", filterAndSort);
+  if (sortSelect) sortSelect.addEventListener("change", filterAndSort);
+  categoryCheckboxes.forEach(function (cb) { cb.addEventListener("change", filterAndSort); });
+  occasionCheckboxes.forEach(function (cb) { cb.addEventListener("change", filterAndSort); });
+  if (resetBtn) resetBtn.addEventListener("click", resetFilters);
+  if (emptyResetBtn) emptyResetBtn.addEventListener("click", resetFilters);
+
+  // Initial run
+  filterAndSort();
+})();
+</script>

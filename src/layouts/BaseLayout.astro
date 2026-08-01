@@ -6,6 +6,8 @@ import WhatsAppButton from "../components/WhatsAppButton.astro";
 import OrderModal from "../components/OrderModal.astro";
 import "../styles/global.css";
 import { SITE } from "../data/site.config";
+import { LOCALES, DEFAULT_LOCALE, type Locale, localePath, getBasePath } from "../i18n/config";
+import { ClientRouter } from "astro:transitions";
 
 export interface Props {
   title?: string;
@@ -13,6 +15,7 @@ export interface Props {
   image?: string;
   type?: "website" | "article" | "product";
   canonicalURL?: string;
+  locale?: Locale;
 }
 
 const {
@@ -21,11 +24,14 @@ const {
   image = `${SITE.url}/images/og-default.svg`,
   type = "website",
   canonicalURL = SITE.url,
+  locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE,
 } = Astro.props;
+
+const basePath = getBasePath(Astro.url.pathname);
 ---
 
 <!doctype html>
-<html lang="tr">
+<html lang={locale}>
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -37,6 +43,7 @@ const {
     <meta name="robots" content="index, follow, max-image-preview:large" />
 
     <title>{title}</title>
+    <ClientRouter />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -60,17 +67,21 @@ const {
       type={type}
       canonicalURL={canonicalURL}
     />
+    {LOCALES.map((l) => (
+      <link rel="alternate" hreflang={l} href={`${SITE.url}${localePath(l, basePath)}`} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={`${SITE.url}${localePath("tr", basePath)}`} />
   </head>
   <body class="min-h-screen flex flex-col">
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[999] focus:bg-forest-700 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg">
       Ana içeriğe geç
     </a>
-    <Header />
+    <Header locale={locale} />
     <main id="main-content" role="main">
       <slot />
     </main>
-    <Footer />
+    <Footer locale={locale} />
     <WhatsAppButton />
-    <OrderModal />
+    {locale === "tr" && <OrderModal />}
   </body>
 </html>

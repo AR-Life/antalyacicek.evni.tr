@@ -13,71 +13,171 @@ const allProducts = getAllProducts();
 const featuredProducts = allProducts.slice(0, 8);
 const nonEmptyCategories = categories.filter((c) => getProductsByCategory(c.id).length > 0);
 
-const categoryColors = [
-  "bg-rose-50 hover:bg-rose-100 border-rose-200/50",
-  "bg-forest-50 hover:bg-forest-100 border-forest-200/50",
-  "bg-gold-50 hover:bg-gold-100 border-gold-200/50",
-  "bg-green-50 hover:bg-green-100 border-green-200/50",
-  "bg-rose-50 hover:bg-rose-100 border-rose-200/50",
-  "bg-forest-50 hover:bg-forest-100 border-forest-200/50",
-  "bg-gold-50 hover:bg-gold-100 border-gold-200/50",
-  "bg-green-50 hover:bg-green-100 border-green-200/50",
-];
 
-const categoryIcons: Record<string, string> = {
-  "premium-buketler": "💐",
-  "guller": "🌹",
-  "papatyalar": "🌼",
-  "lilyum-zambak": "🪷",
-  "orkide-saksi-cicekleri": "🪻",
-  "kutuda-cicekler": "🎁",
-  "celenk": "🕊️",
-  "ev-ofis-bitkileri": "🌿",
-};
 ---
 
 <BaseLayout>
   <HeroSection />
 
-  <section id="kategoriler" class="py-16 lg:py-24 bg-gradient-to-b from-white to-forest-50/30">
+  <section id="kategoriler" class="py-8 lg:py-12 bg-gradient-to-b from-white to-forest-50/30 overflow-hidden">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-10 lg:mb-14">
-        <h2 class="text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-3">
+      <div class="text-center mb-6 lg:mb-8">
+        <h2 class="text-2xl lg:text-3xl font-display font-bold text-neutral-900 mb-2">
           Kategoriler
         </h2>
-        <p class="text-neutral-500 max-w-xl mx-auto text-sm lg:text-base">
+        <p class="text-neutral-500 max-w-xl mx-auto text-xs lg:text-sm">
           Her anı özel kılan el yapımı çiçek aranjmanları
         </p>
       </div>
 
-      <div class="flex flex-wrap justify-center gap-3 lg:gap-4">
-        {nonEmptyCategories.map((category, index) => (
-          <a
-            href={`#cat-${category.slug}`}
-            class={`group inline-flex items-center gap-2.5 px-5 py-3 ${categoryColors[index % categoryColors.length]} border rounded-full transition-all duration-300 hover:-translate-y-1 hover:shadow-lg`}
-          >
-            <span class="text-xl">{categoryIcons[category.slug] || "🌸"}</span>
-            <span class="text-sm font-semibold text-neutral-800">{category.name}</span>
-          </a>
-        ))}
-      </div>
+      <div class="flex flex-col gap-6">
+        <!-- Row 1: Çiçek Türleri -->
+        <div>
+          <h3 class="text-xs lg:text-sm font-bold text-forest-700 uppercase tracking-widest mb-3 px-1">🌸 Çiçek Türleri</h3>
+          <div class="marquee-wrapper" data-marquee="categories">
+            <div class="marquee-track">
+              {[...Array(4)].map(() => (
+                <div class="marquee-content">
+                  {nonEmptyCategories.map((category) => {
+                    const catProducts = getProductsByCategory(category.id);
+                    const thumbImage = catProducts.length > 0
+                      ? (catProducts[0].image || "/images/placeholder.svg")
+                      : "/images/placeholder.svg";
+                    return (
+                      <a
+                        href={`#cat-${category.slug}`}
+                        class="flex-none flex flex-col items-center gap-2 group/item marquee-item"
+                      >
+                        <div class="w-[72px] h-[72px] lg:w-[88px] lg:h-[88px] rounded-full border-[3px] border-forest-500 p-[2.5px] transition-all duration-300 group-hover/item:border-forest-600 group-hover/item:shadow-lg group-hover/item:shadow-forest-500/20 group-hover/item:scale-110">
+                          <div class="w-full h-full rounded-full overflow-hidden bg-neutral-100">
+                            <img
+                              src={thumbImage}
+                              alt={category.name}
+                              loading="lazy"
+                              width="88"
+                              height="88"
+                              class="w-full h-full object-cover"
+                            />
+                          </div>
+                        </div>
+                        <span class="text-[11px] lg:text-xs font-semibold text-neutral-700 text-center leading-tight max-w-[76px] lg:max-w-[90px] group-hover/item:text-forest-700 transition-colors duration-200">
+                          {category.name}
+                        </span>
+                      </a>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
 
-      <div class="mt-10 pt-8 border-t border-forest-200/30">
-        <h3 class="text-center text-lg font-semibold text-neutral-700 mb-6">Özel Günler</h3>
-        <div class="flex flex-wrap justify-center gap-3 lg:gap-4">
-          {occasions.map((occasion) => (
-            <a
-              href={`/firsatlar/${occasion.slug}`}
-              class="group inline-flex items-center gap-2.5 px-5 py-3 bg-amber-50 hover:bg-amber-100 border border-amber-200/50 rounded-full transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-            >
-              <span class="text-xl">{occasion.icon}</span>
-              <span class="text-sm font-semibold text-neutral-800">{occasion.name}</span>
-            </a>
-          ))}
+        <!-- Row 2: Gönderim Amacı -->
+        <div>
+          <h3 class="text-xs lg:text-sm font-bold text-amber-600 uppercase tracking-widest mb-3 px-1">🎁 Gönderim Amacı</h3>
+          <div class="marquee-wrapper" data-marquee="occasions">
+            <div class="marquee-track marquee-reverse">
+              {[...Array(4)].map(() => (
+                <div class="marquee-content">
+                  {occasions.map((occasion) => (
+                    <a
+                      href={`/firsatlar/${occasion.slug}`}
+                      class="flex-none flex flex-col items-center gap-2 group/item marquee-item"
+                    >
+                      <div class="w-[72px] h-[72px] lg:w-[88px] lg:h-[88px] rounded-full border-[3px] border-amber-400 p-[2.5px] transition-all duration-300 group-hover/item:border-amber-500 group-hover/item:shadow-lg group-hover/item:shadow-amber-400/20 group-hover/item:scale-110">
+                        <div class="w-full h-full rounded-full overflow-hidden bg-amber-50 flex items-center justify-center">
+                          <span class="text-2xl lg:text-3xl">{occasion.icon}</span>
+                        </div>
+                      </div>
+                      <span class="text-[11px] lg:text-xs font-semibold text-neutral-700 text-center leading-tight max-w-[76px] lg:max-w-[90px] group-hover/item:text-amber-700 transition-colors duration-200">
+                        {occasion.name}
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
+
+  <style>
+    .marquee-wrapper {
+      position: relative;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+      mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+    }
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: marquee-scroll 30s linear infinite;
+    }
+    .marquee-track.marquee-reverse {
+      animation: marquee-scroll-reverse 35s linear infinite;
+    }
+    .marquee-content {
+      display: flex;
+      gap: 1.25rem;
+      padding-right: 1.25rem;
+    }
+    @media (min-width: 1024px) {
+      .marquee-content {
+        gap: 1.75rem;
+        padding-right: 1.75rem;
+      }
+    }
+
+    /* Pause on hover (desktop) */
+    .marquee-wrapper:hover .marquee-track {
+      animation-play-state: paused;
+    }
+    /* Pause on touch (mobile) - managed via JS class */
+    .marquee-wrapper.is-touching .marquee-track {
+      animation-play-state: paused;
+    }
+
+    @keyframes marquee-scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    @keyframes marquee-scroll-reverse {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .marquee-track {
+        animation: none !important;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .marquee-track::-webkit-scrollbar {
+        display: none;
+      }
+      .marquee-wrapper {
+        -webkit-mask-image: none;
+        mask-image: none;
+      }
+    }
+  </style>
+
+  <script is:inline>
+  (function() {
+    var wrappers = document.querySelectorAll('.marquee-wrapper');
+    wrappers.forEach(function(wrapper) {
+      wrapper.addEventListener('touchstart', function() {
+        wrapper.classList.add('is-touching');
+      }, { passive: true });
+      wrapper.addEventListener('touchend', function() {
+        wrapper.classList.remove('is-touching');
+      }, { passive: true });
+    });
+  })();
+  </script>
 
   <CategoryTabs categories={categories} />
 
@@ -103,7 +203,7 @@ const categoryIcons: Record<string, string> = {
 
       <div class="text-center mt-10 lg:mt-14">
         <a
-          href="/#urunler"
+          href="/cicekler"
           class="inline-flex items-center gap-2 px-8 py-4 bg-forest-700 hover:bg-forest-800 text-white font-semibold rounded-full transition-all duration-300 shadow-lg shadow-forest-700/20 hover:shadow-xl hover:shadow-forest-700/30 hover:-translate-y-0.5"
         >
           Tüm Ürünleri Gör

@@ -1,0 +1,132 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getProductBySlug } from "../../../lib/products-store";
+import { products as hardcodedProducts } from "../../../data/products";
+import { categories } from "../../../data/categories";
+import { SITE } from "../../../data/site.config";
+import { contactInfo } from "../../../data/contact-info";
+import { isValidLocale, type Locale, LOCALE_SLUGS, localePath } from "../../../i18n/config";
+import { t } from "../../../i18n/translations";
+import { formatPrice } from "../../../lib/currency";
+
+const { lang, flower, slug } = Astro.params;
+
+if (!isValidLocale(lang || "") || lang === "tr") {
+  return Astro.redirect("/", 302);
+}
+const locale = lang as Locale;
+
+if (LOCALE_SLUGS[locale].flower !== flower) {
+  return new Response(null, { status: 404 });
+}
+
+let product: any = getProductBySlug(slug!);
+if (!product) {
+  product = hardcodedProducts.find((p: any) => p.slug === slug);
+}
+if (!product) {
+  return Astro.redirect("/404", 302);
+}
+
+const category = categories.find((c) => c.id === product.categoryId);
+const mainImage = product.images?.[0]?.url || product.image || "https://placehold.co/800x1000/f5f5f5/fda4af?text=No+Image";
+const hasDiscount = product.oldPrice && product.oldPrice > product.price;
+
+const tName = t(locale, `product.name.${product.slug}`, product.name);
+const tDesc = t(locale, `product.desc.${product.slug}`, product.description);
+const tCat = category ? t(locale, `category.${category.id}`, category.name) : "Flower";
+
+const formattedPrice = await formatPrice(product.price, locale);
+const formattedOldPrice = hasDiscount ? await formatPrice(product.oldPrice!, locale) : null;
+
+const waMsg = `Hello, I would like to order: ${tName} - ${formattedPrice} (${SITE.url}/cicek/${product.slug})`;
+const waUrl = `https://wa.me/${contactInfo.whatsapp}?text=${encodeURIComponent(waMsg)}`;
+
+const productTitle = `${tName} | ${SITE.name}`;
+const productDescription = `${tDesc} | ${formattedPrice}`;
+const canonicalUrl = `${SITE.url}/${locale}/${flower}/${product.slug}`;
+---
+
+<BaseLayout
+  title={productTitle}
+  description={productDescription}
+  image={mainImage}
+  type="product"
+  canonicalURL={canonicalUrl}
+  locale={locale}
+>
+  <main class="pt-24 pb-20 bg-neutral-50/50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="text-xs uppercase tracking-widest text-neutral-400 mb-8 flex items-center gap-2">
+        <a href={localePath(locale, "/")} class="hover:text-forest-700 font-semibold">{t(locale, "ui.home", "Ana Sayfa")}</a> /
+        <a href={localePath(locale, "/cicekler")} class="hover:text-forest-700 font-semibold">{t(locale, "ui.flowers", "Çiçekler")}</a> /
+        <span class="text-forest-700 font-bold">{tName}</span>
+      </nav>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 bg-white rounded-3xl p-6 lg:p-10 shadow-sm border border-forest-100/40">
+        <!-- Image Gallery -->
+        <div class="relative aspect-[4/5] overflow-hidden rounded-2xl bg-neutral-100 shadow-inner">
+          {hasDiscount && (
+            <span class="absolute top-4 left-4 z-10 px-4 py-2 bg-gradient-to-r from-forest-600 to-forest-700 text-white text-xs font-bold rounded-full shadow-lg">
+              {t(locale, "ui.sale", "İndirim")}
+            </span>
+          )}
+          <img
+            src={mainImage}
+            alt={tName}
+            class="w-full h-full object-cover"
+          />
+        </div>
+
+        <!-- Product Info & Direct WhatsApp Ordering -->
+        <div class="flex flex-col justify-between py-2 space-y-6">
+          <div>
+            <div class="inline-block px-3 py-1 bg-forest-50 text-forest-700 text-xs font-semibold rounded-full mb-4">
+              {tCat}
+            </div>
+            <h1 class="text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-4">
+              {tName}
+            </h1>
+            <div class="flex items-baseline gap-3 mb-6">
+              <span class="text-3xl font-bold text-forest-700">
+                {formattedPrice}
+              </span>
+              {hasDiscount && (
+                <span class="text-lg text-neutral-400 line-through">
+                  {formattedOldPrice}
+                </span>
+              )}
+            </div>
+            <p class="text-neutral-600 leading-relaxed text-sm lg:text-base mb-8">
+              {tDesc}
+            </p>
+
+            <div class="p-5 bg-green-50/70 border border-green-200/60 rounded-2xl mb-8 space-y-2">
+              <div class="flex items-center gap-2 text-green-800 font-bold text-sm">
+                <span>💬</span>
+                <span>{t(locale, "ui.whatsapp_order", "Siparişinizi Hemen Verin")}</span>
+              </div>
+              <p class="text-xs text-green-700 leading-relaxed">
+                {t(locale, "ui.whatsapp_desc", "WhatsApp üzerinden siparişinizi verebilirsiniz.")}
+              </p>
+            </div>
+          </div>
+
+          <div class="pt-6 border-t border-neutral-100 space-y-4">
+            <a
+              href={waUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="w-full flex items-center justify-center gap-3 py-4 bg-green-500 hover:bg-green-600 text-white text-base lg:text-lg font-bold rounded-2xl shadow-xl shadow-green-500/25 transition-all hover:scale-[1.02] hover:shadow-2xl hover:shadow-green-500/35"
+            >
+              <svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+              </svg>
+              {t(locale, "ui.order_btn", "Sipariş Ver")} ({formattedPrice})
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

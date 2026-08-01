@@ -1,15 +1,23 @@
 ---
 import { SITE } from "../data/site.config";
+import { type Locale } from "../i18n/config";
+import { t } from "../i18n/translations";
+
+export interface Props {
+  locale?: Locale;
+}
+
+const { locale = (Astro.locals.locale as Locale) || "tr" } = Astro.props;
 ---
 
 <section id="teslimat" class="py-20 bg-white">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-16">
       <h2 class="text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-4">
-        3 Adımda WhatsApp Siparişi
+        {t(locale, "ui.steps_title", "3 Steps to WhatsApp Order")}
       </h2>
       <p class="text-neutral-500 max-w-2xl mx-auto text-sm lg:text-base">
-        Sepet yok, üyelik yok, bekleme yok. Sadece 3 adımda çiçekleriniz kapınızda.
+        {t(locale, "ui.steps_subtitle", "No cart, no signup, no waiting. Just 3 steps and your flowers are at the door.")}
       </p>
     </div>
 
@@ -21,9 +29,9 @@ import { SITE } from "../data/site.config";
         <span class="absolute top-0 right-0 lg:right-[-2rem] text-6xl text-rose-100 font-display font-bold hidden md:block select-none">
           01
         </span>
-        <h3 class="text-lg font-semibold text-neutral-900 mb-2">Ürünü Beğen</h3>
+        <h3 class="text-lg font-semibold text-neutral-900 mb-2">{t(locale, "ui.step1_title", "Choose a Product")}</h3>
         <p class="text-sm text-neutral-500 leading-relaxed">
-          Beğendiğin ürüne tıkla, detayları incele.
+          {t(locale, "ui.step1_desc", "Click on the product you like and check its details.")}
         </p>
       </div>
 
@@ -36,9 +44,9 @@ import { SITE } from "../data/site.config";
         <span class="absolute top-0 right-0 lg:right-[-2rem] text-6xl text-rose-100 font-display font-bold hidden md:block select-none">
           02
         </span>
-        <h3 class="text-lg font-semibold text-neutral-900 mb-2">Sipariş Ver</h3>
+        <h3 class="text-lg font-semibold text-neutral-900 mb-2">{t(locale, "ui.step2_title", "Place an Order")}</h3>
         <p class="text-sm text-neutral-500 leading-relaxed">
-          WhatsApp butonuna bas, otomatik mesajla siparişini ilet.
+          {t(locale, "ui.step2_desc", "Click the WhatsApp button to send your order with an automated message.")}
         </p>
       </div>
 
@@ -51,9 +59,9 @@ import { SITE } from "../data/site.config";
         <span class="absolute top-0 right-0 lg:right-[-2rem] text-6xl text-rose-100 font-display font-bold hidden md:block select-none">
           03
         </span>
-        <h3 class="text-lg font-semibold text-neutral-900 mb-2">Teslim Al</h3>
+        <h3 class="text-lg font-semibold text-neutral-900 mb-2">{t(locale, "ui.step3_title", "Receive Your Flowers")}</h3>
         <p class="text-sm text-neutral-500 leading-relaxed">
-          Çiçeklerin aynı gün kapında. Hızlı, taze ve güvenilir teslimat.
+          {t(locale, "ui.step3_desc", "Fast, fresh, and reliable same-day delivery to your door.")}
         </p>
       </div>
     </div>

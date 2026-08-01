@@ -1,0 +1,53 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProductCard from "../../components/ProductCard.astro";
+import { getAllProducts } from "../../data/products";
+import { SITE } from "../../data/site.config";
+import { isValidLocale, type Locale, LOCALE_SLUGS, LOCALE_NAMES } from "../../i18n/config";
+import { t } from "../../i18n/translations";
+
+const { lang, catalog } = Astro.params;
+if (!isValidLocale(lang || "") || lang === "tr") {
+  return Astro.redirect("/", 302);
+}
+const locale = lang as Locale;
+if (LOCALE_SLUGS[locale].flowers !== catalog) {
+  return new Response(null, { status: 404 });
+}
+
+const allProducts = getAllProducts();
+const tTitle = t(locale, "ui.collection_title", "Çiçek Koleksiyonumuz");
+const tDesc = t(locale, "ui.collection_desc", "Sevdiklerinize en uygun, taze ve lüks tasarımları keşfedin. Aynı gün teslimat.");
+
+const pageTitle = `${tTitle} | ${SITE.name}`;
+const pageDescription = tDesc;
+const canonicalURL = `${SITE.url}/${locale}/${catalog}`;
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonicalURL={canonicalURL}
+  locale={locale}
+>
+  <div class="pt-24 pb-20 bg-gradient-to-b from-forest-50/30 to-white min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Header -->
+      <div class="mb-12 border-b border-forest-200/30 pb-8 text-center sm:text-left">
+        <h1 class="font-display text-3xl md:text-5xl font-bold text-neutral-900 mb-3">
+          {tTitle}
+        </h1>
+        <p class="text-neutral-500 text-sm lg:text-base max-w-2xl">
+          {tDesc}
+        </p>
+      </div>
+
+      <!-- Products Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
+        {allProducts.map((product) => (
+          <ProductCard product={product} locale={locale} />
+        ))}
+      </div>
+    </div>
+  </div>
+</BaseLayout>
