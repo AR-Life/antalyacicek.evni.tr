@@ -25,9 +25,10 @@ export async function getRates(): Promise<Record<string, number>> {
     const res = await fetch("https://rates.antalyacicek.evni.tr");
     const data = await res.json();
     if (data && data.rates) {
-      cachedRates = data.rates;
+      const rates = data.rates as Record<string, number>;
+      cachedRates = rates;
       lastFetch = Date.now();
-      return cachedRates;
+      return rates;
     }
   } catch (error) {
     console.error("Failed to fetch exchange rates:", error);

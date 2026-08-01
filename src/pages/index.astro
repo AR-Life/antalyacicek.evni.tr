@@ -106,17 +106,27 @@ const nonEmptyCategories = categories.filter((c) => getProductsByCategory(c.id).
   <style>
     .marquee-wrapper {
       position: relative;
+      /* Hover'da scale(1.1) + shadow taşmasın diye dikey pay; negatif margin ile
+         satır yüksekliği görsel olarak aynı kalır */
+      --marquee-overflow: 14px;
       overflow: hidden;
+      padding-block: var(--marquee-overflow);
+      margin-block: calc(var(--marquee-overflow) * -1);
       -webkit-mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
       mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+    }
+    @media (min-width: 1024px) {
+      .marquee-wrapper {
+        --marquee-overflow: 18px;
+      }
     }
     .marquee-track {
       display: flex;
       width: max-content;
-      animation: marquee-scroll 30s linear infinite;
+      animation: marquee-scroll 55s linear infinite;
     }
     .marquee-track.marquee-reverse {
-      animation: marquee-scroll-reverse 35s linear infinite;
+      animation: marquee-scroll-reverse 65s linear infinite;
     }
     .marquee-content {
       display: flex;

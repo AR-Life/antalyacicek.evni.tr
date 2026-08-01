@@ -12,6 +12,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.10",
     "@astrojs/node": "^11.0.3",
     "@aws-sdk/client-s3": "^3.1100.0",
     "@aws-sdk/lib-storage": "^3.1100.0",
@@ -19,5 +20,9 @@
     "astro": "^7.1.6",
     "compression-streams-polyfill": "^0.1.7",
     "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "typescript": "^6.0.3"
   }
 }

@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getProductBySlug, readProducts } from "../../lib/products-store";
+import { getProductBySlug, readProducts, type ProductImage } from "../../lib/products-store";
 import { products as hardcodedProducts } from "../../data/products";
 import { categories } from "../../data/categories";
 import { SITE } from "../../data/site.config";
@@ -59,7 +59,7 @@ const galleryImages = product.images?.length ? product.images : (product.image ?
       "@type": "Brand",
       "name": "${product.brand}"
     },
-    "image": ${JSON.stringify(product.images?.map(i => i.url) || [mainImage])},
+    "image": ${JSON.stringify(product.images?.map((i: ProductImage) => i.url) || [mainImage])},
     "offers": {
       "@type": "Offer",
       "url": "${canonicalUrl}",
@@ -133,7 +133,7 @@ const galleryImages = product.images?.length ? product.images : (product.image ?
 
           {product.images && product.images.length > 1 && (
             <div class="flex gap-3 overflow-x-auto scrollbar-hide">
-              {product.images.map((img, i) => (
+              {product.images.map((img: ProductImage, i: number) => (
                 <button
                   type="button"
                   onclick={`document.getElementById('main-gallery-image')?.setAttribute('src','${img.url}')`}
@@ -148,7 +148,7 @@ const galleryImages = product.images?.length ? product.images : (product.image ?
 
         <div class="flex flex-col">
           <div class="flex flex-wrap gap-2 mb-4">
-            {product.tags?.map((tag) => (
+            {product.tags?.map((tag: string) => (
               <span class="text-xs px-2.5 py-1 bg-forest-50 text-forest-800 font-medium rounded-full">
                 {tag}
               </span>

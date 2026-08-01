@@ -1,3 +1,5 @@
+import type { ProductImage } from "../lib/products-store";
+
 export interface Product {
   id: string;
   name: string;
@@ -7,8 +9,9 @@ export interface Product {
   oldPrice?: number;
   categoryId: string;
   image: string;
+  images?: ProductImage[];
   tags: string[];
-  occasions: string[];
+  occasions?: string[];
   delivery: string;
 }
 
