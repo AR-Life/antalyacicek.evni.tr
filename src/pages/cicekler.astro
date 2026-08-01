@@ -5,6 +5,10 @@ import { categories } from "../data/categories";
 import { occasions } from "../data/occasions";
 import { getAllProducts } from "../data/products";
 import { SITE } from "../data/site.config";
+import { t } from "../i18n/translations";
+import { DEFAULT_LOCALE, type Locale } from "../i18n/config";
+
+const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
 
 const allProducts = getAllProducts();
 
@@ -63,7 +67,7 @@ const canonicalURL = `${SITE.url}/cicekler`;
 
           <!-- Search -->
           <div>
-            <h2 class="font-display text-base font-bold text-neutral-900 mb-3">Arama</h2>
+            <h2 class="font-display text-base font-bold text-neutral-900 mb-3">{t(locale, "ui.search", "Arama")}</h2>
             <div class="relative">
               <div class="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
                 <svg class="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -73,7 +77,7 @@ const canonicalURL = `${SITE.url}/cicekler`;
               <input
                 type="text"
                 id="search-filter"
-                placeholder="Çiçek adı ara..."
+                placeholder={t(locale, "ui.search_flowers_placeholder", "Çiçek adı ara...")}
                 class="w-full border border-forest-200/50 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-forest-400 focus:ring-2 focus:ring-forest-100 bg-forest-50/30 text-neutral-700 placeholder:text-neutral-400 transition-all"
               />
             </div>
@@ -81,7 +85,7 @@ const canonicalURL = `${SITE.url}/cicekler`;
 
           <!-- Category Filter -->
           <div>
-            <h2 class="font-display text-base font-bold text-neutral-900 mb-3">Çiçek Tipi</h2>
+            <h2 class="font-display text-base font-bold text-neutral-900 mb-3">{t(locale, "ui.flower_type", "Çiçek Tipi")}</h2>
             <div class="space-y-2">
               {categories.map((cat) => (
                 <label class="flex items-center gap-2.5 text-sm text-neutral-600 cursor-pointer select-none group hover:text-neutral-900 transition-colors py-0.5">
@@ -98,7 +102,7 @@ const canonicalURL = `${SITE.url}/cicekler`;
 
           <!-- Occasion / Purpose Filter -->
           <div>
-            <h2 class="font-display text-base font-bold text-neutral-900 mb-3">Gönderim Amacı</h2>
+            <h2 class="font-display text-base font-bold text-neutral-900 mb-3">{t(locale, "ui.delivery_purpose", "Gönderim Amacı")}</h2>
             <div class="space-y-2 max-h-48 overflow-y-auto scrollbar-hide">
               {occasions.map((occ) => (
                 <label class="flex items-center gap-2.5 text-sm text-neutral-600 cursor-pointer select-none group hover:text-neutral-900 transition-colors py-0.5">
@@ -116,7 +120,7 @@ const canonicalURL = `${SITE.url}/cicekler`;
 
           <!-- Price Slider -->
           <div>
-            <h2 class="font-display text-base font-bold text-neutral-900 mb-3">Maksimum Fiyat</h2>
+            <h2 class="font-display text-base font-bold text-neutral-900 mb-3">{t(locale, "ui.max_price", "Maksimum Fiyat")}</h2>
             <div class="space-y-2.5">
               <input
                 type="range"
@@ -136,17 +140,17 @@ const canonicalURL = `${SITE.url}/cicekler`;
 
           <!-- Sort -->
           <div>
-            <h2 class="font-display text-base font-bold text-neutral-900 mb-3">Sıralama</h2>
+            <h2 class="font-display text-base font-bold text-neutral-900 mb-3">{t(locale, "ui.sort_by", "Sıralama")}</h2>
             <select
               id="sort-select"
               class="w-full border border-forest-200/50 rounded-xl px-3 py-2.5 text-sm bg-forest-50/30 text-neutral-700 focus:outline-none focus:border-forest-400 focus:ring-2 focus:ring-forest-100 cursor-pointer transition-all"
             >
-              <option value="default">Varsayılan</option>
-              <option value="price-asc">Fiyat: Düşükten Yükseğe</option>
-              <option value="price-desc">Fiyat: Yüksekten Düşüğe</option>
-              <option value="name-asc">İsim: A-Z</option>
-              <option value="name-desc">İsim: Z-A</option>
-              <option value="discount">İndirim Oranı</option>
+              <option value="default">{t(locale, "ui.default_sort", "Varsayılan")}</option>
+              <option value="price-asc">{t(locale, "ui.price_low_to_high", "Fiyat: Düşükten Yükseğe")}</option>
+              <option value="price-desc">{t(locale, "ui.price_high_to_low", "Fiyat: Yüksekten Düşüğe")}</option>
+              <option value="name-asc">{t(locale, "ui.name_a_to_z", "İsim: A-Z")}</option>
+              <option value="name-desc">{t(locale, "ui.name_z_to_a", "İsim: Z-A")}</option>
+              <option value="discount">{t(locale, "ui.discount_percentage", "İndirim Oranı")}</option>
             </select>
           </div>
 
@@ -155,7 +159,7 @@ const canonicalURL = `${SITE.url}/cicekler`;
             id="reset-filters-btn"
             class="w-full py-2.5 bg-forest-50 hover:bg-forest-100 text-forest-700 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors duration-200 cursor-pointer border border-forest-200/30"
           >
-            Filtreleri Temizle
+            {t(locale, "ui.clear_filters", "Filtreleri Temizle")}
           </button>
         </aside>
 
@@ -164,10 +168,10 @@ const canonicalURL = `${SITE.url}/cicekler`;
           <!-- Stats bar -->
           <div class="flex items-center justify-between text-xs tracking-wider uppercase text-neutral-400 font-medium bg-white/60 rounded-xl px-4 py-3 border border-forest-100/30">
             <span>
-              Toplam <span id="matching-count" class="text-forest-700 font-bold text-sm">{allProducts.length}</span> ürün bulunuyor
+              Toplam <span id="matching-count" class="text-forest-700 font-bold text-sm">{allProducts.length}</span> {t(locale, "ui.products_showing", "ürün bulunuyor")}
             </span>
             <span id="active-filters-info" class="text-forest-600 font-semibold hidden">
-              Filtre aktif
+              {t(locale, "ui.filter_active", "Filtre aktif")}
             </span>
           </div>
 
@@ -190,13 +194,13 @@ const canonicalURL = `${SITE.url}/cicekler`;
           <!-- Empty state -->
           <div id="no-products-msg" class="hidden text-center py-20 space-y-4">
             <span class="text-5xl block">🥀</span>
-            <h3 class="font-display text-xl font-bold text-neutral-900">Eşleşen Ürün Bulunamadı</h3>
-            <p class="text-sm text-neutral-500 max-w-sm mx-auto">Lütfen filtreleri sıfırlamayı veya arama teriminizi değiştirmeyi deneyin.</p>
+            <h3 class="font-display text-xl font-bold text-neutral-900">{t(locale, "ui.no_matching_products", "Eşleşen Ürün Bulunamadı")}</h3>
+            <p class="text-sm text-neutral-500 max-w-sm mx-auto">{t(locale, "ui.try_reset_filters", "Lütfen filtreleri sıfırlamayı veya arama teriminizi değiştirmeyi deneyin.")}</p>
             <button
               id="empty-reset-btn"
               class="inline-flex items-center gap-2 px-6 py-2.5 bg-forest-700 hover:bg-forest-800 text-white text-sm font-semibold rounded-full transition-all duration-200 mt-2 cursor-pointer"
             >
-              Filtreleri Temizle
+              {t(locale, "ui.clear_filters", "Filtreleri Temizle")}
             </button>
           </div>
         </section>

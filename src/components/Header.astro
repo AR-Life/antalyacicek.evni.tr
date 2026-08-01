@@ -50,7 +50,7 @@ const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
           <input
             type="search"
             id="search-input"
-            placeholder="Çiçek ara..."
+            placeholder={t(locale, "ui.search_flowers", "Çiçek ara...")}
             class="w-full pl-11 pr-4 py-2.5 bg-forest-50/50 border border-forest-200/50 rounded-full text-sm font-medium text-neutral-700 placeholder:text-neutral-400 focus:outline-none focus:bg-white focus:border-forest-400 focus:ring-2 focus:ring-forest-100 transition-all"
           />
           <div
@@ -68,7 +68,7 @@ const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
           href={`https://wa.me/${contactInfo.whatsapp}?text=${encodeURIComponent(contactInfo.whatsappMessage)}`}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="WhatsApp ile Sipariş"
+          aria-label={t(locale, "ui.order_via_whatsapp", "WhatsApp ile Sipariş")}
           class="hidden sm:inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-full transition-all duration-200 shadow-md shadow-green-500/20 hover:shadow-lg hover:shadow-green-500/30 hover:-translate-y-0.5"
         >
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"
@@ -81,7 +81,7 @@ const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
 
         <button
           id="mobile-menu-btn"
-          aria-label="Menüyü Aç"
+          aria-label={t(locale, "ui.open_menu", "Menüyü Aç")}
           class="lg:hidden p-2 hover:bg-forest-50 rounded-full transition-colors duration-200 text-forest-800 cursor-pointer"
         >
           <svg
@@ -160,7 +160,7 @@ const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
       <h3
         class="text-xs uppercase tracking-widest font-bold text-forest-600 mb-3"
       >
-        Özel Günler
+        {t(locale, "ui.special_occasions", "Özel Günler")}
       </h3>
       <div class="grid grid-cols-2 gap-x-4 gap-y-2">
         <a
@@ -168,28 +168,28 @@ const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
           class="flex items-center gap-2 py-2 text-sm text-neutral-700 hover:text-forest-700 transition-colors"
         >
           <span>❤️</span>
-          <span class="font-medium">Sevgiliye</span>
+          <span class="font-medium">{t(locale, "ui.for_partner", "Sevgiliye")}</span>
         </a>
         <a
           href="/firsatlar/anneye-cicek"
           class="flex items-center gap-2 py-2 text-sm text-neutral-700 hover:text-forest-700 transition-colors"
         >
           <span>💐</span>
-          <span class="font-medium">Anneye</span>
+          <span class="font-medium">{t(locale, "ui.for_mother", "Anneye")}</span>
         </a>
         <a
           href="/firsatlar/dogum-gunu-cicekleri"
           class="flex items-center gap-2 py-2 text-sm text-neutral-700 hover:text-forest-700 transition-colors"
         >
           <span>🎂</span>
-          <span class="font-medium">Doğum Günü</span>
+          <span class="font-medium">{t(locale, "ui.birthday", "Doğum Günü")}</span>
         </a>
         <a
           href="/firsatlar/yil-donumu-cicegi"
           class="flex items-center gap-2 py-2 text-sm text-neutral-700 hover:text-forest-700 transition-colors"
         >
           <span>🥂</span>
-          <span class="font-medium">Yıl Dönümü</span>
+          <span class="font-medium">{t(locale, "ui.anniversary", "Yıl Dönümü")}</span>
         </a>
       </div>
     </div>
@@ -198,7 +198,7 @@ const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
       <h3
         class="text-xs uppercase tracking-widest font-bold text-forest-600 mb-3"
       >
-        İletişim
+        {t(locale, "ui.contact", "İletişim")}
       </h3>
       <div class="space-y-2 text-sm">
         <a
@@ -228,7 +228,7 @@ const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
           d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"
         ></path></svg
       >
-      WhatsApp Sipariş
+      {t(locale, "ui.whatsapp_order", "WhatsApp Sipariş")}
     </a>
   </div>
 </div>

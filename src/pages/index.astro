@@ -8,6 +8,10 @@ import { categories } from "../data/categories";
 import { occasions } from "../data/occasions";
 import { products, getBestSellers, getProductsByCategory, getAllProducts } from "../data/products";
 import { contactInfo } from "../data/contact-info";
+import { t } from "../i18n/translations";
+import { DEFAULT_LOCALE, type Locale } from "../i18n/config";
+
+const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
 
 const allProducts = getAllProducts();
 const featuredProducts = allProducts.slice(0, 8);
@@ -23,17 +27,17 @@ const nonEmptyCategories = categories.filter((c) => getProductsByCategory(c.id).
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-6 lg:mb-8">
         <h2 class="text-2xl lg:text-3xl font-display font-bold text-neutral-900 mb-2">
-          Kategoriler
+          {t(locale, "ui.categories_title", "Kategoriler")}
         </h2>
         <p class="text-neutral-500 max-w-xl mx-auto text-xs lg:text-sm">
-          Her anı özel kılan el yapımı çiçek aranjmanları
+          {t(locale, "ui.home_subtitle", "Her anı özel kılan el yapımı çiçek aranjmanları")}
         </p>
       </div>
 
       <div class="flex flex-col gap-6">
         <!-- Row 1: Çiçek Türleri -->
         <div>
-          <h3 class="text-xs lg:text-sm font-bold text-forest-700 uppercase tracking-widest mb-3 px-1">🌸 Çiçek Türleri</h3>
+          <h3 class="text-xs lg:text-sm font-bold text-forest-700 uppercase tracking-widest mb-3 px-1">🌸 {t(locale, "ui.flower_types", "Çiçek Türleri")}</h3>
           <div class="marquee-wrapper" data-marquee="categories">
             <div class="marquee-track">
               {[...Array(4)].map(() => (
@@ -74,7 +78,7 @@ const nonEmptyCategories = categories.filter((c) => getProductsByCategory(c.id).
 
         <!-- Row 2: Gönderim Amacı -->
         <div>
-          <h3 class="text-xs lg:text-sm font-bold text-amber-600 uppercase tracking-widest mb-3 px-1">🎁 Gönderim Amacı</h3>
+          <h3 class="text-xs lg:text-sm font-bold text-amber-600 uppercase tracking-widest mb-3 px-1">🎁 {t(locale, "ui.delivery_purpose", "Gönderim Amacı")}</h3>
           <div class="marquee-wrapper" data-marquee="occasions">
             <div class="marquee-track marquee-reverse">
               {[...Array(4)].map(() => (
@@ -195,13 +199,13 @@ const nonEmptyCategories = categories.filter((c) => getProductsByCategory(c.id).
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-10 lg:mb-14">
         <span class="inline-block text-xs uppercase tracking-widest text-forest-600 font-bold mb-2">
-          En Çok Tercih Edilenler
+          {t(locale, "ui.most_preferred", "En Çok Tercih Edilenler")}
         </span>
         <h2 class="text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-3">
-          Öne Çıkan Ürünler
+          {t(locale, "ui.featured_products", "Öne Çıkan Ürünler")}
         </h2>
         <p class="text-neutral-500 max-w-xl mx-auto text-sm lg:text-base">
-          Müşterilerimizin en çok beğendiği çiçek aranjmanları
+          {t(locale, "ui.featured_products_subtitle", "Müşterilerimizin en çok beğendiği çiçek aranjmanları")}
         </p>
       </div>
 
@@ -216,7 +220,7 @@ const nonEmptyCategories = categories.filter((c) => getProductsByCategory(c.id).
           href="/cicekler"
           class="inline-flex items-center gap-2 px-8 py-4 bg-forest-700 hover:bg-forest-800 text-white font-semibold rounded-full transition-all duration-300 shadow-lg shadow-forest-700/20 hover:shadow-xl hover:shadow-forest-700/30 hover:-translate-y-0.5"
         >
-          Tüm Ürünleri Gör
+          {t(locale, "ui.view_all_products", "Tüm Ürünleri Gör")}
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
           </svg>
@@ -230,10 +234,10 @@ const nonEmptyCategories = categories.filter((c) => getProductsByCategory(c.id).
   <section class="py-16 lg:py-24 bg-gradient-to-br from-forest-50 via-white to-rose-50/30">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
       <h2 class="text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-4">
-        Siparişinizi Hemen Verin
+        {t(locale, "ui.order_now_title", "Siparişinizi Hemen Verin")}
       </h2>
       <p class="text-neutral-500 max-w-xl mx-auto mb-8 text-sm lg:text-base">
-        WhatsApp üzerinden siparişinizi iletin, çiçekleriniz aynı gün kapınızda olsun.
+        {t(locale, "ui.order_now_subtitle", "WhatsApp üzerinden siparişinizi iletin, çiçekleriniz aynı gün kapınızda olsun.")}
       </p>
       <a
         href={`https://wa.me/${contactInfo.whatsapp}?text=${encodeURIComponent(contactInfo.whatsappMessage)}`}
@@ -244,7 +248,7 @@ const nonEmptyCategories = categories.filter((c) => getProductsByCategory(c.id).
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
         </svg>
-        WhatsApp ile Sipariş Ver
+        {t(locale, "ui.order_via_whatsapp_button", "WhatsApp ile Sipariş Ver")}
       </a>
     </div>
   </section>

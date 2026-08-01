@@ -2,6 +2,10 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { contactInfo, generateContactPageSchema, generateLocalBusinessSchema } from "../data/contact-info";
 import { SITE } from "../data/site.config";
+import { t } from "../i18n/translations";
+import { DEFAULT_LOCALE, type Locale } from "../i18n/config";
+
+const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
 
 const pageTitle = `İletişim - ${contactInfo.businessName} | ${SITE.name}`;
 const pageDescription = `${contactInfo.businessName} iletişim bilgileri. Telefon: ${contactInfo.phoneDisplay}, Adres: ${contactInfo.address.fullAddress}`;
@@ -20,10 +24,10 @@ const canonicalUrl = `${SITE.url}/iletisim`;
     <section class="bg-gradient-to-br from-forest-50 via-white to-rose-50/30 py-12 lg:py-16">
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
         <h1 class="text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-4">
-          İletişim
+          {t(locale, "ui.contact", "İletişim")}
         </h1>
         <p class="text-neutral-500 max-w-2xl mx-auto text-base lg:text-lg">
-          Bize ulaşmak için aşağıdaki bilgileri kullanabilirsiniz.
+          {t(locale, "ui.contact_intro", "Bize ulaşmak için aşağıdaki bilgileri kullanabilirsiniz.")}
         </p>
       </div>
     </section>
@@ -41,11 +45,11 @@ const canonicalUrl = `${SITE.url}/iletisim`;
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-lg font-bold text-neutral-900 mb-1">Telefon</h3>
+                  <h3 class="text-lg font-bold text-neutral-900 mb-1">{t(locale, "ui.phone", "Telefon")}</h3>
                   <a href={`tel:${contactInfo.phone}`} class="text-forest-700 hover:text-forest-800 font-semibold text-lg">
                     {contactInfo.phoneDisplay}
                   </a>
-                  <p class="text-sm text-neutral-500 mt-1">7/24 arayabilirsiniz</p>
+                  <p class="text-sm text-neutral-500 mt-1">{t(locale, "ui.call_anytime", "7/24 arayabilirsiniz")}</p>
                 </div>
               </div>
             </div>
@@ -58,11 +62,11 @@ const canonicalUrl = `${SITE.url}/iletisim`;
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-lg font-bold text-neutral-900 mb-1">WhatsApp</h3>
+                  <h3 class="text-lg font-bold text-neutral-900 mb-1">{t(locale, "ui.whatsapp", "WhatsApp")}</h3>
                   <a href={`https://wa.me/${contactInfo.whatsapp}?text=${encodeURIComponent(contactInfo.whatsappMessage)}`} target="_blank" rel="noopener noreferrer" class="text-green-600 hover:text-green-700 font-semibold text-lg">
-                    Hızlı Sipariş Ver
+                    {t(locale, "ui.quick_order", "Hızlı Sipariş Ver")}
                   </a>
-                  <p class="text-sm text-neutral-500 mt-1">Anında yanıt alın</p>
+                  <p class="text-sm text-neutral-500 mt-1">{t(locale, "ui.instant_response", "Anında yanıt alın")}</p>
                 </div>
               </div>
             </div>
@@ -76,10 +80,10 @@ const canonicalUrl = `${SITE.url}/iletisim`;
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-lg font-bold text-neutral-900 mb-1">Adres</h3>
+                  <h3 class="text-lg font-bold text-neutral-900 mb-1">{t(locale, "ui.address", "Adres")}</h3>
                   <p class="text-neutral-700 font-medium">{contactInfo.address.fullAddress}</p>
                   <a href={`https://maps.google.com/?q=${encodeURIComponent(contactInfo.address.fullAddress)}`} target="_blank" rel="noopener noreferrer" class="text-forest-700 hover:text-forest-800 text-sm font-semibold mt-2 inline-block">
-                    Haritada Gör →
+                    {t(locale, "ui.view_on_map", "Haritada Gör →")}
                   </a>
                 </div>
               </div>
@@ -93,11 +97,11 @@ const canonicalUrl = `${SITE.url}/iletisim`;
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-lg font-bold text-neutral-900 mb-1">E-posta</h3>
+                  <h3 class="text-lg font-bold text-neutral-900 mb-1">{t(locale, "ui.email", "E-posta")}</h3>
                   <a href={`mailto:${contactInfo.email}`} class="text-rose-600 hover:text-rose-700 font-semibold">
                     {contactInfo.email}
                   </a>
-                  <p class="text-sm text-neutral-500 mt-1">24 saat içinde yanıt</p>
+                  <p class="text-sm text-neutral-500 mt-1">{t(locale, "ui.response_24h", "24 saat içinde yanıt")}</p>
                 </div>
               </div>
             </div>
@@ -105,7 +109,7 @@ const canonicalUrl = `${SITE.url}/iletisim`;
 
           <div class="space-y-6">
             <div class="bg-white rounded-2xl p-6 lg:p-8 border border-forest-100 shadow-sm">
-              <h3 class="text-xl font-display font-bold text-neutral-900 mb-4">Çalışma Saatleri</h3>
+              <h3 class="text-xl font-display font-bold text-neutral-900 mb-4">{t(locale, "ui.working_hours", "Çalışma Saatleri")}</h3>
               <div class="space-y-3">
                 {contactInfo.openingHours.map((oh) => (
                   <div class="flex items-center justify-between py-2 border-b border-neutral-100 last:border-0">
@@ -117,7 +121,7 @@ const canonicalUrl = `${SITE.url}/iletisim`;
             </div>
 
             <div class="bg-white rounded-2xl p-6 lg:p-8 border border-forest-100 shadow-sm">
-              <h3 class="text-xl font-display font-bold text-neutral-900 mb-4">Teslimat Bölgeleri</h3>
+              <h3 class="text-xl font-display font-bold text-neutral-900 mb-4">{t(locale, "ui.delivery_areas", "Teslimat Bölgeleri")}</h3>
               <div class="flex flex-wrap gap-2">
                 {contactInfo.delivery.areas.map((area) => (
                   <span class="px-3 py-1.5 bg-forest-50 text-forest-800 text-sm font-medium rounded-full">
@@ -126,12 +130,12 @@ const canonicalUrl = `${SITE.url}/iletisim`;
                 ))}
               </div>
               <p class="text-sm text-neutral-500 mt-4">
-                <span class="font-semibold text-forest-700">{contactInfo.delivery.freeDeliveryMin} TL</span> üzeri siparişlerde ücretsiz teslimat
+                <span class="font-semibold text-forest-700">{contactInfo.delivery.freeDeliveryMin} TL</span> {t(locale, "ui.free_delivery_info", "üzeri siparişlerde ücretsiz teslimat")}
               </p>
             </div>
 
             <div class="bg-white rounded-2xl p-6 lg:p-8 border border-forest-100 shadow-sm">
-              <h3 class="text-xl font-display font-bold text-neutral-900 mb-4">Ödeme Yöntemleri</h3>
+              <h3 class="text-xl font-display font-bold text-neutral-900 mb-4">{t(locale, "ui.payment_methods", "Ödeme Yöntemleri")}</h3>
               <div class="flex flex-wrap gap-2">
                 {contactInfo.payment.methods.map((method) => (
                   <span class="px-3 py-1.5 bg-neutral-100 text-neutral-700 text-sm font-medium rounded-full">
@@ -142,7 +146,7 @@ const canonicalUrl = `${SITE.url}/iletisim`;
             </div>
 
             <div class="bg-white rounded-2xl p-6 lg:p-8 border border-forest-100 shadow-sm">
-              <h3 class="text-xl font-display font-bold text-neutral-900 mb-4">Bizi Takip Edin</h3>
+              <h3 class="text-xl font-display font-bold text-neutral-900 mb-4">{t(locale, "ui.follow_us", "Bizi Takip Edin")}</h3>
               <div class="flex gap-3">
                 <a href={contactInfo.social.instagram} target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white hover:scale-110 transition-transform">
                   <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">

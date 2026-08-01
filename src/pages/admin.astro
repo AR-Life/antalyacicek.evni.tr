@@ -2,6 +2,10 @@
 import "../styles/global.css";
 import { categories } from "../data/categories";
 import { occasions } from "../data/occasions";
+import { t } from "../i18n/translations";
+import { DEFAULT_LOCALE, type Locale } from "../i18n/config";
+
+const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
 
 const categoriesJson = JSON.stringify(
   categories.map((c) => ({ id: c.id, name: c.name }))
@@ -9,6 +13,15 @@ const categoriesJson = JSON.stringify(
 const occasionsJson = JSON.stringify(
   occasions.map((o) => ({ id: o.id, name: o.name, slug: o.slug, icon: o.icon }))
 );
+const translationsJson = JSON.stringify({
+  geersiz_ifre: t(locale, "ui.invalid_password"),
+  rn_bulundu: t(locale, "ui.products_found"),
+  henz_rn_eklenmedi: t(locale, "ui.no_products_yet"),
+  dzenle: t(locale, "ui.edit_button"),
+  sil: t(locale, "ui.delete_button"),
+  bu_rn_silmek_istediinize: t(locale, "ui.confirm_delete"),
+  silme_baarsz: t(locale, "ui.delete_failed"),
+});
 ---
 
 <!doctype html>
@@ -30,17 +43,17 @@ const occasionsJson = JSON.stringify(
     <div class="w-full max-w-md bg-white rounded-3xl shadow-xl p-8">
       <div class="text-center mb-8">
         <span class="text-4xl">🌸</span>
-        <h1 class="text-2xl font-display font-bold text-neutral-900 mt-3">Admin Panel</h1>
-        <p class="text-sm text-neutral-500 mt-1">Ürün yönetim paneline hoş geldiniz</p>
+        <h1 class="text-2xl font-display font-bold text-neutral-900 mt-3">{t(locale, "ui.admin_panel")}</h1>
+        <p class="text-sm text-neutral-500 mt-1">{t(locale, "ui.admin_welcome")}</p>
       </div>
       <form id="login-form" class="space-y-4">
         <div>
-          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Şifre</label>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">{t(locale, "ui.password_label")}</label>
           <input
             id="password-input"
             type="password"
             required
-            placeholder="Admin şifrenizi girin"
+            placeholder={t(locale, "ui.enter_admin_password")}
             class="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm"
           />
         </div>
@@ -48,7 +61,7 @@ const occasionsJson = JSON.stringify(
           type="submit"
           class="w-full py-3 bg-forest-700 hover:bg-forest-800 text-white font-semibold rounded-xl transition-all shadow-lg shadow-forest-700/20 text-sm"
         >
-          Giriş Yap
+          {t(locale, "ui.login_button")}
         </button>
         <p id="login-error" class="text-red-500 text-xs text-center hidden"></p>
       </form>
@@ -61,14 +74,14 @@ const occasionsJson = JSON.stringify(
       <div class="mx-auto max-w-6xl px-4 sm:px-6 h-16 flex items-center justify-between">
         <div class="flex items-center gap-3">
           <span class="text-2xl">🌸</span>
-          <h1 class="font-display font-bold text-lg text-neutral-900">Ürün Yönetimi</h1>
+          <h1 class="font-display font-bold text-lg text-neutral-900">{t(locale, "ui.product_management")}</h1>
         </div>
         <div class="flex items-center gap-4">
           <button id="add-product-btn" class="px-4 py-2 bg-forest-700 hover:bg-forest-800 text-white text-sm font-semibold rounded-xl transition-all shadow-md shadow-forest-700/20">
-            + Yeni Ürün
+            + {t(locale, "ui.add_new_product")}
           </button>
           <button id="logout-btn" class="text-sm text-neutral-500 hover:text-red-500 transition-colors">
-            Çıkış
+            {t(locale, "ui.logout")}
           </button>
         </div>
       </div>
@@ -84,63 +97,63 @@ const occasionsJson = JSON.stringify(
   <div id="product-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="modal-backdrop"></div>
     <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 lg:p-8">
-      <h2 id="modal-title-text" class="text-xl font-display font-bold text-neutral-900 mb-6">Yeni Ürün</h2>
+      <h2 id="modal-title-text" class="text-xl font-display font-bold text-neutral-900 mb-6">{t(locale, "ui.new_product")}</h2>
       
       <form id="product-form" class="space-y-5">
         <input type="hidden" id="edit-id" value="" />
 
         <div>
-          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Ürün Adı</label>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">{t(locale, "ui.product_name_label")}</label>
           <input id="input-name" type="text" required class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" />
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Kategori</label>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">{t(locale, "ui.category_label")}</label>
           <select id="input-category" required class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm bg-white">
-            <option value="">Seçiniz</option>
+            <option value="">{t(locale, "ui.select_option")}</option>
             {categories.map((c) => <option value={c.id}>{c.name}</option>)}
           </select>
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Açıklama</label>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">{t(locale, "ui.description_label")}</label>
           <textarea id="input-desc" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm resize-none"></textarea>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Fiyat (TL)</label>
+            <label class="block text-sm font-semibold text-neutral-700 mb-1.5">{t(locale, "ui.price_label")}</label>
             <input id="input-price" type="number" step="0.01" min="0" required class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" oninput="calcDiscount()" />
           </div>
           <div>
-            <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Eski Fiyat (TL)</label>
-            <input id="input-oldprice" type="number" step="0.01" min="0" placeholder="İndirim yoksa boş bırak" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" oninput="calcDiscount()" />
+            <label class="block text-sm font-semibold text-neutral-700 mb-1.5">{t(locale, "ui.old_price_label")}</label>
+            <input id="input-oldprice" type="number" step="0.01" min="0" placeholder={t(locale, "ui.leave_empty_no_discount")} class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" oninput="calcDiscount()" />
             <span id="discount-preview" class="text-xs text-forest-700 font-semibold mt-1 hidden"></span>
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Marka</label>
+            <label class="block text-sm font-semibold text-neutral-700 mb-1.5">{t(locale, "ui.brand_label")}</label>
             <input id="input-brand" type="text" value="Antalya Çiçek" required class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" />
           </div>
           <div>
-            <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Stok Durumu</label>
+            <label class="block text-sm font-semibold text-neutral-700 mb-1.5">{t(locale, "ui.stock_status_label")}</label>
             <select id="input-availability" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm bg-white">
-              <option value="InStock">Stokta Var</option>
-              <option value="OutOfStock">Stokta Yok</option>
-              <option value="PreOrder">Ön Sipariş</option>
+              <option value="InStock">{t(locale, "ui.in_stock")}</option>
+              <option value="OutOfStock">{t(locale, "ui.out_of_stock")}</option>
+              <option value="PreOrder">{t(locale, "ui.pre_order")}</option>
             </select>
           </div>
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Etiketler (virgülle ayır)</label>
-          <input id="input-tags" type="text" placeholder="gül, kırmızı, popüler" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" />
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">{t(locale, "ui.tags_label")}</label>
+          <input id="input-tags" type="text" placeholder={t(locale, "ui.tags_example")} class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" />
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Fırsatlar / Özel Günler</label>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">{t(locale, "ui.occasions_label")}</label>
           <div id="occasions-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 bg-neutral-50 rounded-xl border border-neutral-200 max-h-48 overflow-y-auto">
             {occasions.map((o) => (
               <label class="flex items-center gap-2 cursor-pointer hover:bg-white rounded-lg p-1.5 transition-colors">
@@ -153,21 +166,21 @@ const occasionsJson = JSON.stringify(
 
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-semibold text-neutral-700 mb-1.5">GTIN (opsiyonel)</label>
+            <label class="block text-sm font-semibold text-neutral-700 mb-1.5">{t(locale, "ui.gtin_label")}</label>
             <input id="input-gtin" type="text" placeholder="8681234567890" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" />
           </div>
           <div>
-            <label class="block text-sm font-semibold text-neutral-700 mb-1.5">MPN (opsiyonel)</label>
+            <label class="block text-sm font-semibold text-neutral-700 mb-1.5">{t(locale, "ui.mpn_label")}</label>
             <input id="input-mpn" type="text" placeholder="AC-001" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" />
           </div>
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Görseller</label>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">{t(locale, "ui.images_label")}</label>
           <div id="images-preview" class="flex flex-wrap gap-3 mb-3"></div>
           <label class="inline-flex items-center gap-2 px-5 py-2.5 bg-neutral-100 hover:bg-neutral-200 rounded-xl cursor-pointer transition-all text-sm font-medium text-neutral-600">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            Görsel Yükle
+            {t(locale, "ui.upload_image")}
             <input type="file" id="input-images" multiple accept="image/*" class="hidden" />
           </label>
           <span id="upload-status" class="text-xs text-neutral-500 ml-3"></span>
@@ -175,15 +188,15 @@ const occasionsJson = JSON.stringify(
 
         <div class="flex items-center gap-3">
           <input type="checkbox" id="input-featured" class="w-4 h-4 rounded border-neutral-300 text-forest-700 focus:ring-forest-400" />
-          <label for="input-featured" class="text-sm text-neutral-700">Öne çıkan ürün (ana sayfada göster)</label>
+          <label for="input-featured" class="text-sm text-neutral-700">{t(locale, "ui.featured_product_checkbox")}</label>
         </div>
 
         <div class="flex gap-3 pt-4">
           <button type="submit" class="flex-1 py-3 bg-forest-700 hover:bg-forest-800 text-white font-semibold rounded-xl transition-all shadow-lg shadow-forest-700/20 text-sm">
-            Kaydet
+            {t(locale, "ui.save_button")}
           </button>
           <button type="button" id="modal-cancel" class="px-6 py-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 font-semibold rounded-xl transition-all text-sm">
-            İptal
+            {t(locale, "ui.cancel_button")}
           </button>
         </div>
       </form>
@@ -193,10 +206,12 @@ const occasionsJson = JSON.stringify(
 
 <div id="categories-data" data-categories={categoriesJson} class="hidden"></div>
 <div id="occasions-data" data-occasions={occasionsJson} class="hidden"></div>
+<div id="translations-data" data-translations={translationsJson} class="hidden"></div>
 
 <script is:inline>
 var CATEGORIES = JSON.parse(document.getElementById('categories-data').dataset.categories);
 var OCCASIONS = JSON.parse(document.getElementById('occasions-data').dataset.occasions);
+var TRANSLATIONS = JSON.parse(document.getElementById('translations-data').dataset.translations);
 
 var products = [];
 var currentImages = [];
@@ -218,7 +233,7 @@ $id('login-form').addEventListener('submit', async function(e) {
     loadProducts();
   } else {
     $id('login-error').classList.remove('hidden');
-    $id('login-error').textContent = 'Geçersiz şifre!';
+    $id('login-error').textContent = TRANSLATIONS.geersiz_ifre;
   }
 });
 
@@ -236,10 +251,10 @@ async function loadProducts() {
 function renderList() {
   var container = $id('product-list');
   var count = $id('product-count');
-  count.textContent = products.length + ' ürün bulundu';
+  count.textContent = products.length + ' ' + TRANSLATIONS.rn_bulundu;
 
   if (products.length === 0) {
-    container.innerHTML = '<p class="col-span-full text-center text-neutral-400 py-12">Henüz ürün eklenmedi.</p>';
+    container.innerHTML = '<p class="col-span-full text-center text-neutral-400 py-12">' + TRANSLATIONS.henz_rn_eklenmedi + '</p>';
     return;
   }
 
@@ -265,8 +280,8 @@ function renderList() {
           (hasDiscount ? '<span class="text-xs text-neutral-400 line-through">'+p.oldPrice.toLocaleString('tr-TR', {minimumFractionDigits: 2})+' ₺</span>' : '')+
         '</div>'+
         '<div class="flex gap-2 mt-3">'+
-          '<button onclick="editProduct(\''+p.id+'\')" class="flex-1 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 text-xs font-semibold rounded-lg transition-all">Düzenle</button>'+
-          '<button onclick="deleteProduct(\''+p.id+'\')" class="py-2 px-3 bg-red-50 hover:bg-red-100 text-red-500 text-xs font-semibold rounded-lg transition-all">Sil</button>'+
+          '<button onclick="editProduct(\''+p.id+'\')" class="flex-1 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 text-xs font-semibold rounded-lg transition-all">'+TRANSLATIONS.dzenle+'</button>'+
+          '<button onclick="deleteProduct(\''+p.id+'\')" class="py-2 px-3 bg-red-50 hover:bg-red-100 text-red-500 text-xs font-semibold rounded-lg transition-all">'+TRANSLATIONS.sil+'</button>'+
         '</div>'+
       '</div>'+
     '</div>';
@@ -408,10 +423,10 @@ window.editProduct = function(id) {
 };
 
 window.deleteProduct = async function(id) {
-  if (!confirm('Bu ürünü silmek istediğinize emin misiniz?')) return;
+  if (!confirm(TRANSLATIONS.bu_rn_silmek_istediinize)) return;
   var res = await fetch('/api/products/' + id, { method: 'DELETE' });
   if (res.ok) loadProducts();
-  else alert('Silme başarısız!');
+  else alert(TRANSLATIONS.silme_baarsz);
 };
 
 function slugify(text) {

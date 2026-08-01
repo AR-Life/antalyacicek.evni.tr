@@ -4,6 +4,10 @@ import { getProductBySlug, readProducts, type ProductImage } from "../../lib/pro
 import { products as hardcodedProducts } from "../../data/products";
 import { categories } from "../../data/categories";
 import { SITE } from "../../data/site.config";
+import { t } from "../../i18n/translations";
+import { DEFAULT_LOCALE, type Locale } from "../../i18n/config";
+
+const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
 
 const { slug } = Astro.params;
 
@@ -108,9 +112,9 @@ const galleryImages = product.images?.length ? product.images : (product.image ?
   <section class="pt-28 pb-8 lg:pt-32 lg:pb-12 bg-white">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <nav class="flex items-center gap-2 text-sm text-neutral-400 mb-8" aria-label="Breadcrumb">
-        <a href="/" class="hover:text-forest-700 transition-colors">Ana Sayfa</a>
+        <a href="/" class="hover:text-forest-700 transition-colors">{t(locale, "ui.home_page")}</a>
         <span>/</span>
-        <a href="/cicekler" class="hover:text-forest-700 transition-colors">Çiçekler</a>
+        <a href="/cicekler" class="hover:text-forest-700 transition-colors">{t(locale, "ui.flowers_page")}</a>
         <span>/</span>
         <span class="text-neutral-600">{product.name}</span>
       </nav>
@@ -179,19 +183,19 @@ const galleryImages = product.images?.length ? product.images : (product.image ?
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              <span class="font-medium">Aynı Gün Teslimat</span>
+              <span class="font-medium">{t(locale, "ui.same_day_delivery")}</span>
             </div>
             <div class="flex items-center gap-2 text-sm text-neutral-500">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span>2 saat içinde teslimat</span>
+              <span>{t(locale, "ui.delivery_2_hours")}</span>
             </div>
             <div class="flex items-center gap-2 text-sm text-neutral-500">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span>En taze çiçekler ile hazırlanır</span>
+              <span>{t(locale, "ui.made_with_fresh_flowers")}</span>
             </div>
           </div>
 
@@ -203,29 +207,29 @@ const galleryImages = product.images?.length ? product.images : (product.image ?
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
             </svg>
-            Bu Çiçeği Gönder
+            {t(locale, "ui.send_this_flower")}
           </button>
 
           <div class="mt-8 pt-8 border-t border-neutral-100 grid grid-cols-2 gap-4">
             <div class="text-center p-4 bg-forest-50 rounded-2xl">
               <span class="text-2xl">🚀</span>
-              <p class="text-xs text-neutral-600 mt-1 font-medium">Aynı Gün</p>
-              <p class="text-xs text-neutral-400">Teslimat</p>
+              <p class="text-xs text-neutral-600 mt-1 font-medium">{t(locale, "ui.same_day")}</p>
+              <p class="text-xs text-neutral-400">{t(locale, "ui.delivery")}</p>
             </div>
             <div class="text-center p-4 bg-green-50 rounded-2xl">
               <span class="text-2xl">💐</span>
-              <p class="text-xs text-neutral-600 mt-1 font-medium">%100 Taze</p>
-              <p class="text-xs text-neutral-400">Çiçek Garantisi</p>
+              <p class="text-xs text-neutral-600 mt-1 font-medium">{t(locale, "ui.hundred_percent_fresh")}</p>
+              <p class="text-xs text-neutral-400">{t(locale, "ui.flower_guarantee")}</p>
             </div>
             <div class="text-center p-4 bg-amber-50 rounded-2xl">
               <span class="text-2xl">📱</span>
-              <p class="text-xs text-neutral-600 mt-1 font-medium">WhatsApp</p>
-              <p class="text-xs text-neutral-400">Anında Sipariş</p>
+              <p class="text-xs text-neutral-600 mt-1 font-medium">{t(locale, "ui.whatsapp")}</p>
+              <p class="text-xs text-neutral-400">{t(locale, "ui.instant_order")}</p>
             </div>
             <div class="text-center p-4 bg-blue-50 rounded-2xl">
               <span class="text-2xl">🎁</span>
-              <p class="text-xs text-neutral-600 mt-1 font-medium">Özel Paket</p>
-              <p class="text-xs text-neutral-400">Hediye Ambalajı</p>
+              <p class="text-xs text-neutral-600 mt-1 font-medium">{t(locale, "ui.special_package")}</p>
+              <p class="text-xs text-neutral-400">{t(locale, "ui.gift_wrapping")}</p>
             </div>
           </div>
         </div>
@@ -236,8 +240,8 @@ const galleryImages = product.images?.length ? product.images : (product.image ?
           <div class="mt-16">
             <div class="flex items-center justify-between mb-6">
               <div>
-                <h2 class="text-xl lg:text-2xl font-display font-bold text-neutral-900">Benzer Ürünler</h2>
-                <p class="text-sm text-neutral-500 mt-1">{category.name} kategorisinden diğer ürünler</p>
+                <h2 class="text-xl lg:text-2xl font-display font-bold text-neutral-900">{t(locale, "ui.similar_products")}</h2>
+                <p class="text-sm text-neutral-500 mt-1">{category.name} {t(locale, "ui.other_products_from_category")}</p>
               </div>
             </div>
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">

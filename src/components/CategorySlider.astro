@@ -2,6 +2,10 @@
 import { SITE } from "../data/site.config";
 import type { Category } from "../data/categories";
 import { getProductsByCategory } from "../data/products";
+import { t } from "../i18n/translations";
+import { DEFAULT_LOCALE, type Locale } from "../i18n/config";
+
+const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
 
 interface Props {
   category: Category;
@@ -26,7 +30,7 @@ const sliderId = `slider-${category.slug}`;
         type="button"
         data-slider-prev={sliderId}
         class="w-10 h-10 rounded-full bg-white border border-neutral-200 shadow-sm hover:bg-forest-50 hover:border-forest-300 flex items-center justify-center transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
-        aria-label="Önceki"
+        aria-label={t(locale, "ui.previous")}
       >
         <svg
           class="w-4 h-4 text-neutral-600"
@@ -44,7 +48,7 @@ const sliderId = `slider-${category.slug}`;
         type="button"
         data-slider-next={sliderId}
         class="w-10 h-10 rounded-full bg-white border border-neutral-200 shadow-sm hover:bg-forest-50 hover:border-forest-300 flex items-center justify-center transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
-        aria-label="Sonraki"
+        aria-label={t(locale, "ui.next")}
       >
         <svg
           class="w-4 h-4 text-neutral-600"
@@ -87,7 +91,7 @@ const sliderId = `slider-${category.slug}`;
                 >
                   {hasDiscount && (
                     <span class="absolute top-4 left-4 z-10 px-3 py-1.5 bg-gradient-to-r from-forest-600 to-forest-700 text-white text-[10px] font-bold rounded-full shadow-lg shadow-forest-700/30">
-                      %{discountPercentage} İndirim
+                      %{discountPercentage} {t(locale, "ui.discount")}
                     </span>
                   )}
 
@@ -163,7 +167,7 @@ const sliderId = `slider-${category.slug}`;
           })
         ) : (
           <p class="text-sm text-neutral-400 italic">
-            Bu kategoride henüz ürün yok.
+            {t(locale, "ui.category_empty")}
           </p>
         )
       }
