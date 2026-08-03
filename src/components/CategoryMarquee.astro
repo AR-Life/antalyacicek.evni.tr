@@ -1,0 +1,250 @@
+---
+import { categories } from "../data/categories";
+import { occasions } from "../data/occasions";
+import { getProductsByCategory } from "../data/products";
+import { t } from "../i18n/translations";
+import { DEFAULT_LOCALE, type Locale } from "../i18n/config";
+
+const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
+const nonEmptyCategories = categories.filter((c) => getProductsByCategory(c.id).length > 0);
+---
+
+<div class="flex flex-col gap-8 py-2">
+  <!-- Row 1: Çiçek Türleri (Sola akıcı) -->
+  <div class="relative">
+    <h3 class="text-xs lg:text-sm font-bold text-forest-700 uppercase tracking-widest mb-4 px-2 flex items-center gap-1.5">
+      <span>🌸</span> {t(locale, "ui.flower_types", "Çiçek Türleri")}
+    </h3>
+    
+    <div class="marquee-scroller-wrap relative group/marquee">
+      <div 
+        class="marquee-scroller flex gap-5 lg:gap-7 overflow-x-auto scrollbar-hide select-none py-2 px-1 cursor-grab active:cursor-grabbing"
+        data-interactive-marquee="normal"
+      >
+        {[...Array(4)].map(() => (
+          <div class="flex gap-5 lg:gap-7 shrink-0">
+            {nonEmptyCategories.map((category) => {
+              const catProducts = getProductsByCategory(category.id);
+              const thumbImage = catProducts.length > 0
+                ? (catProducts[0].image || "/images/placeholder.svg")
+                : "/images/placeholder.svg";
+              return (
+                <a
+                  href={`#cat-${category.slug}`}
+                  class="shrink-0 flex flex-col items-center gap-2.5 group/item transition-transform duration-200 hover:-translate-y-1"
+                >
+                  <div class="w-[74px] h-[74px] lg:w-[92px] lg:h-[92px] rounded-full border-[3px] border-forest-500 p-[3px] transition-all duration-300 group-hover/item:border-forest-600 group-hover/item:shadow-lg group-hover/item:shadow-forest-500/25 group-hover/item:scale-105 bg-white">
+                    <div class="w-full h-full rounded-full overflow-hidden bg-neutral-100">
+                      <img
+                        src={thumbImage}
+                        alt={category.name}
+                        loading="lazy"
+                        width="92"
+                        height="92"
+                        class="w-full h-full object-cover pointer-events-none"
+                      />
+                    </div>
+                  </div>
+                  <span class="text-[11px] lg:text-xs font-semibold text-neutral-700 text-center leading-tight max-w-[80px] lg:max-w-[96px] group-hover/item:text-forest-700 transition-colors duration-200">
+                    {category.name}
+                  </span>
+                </a>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: Gönderim Amacı (Sağa akıcı / reverse) -->
+  <div class="relative">
+    <h3 class="text-xs lg:text-sm font-bold text-amber-600 uppercase tracking-widest mb-4 px-2 flex items-center gap-1.5">
+      <span>🎁</span> {t(locale, "ui.delivery_purpose", "Gönderim Amacı")}
+    </h3>
+    
+    <div class="marquee-scroller-wrap relative group/marquee">
+      <div 
+        class="marquee-scroller flex gap-5 lg:gap-7 overflow-x-auto scrollbar-hide select-none py-2 px-1 cursor-grab active:cursor-grabbing"
+        data-interactive-marquee="reverse"
+      >
+        {[...Array(4)].map(() => (
+          <div class="flex gap-5 lg:gap-7 shrink-0">
+            {occasions.map((occasion) => (
+              <a
+                href={`/firsatlar/${occasion.slug}`}
+                class="shrink-0 flex flex-col items-center gap-2.5 group/item transition-transform duration-200 hover:-translate-y-1"
+              >
+                <div class="w-[74px] h-[74px] lg:w-[92px] lg:h-[92px] rounded-full border-[3px] border-amber-400 p-[3px] transition-all duration-300 group-hover/item:border-amber-500 group-hover/item:shadow-lg group-hover/item:shadow-amber-400/25 group-hover/item:scale-105 bg-white">
+                  <div class="w-full h-full rounded-full overflow-hidden bg-amber-50 flex items-center justify-center">
+                    <span class="text-2xl lg:text-3xl pointer-events-none">{occasion.icon}</span>
+                  </div>
+                </div>
+                <span class="text-[11px] lg:text-xs font-semibold text-neutral-700 text-center leading-tight max-w-[80px] lg:max-w-[96px] group-hover/item:text-amber-700 transition-colors duration-200">
+                  {occasion.name}
+                </span>
+              </a>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .marquee-scroller {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+  }
+  .marquee-scroller::-webkit-scrollbar {
+    display: none;
+  }
+  .marquee-scroller.is-dragging {
+    cursor: grabbing !important;
+    cursor: -webkit-grabbing !important;
+    scroll-behavior: auto !important;
+  }
+  .marquee-scroller.is-dragging * {
+    pointer-events: none !important;
+  }
+</style>
+
+<script is:inline>
+  function initInteractiveMarquees() {
+    document.querySelectorAll("[data-interactive-marquee]").forEach(function (scroller) {
+      if (scroller.hasAttribute("data-scroller-init")) return;
+      scroller.setAttribute("data-scroller-init", "true");
+
+      var type = scroller.getAttribute("data-interactive-marquee");
+      var speed = type === "reverse" ? -0.45 : 0.45; // Zarif ve pürüzsüz akış hızı
+      
+      var isPaused = false;
+      var isDragging = false;
+      var hasDragged = false;
+      var startX = 0;
+      var startScrollLeft = 0;
+      var resumeTimeout = null;
+
+      // Tersten akıcı olanı orta noktadan başlat ki hemen sağa doğru kayabilsin
+      if (type === "reverse") {
+        scroller.scrollLeft = scroller.scrollWidth / 2;
+      }
+
+      var lastTime = performance.now();
+      var currentPos = scroller.scrollLeft;
+
+      function step(now) {
+        var dt = (now - lastTime) / 16.666; 
+        lastTime = now;
+        if (isNaN(dt) || dt > 4) dt = 1;
+
+        if (!isPaused && !isDragging) {
+          // Kullanıcı parmağıyla veya mola sırasında manuel kaydırdıysa pozisyonu güncelle
+          if (Math.abs(scroller.scrollLeft - currentPos) > 2) {
+            currentPos = scroller.scrollLeft;
+          }
+
+          // Tarayıcıların küçük ondalık kaydırmaları sıfıra yuvarlamasını engellemek için float tutuyoruz!
+          currentPos += speed * dt;
+          scroller.scrollLeft = currentPos;
+
+          // Sonsuz kaydırma kesimi (başa/sona sardığında çaktırmadan orta noktaya zıplat)
+          var maxScroll = scroller.scrollWidth - scroller.clientWidth;
+          if (maxScroll > 0) {
+            if (scroller.scrollLeft >= maxScroll - 10 || scroller.scrollLeft <= 10) {
+              scroller.scrollLeft = maxScroll / 2;
+              currentPos = scroller.scrollLeft;
+            }
+          }
+        } else {
+          // Mola veya elle sürükleme esnasında gerçek scroll değerine kilitlen
+          currentPos = scroller.scrollLeft;
+        }
+        requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+
+      function pauseForWhile() {
+        isPaused = true;
+        if (resumeTimeout) clearTimeout(resumeTimeout);
+        resumeTimeout = setTimeout(function () {
+          if (!isDragging) isPaused = false;
+        }, 1200);
+      }
+
+      // Hover / Touch / Wheel molaları (Not: 'scroll' eventi JS animasyonu tarafından tetiklendiği için dinlenmez!)
+      scroller.addEventListener("mouseenter", function () {
+        isPaused = true;
+        if (resumeTimeout) clearTimeout(resumeTimeout);
+      });
+      scroller.addEventListener("mouseleave", function () {
+        if (!isDragging) {
+          if (resumeTimeout) clearTimeout(resumeTimeout);
+          isPaused = false;
+        }
+      });
+      scroller.addEventListener("touchstart", function () {
+        isPaused = true;
+        if (resumeTimeout) clearTimeout(resumeTimeout);
+      }, { passive: true });
+      scroller.addEventListener("touchend", function () {
+        pauseForWhile();
+      }, { passive: true });
+      scroller.addEventListener("touchcancel", function () {
+        pauseForWhile();
+      }, { passive: true });
+      scroller.addEventListener("wheel", function () {
+        pauseForWhile();
+      }, { passive: true });
+
+      // Masaüstü Mouse Sürükleme (Drag-to-Scroll)
+      scroller.addEventListener("mousedown", function (e) {
+        if (resumeTimeout) clearTimeout(resumeTimeout);
+        isDragging = true;
+        isPaused = true;
+        hasDragged = false;
+        scroller.classList.add("is-dragging");
+        startX = e.pageX - scroller.offsetLeft;
+        startScrollLeft = scroller.scrollLeft;
+      });
+
+      window.addEventListener("mousemove", function (e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        var x = e.pageX - scroller.offsetLeft;
+        var walk = (x - startX) * 1.5;
+        if (Math.abs(walk) > 5) hasDragged = true;
+        scroller.scrollLeft = startScrollLeft - walk;
+      });
+
+      function stopDrag() {
+        if (!isDragging) return;
+        isDragging = false;
+        scroller.classList.remove("is-dragging");
+        pauseForWhile();
+      }
+
+      window.addEventListener("mouseup", stopDrag);
+
+      // Sürükleme sonrası linke gitmeyi kesin engelle
+      scroller.addEventListener("click", function (e) {
+        if (hasDragged) {
+          e.preventDefault();
+          e.stopPropagation();
+          hasDragged = false;
+        }
+      }, true);
+
+      scroller.addEventListener("dragstart", function (e) {
+        e.preventDefault();
+      });
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", initInteractiveMarquees);
+  document.addEventListener("astro:page-load", initInteractiveMarquees);
+  initInteractiveMarquees();
+</script>

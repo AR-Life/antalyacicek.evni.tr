@@ -207,113 +207,234 @@ const sliderId = `slider-${category.slug}`;
 </section>
 
 <script is:inline>
-  document
-    .querySelectorAll("[data-category-slider]")
-    .forEach(function (slider) {
-      var container = slider.closest("[data-slider-container]");
-      var sliderId = container
-        ? container.getAttribute("data-slider-container")
-        : "";
-      var section = slider.closest("section");
+  function initCategorySliders() {
+    document
+      .querySelectorAll("[data-category-slider]")
+      .forEach(function (slider) {
+        if (slider.hasAttribute("data-slider-init")) return;
+        slider.setAttribute("data-slider-init", "true");
 
-      var prevBtn = section
-        ? section.querySelector('[data-slider-prev="' + sliderId + '"]')
-        : null;
-      var nextBtn = section
-        ? section.querySelector('[data-slider-next="' + sliderId + '"]')
-        : null;
-      var swipeHint = container
-        ? container.querySelector("[data-swipe-hint]")
-        : null;
+        var container = slider.closest("[data-slider-container]");
+        var sliderId = container
+          ? container.getAttribute("data-slider-container")
+          : "";
+        var section = slider.closest("section");
 
-      var scrollAmount = 280;
+        var prevBtn = section
+          ? section.querySelector('[data-slider-prev="' + sliderId + '"]')
+          : null;
+        var nextBtn = section
+          ? section.querySelector('[data-slider-next="' + sliderId + '"]')
+          : null;
 
-      if (prevBtn) {
-        prevBtn.addEventListener("click", function () {
-          slider.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+        var scrollAmount = 280;
+        var autoScrollTimer = null;
+
+        // --- BUTON KONTROLLERİ ---
+        if (prevBtn) {
+          prevBtn.addEventListener("click", function () {
+            stopAutoScroll();
+            slider.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+            startAutoScrollWithDelay();
+          });
+        }
+        if (nextBtn) {
+          nextBtn.addEventListener("click", function () {
+            stopAutoScroll();
+            slider.scrollBy({ left: scrollAmount, behavior: "smooth" });
+            startAutoScrollWithDelay();
+          });
+        }
+
+        function updateButtons() {
+          if (prevBtn) prevBtn.disabled = slider.scrollLeft <= 10;
+          if (nextBtn)
+            nextBtn.disabled =
+              slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 10;
+        }
+
+        slider.addEventListener("scroll", updateButtons);
+        updateButtons();
+
+        // --- OTOMATİK KAYDIRMA & DURDURMA (AUTO-SCROLL) ---
+        function startAutoScroll() {
+          stopAutoScroll();
+          // Eğer içerik kaydırmak için yetersizse başlatma
+          if (slider.scrollWidth <= slider.clientWidth + 10) return;
+
+          autoScrollTimer = setInterval(function () {
+            if (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 20) {
+              slider.scrollTo({ left: 0, behavior: "smooth" });
+            } else {
+              slider.scrollBy({ left: scrollAmount, behavior: "smooth" });
+            }
+          }, 3500);
+        }
+
+        function stopAutoScroll() {
+          if (autoScrollTimer) {
+            clearInterval(autoScrollTimer);
+            autoScrollTimer = null;
+          }
+        }
+
+        function startAutoScrollWithDelay() {
+          setTimeout(function () {
+            if (!isDown) startAutoScroll();
+          }, 3000);
+        }
+
+        // Hover veya dokunmada otomatik akışı durdur
+        slider.addEventListener("mouseenter", stopAutoScroll);
+        slider.addEventListener("mouseleave", function () {
+          if (!isDown) startAutoScroll();
         });
-      }
-      if (nextBtn) {
-        nextBtn.addEventListener("click", function () {
-          slider.scrollBy({ left: scrollAmount, behavior: "smooth" });
+        slider.addEventListener("touchstart", stopAutoScroll, { passive: true });
+        slider.addEventListener("touchend", startAutoScrollWithDelay);
+
+        // --- MOUSE İLE TUTUP SÜRÜKLEME (DRAG TO SCROLL) ---
+        var isDown = false;
+        var startX;
+        var scrollLeftPos;
+        var hasDragged = false;
+
+        slider.addEventListener("mousedown", function (e) {
+          stopAutoScroll();
+          isDown = true;
+          hasDragged = false;
+          slider.classList.add("is-dragging");
+          startX = e.pageX - slider.offsetLeft;
+          scrollLeftPos = slider.scrollLeft;
         });
+
+        slider.addEventListener("mouseleave", function () {
+          if (!isDown) return;
+          isDown = false;
+          slider.classList.remove("is-dragging");
+          startAutoScroll();
+        });
+
+        slider.addEventListener("mouseup", function () {
+          if (!isDown) return;
+          isDown = false;
+          slider.classList.remove("is-dragging");
+          startAutoScroll();
+        });
+
+        slider.addEventListener("mousemove", function (e) {
+          if (!isDown) return;
+          e.preventDefault();
+          var x = e.pageX - slider.offsetLeft;
+          var walk = (x - startX) * 1.5; // Sürükleme çarpanı
+          if (Math.abs(walk) > 5) {
+            hasDragged = true;
+          }
+          slider.scrollLeft = scrollLeftPos - walk;
+        });
+
+        // Tarayıcının varsayılan görsel/link sürükleme davranışını durdur
+        slider.addEventListener("dragstart", function (e) {
+          if (isDown) e.preventDefault();
+        });
+
+        // Eğer fare ile sürükleme (drag) yapıldıysa, linkin tıklama eventini iptal et!
+        slider.addEventListener("click", function (e) {
+          if (hasDragged) {
+            e.preventDefault();
+            e.stopPropagation();
+            hasDragged = false;
+          }
+        }, true);
+
+        // Başlangıçta otomatik kaydırmayı başlat
+        startAutoScroll();
+      });
+
+    // --- MOBİL İPUCU (SWIPE HINT) ---
+    document.querySelectorAll(".swipe-hint").forEach(function (el) {
+      if (window.innerWidth >= 1024) {
+        el.remove();
+        return;
+      }
+      if (el.hasAttribute("data-hint-init")) return;
+      el.setAttribute("data-hint-init", "true");
+
+      var container = el.closest("[data-slider-container]");
+      var slider = container?.querySelector("[data-category-slider]");
+      if (!slider) return;
+
+      el.style.transition = "opacity 0.4s ease-out, transform 0.4s ease-out";
+      el.style.opacity = "0";
+
+      var shown = false;
+
+      function showHint() {
+        if (shown) return;
+        if (slider.scrollWidth <= slider.clientWidth + 2) return;
+        shown = true;
+
+        var pulse = 0;
+        var interval = setInterval(function () {
+          el.style.transform =
+            "translateX(" + (pulse % 2 === 0 ? "-14px" : "0px") + ")";
+          el.style.opacity = String(
+            pulse < 5 ? 1 : Math.max(0, 1 - (pulse - 5) * 0.3),
+          );
+          pulse++;
+          if (pulse > 8) {
+            clearInterval(interval);
+            el.style.opacity = "0";
+          }
+        }, 380);
       }
 
-      function update() {
-        if (prevBtn) prevBtn.disabled = slider.scrollLeft <= 10;
-        if (nextBtn)
-          nextBtn.disabled =
-            slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 10;
-      }
+      var observer = new IntersectionObserver(
+        function (entries) {
+          if (entries[0].isIntersecting) {
+            setTimeout(showHint, 300);
+            observer.disconnect();
+          }
+        },
+        { threshold: 0.3 },
+      );
 
-      slider.addEventListener("scroll", update);
-      update();
+      if (container) observer.observe(container);
+
+      slider.addEventListener(
+        "scroll",
+        function () {
+          if (shown) el.style.opacity = "0";
+        },
+        { once: true },
+      );
     });
+  }
 
-  // Mobile swipe hint
-  document.querySelectorAll(".swipe-hint").forEach(function (el) {
-    if (window.innerWidth >= 1024) {
-      el.remove();
-      return;
-    }
-
-    var container = el.closest("[data-slider-container]");
-    var slider = container?.querySelector("[data-category-slider]");
-    if (!slider) return;
-
-    el.style.transition = "opacity 0.4s ease-out, transform 0.4s ease-out";
-    el.style.opacity = "0";
-
-    var shown = false;
-
-    function showHint() {
-      if (shown) return;
-      if (slider.scrollWidth <= slider.clientWidth + 2) return;
-      shown = true;
-
-      var pulse = 0;
-      var interval = setInterval(function () {
-        el.style.transform =
-          "translateX(" + (pulse % 2 === 0 ? "-14px" : "0px") + ")";
-        el.style.opacity = String(
-          pulse < 5 ? 1 : Math.max(0, 1 - (pulse - 5) * 0.3),
-        );
-        pulse++;
-        if (pulse > 8) {
-          clearInterval(interval);
-          el.style.opacity = "0";
-        }
-      }, 380);
-    }
-
-    var observer = new IntersectionObserver(
-      function (entries) {
-        if (entries[0].isIntersecting) {
-          setTimeout(showHint, 300);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.3 },
-    );
-
-    observer.observe(container);
-
-    slider.addEventListener(
-      "scroll",
-      function () {
-        if (shown) el.style.opacity = "0";
-      },
-      { once: true },
-    );
-  });
+  // Hem ilk açılışta hem de Astro SPA geçişlerinde çalışmasını sağla
+  document.addEventListener("DOMContentLoaded", initCategorySliders);
+  document.addEventListener("astro:page-load", initCategorySliders);
+  initCategorySliders();
 </script>
 
 <style>
   [data-category-slider] {
     scrollbar-width: none;
     -ms-overflow-style: none;
+    cursor: grab;
+    cursor: -webkit-grab;
   }
   [data-category-slider]::-webkit-scrollbar {
     display: none;
+  }
+  [data-category-slider].is-dragging {
+    cursor: grabbing !important;
+    cursor: -webkit-grabbing !important;
+    scroll-snap-type: none !important;
+    scroll-behavior: auto !important;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  [data-category-slider].is-dragging a {
+    pointer-events: auto;
   }
 </style>
