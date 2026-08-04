@@ -6,87 +6,224 @@ import { t } from "../i18n/translations";
 import { DEFAULT_LOCALE, type Locale } from "../i18n/config";
 
 const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
-const nonEmptyCategories = categories.filter((c) => getProductsByCategory(c.id).length > 0);
+const nonEmptyCategories = categories.filter(
+  (c) => getProductsByCategory(c.id).length > 0,
+);
+
+// Pastel Renk Paletleri (Göz yormayan, zarif arka planlar ve yumuşak tonlar)
+const pastelPalettes = [
+  {
+    bg: "bg-rose-50/90",
+    border: "border-rose-200/80",
+    hoverBorder: "group-hover/item:border-rose-300",
+    text: "text-rose-500",
+    groupText: "group-hover/item:text-rose-700",
+  },
+  {
+    bg: "bg-emerald-50/90",
+    border: "border-emerald-200/80",
+    hoverBorder: "group-hover/item:border-emerald-300",
+    text: "text-emerald-600",
+    groupText: "group-hover/item:text-emerald-700",
+  },
+  {
+    bg: "bg-amber-50/90",
+    border: "border-amber-200/80",
+    hoverBorder: "group-hover/item:border-amber-300",
+    text: "text-amber-600",
+    groupText: "group-hover/item:text-amber-700",
+  },
+  {
+    bg: "bg-purple-50/90",
+    border: "border-purple-200/80",
+    hoverBorder: "group-hover/item:border-purple-300",
+    text: "text-purple-500",
+    groupText: "group-hover/item:text-purple-700",
+  },
+  {
+    bg: "bg-sky-50/90",
+    border: "border-sky-200/80",
+    hoverBorder: "group-hover/item:border-sky-300",
+    text: "text-sky-500",
+    groupText: "group-hover/item:text-sky-700",
+  },
+  {
+    bg: "bg-teal-50/90",
+    border: "border-teal-200/80",
+    hoverBorder: "group-hover/item:border-teal-300",
+    text: "text-teal-600",
+    groupText: "group-hover/item:text-teal-700",
+  },
+  {
+    bg: "bg-pink-50/90",
+    border: "border-pink-200/80",
+    hoverBorder: "group-hover/item:border-pink-300",
+    text: "text-pink-500",
+    groupText: "group-hover/item:text-pink-700",
+  },
+  {
+    bg: "bg-indigo-50/90",
+    border: "border-indigo-200/80",
+    hoverBorder: "group-hover/item:border-indigo-300",
+    text: "text-indigo-500",
+    groupText: "group-hover/item:text-indigo-700",
+  },
+];
+
+// Modern Outline (Çizgi) SVG İkonlar
+const outlineIcons: Record<string, string> = {
+  "anneye-cicek": `<svg class="w-7 h-7 transition-transform duration-300 group-hover/item:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/><circle cx="12" cy="9" r="2" opacity="0.6"/></svg>`,
+  "babaya-cicek": `<svg class="w-7 h-7 transition-transform duration-300 group-hover/item:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3H8L6 8l6 13 6-13-2-5z"/><path d="M6 8h12"/></svg>`,
+  "sevgiliye-cicek": `<svg class="w-7 h-7 transition-transform duration-300 group-hover/item:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/><path d="M16 11l2-2M8 11l-2-2"/></svg>`,
+  "dogum-gunu-cicekleri": `<svg class="w-7 h-7 transition-transform duration-300 group-hover/item:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21H4V10a2 2 0 012-2h12a2 2 0 012 2v11z"/><path d="M4 14h16M12 8V4M12 4s-1-1-1-2 1-2 1-2 1 1 1 2-1 2-1 2z"/><path d="M8 8v2M16 8v2"/></svg>`,
+  "bebek-dogum-cicekleri": `<svg class="w-7 h-7 transition-transform duration-300 group-hover/item:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>`,
+  "dugun-nisan-soz": `<svg class="w-7 h-7 transition-transform duration-300 group-hover/item:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="5"/><circle cx="16" cy="15" r="5"/><path d="M8 10L11 3l3 7"/></svg>`,
+  "yil-donumu-cicegi": `<svg class="w-7 h-7 transition-transform duration-300 group-hover/item:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 11v11M7 3h10M6 3v5a6 6 0 0012 0V3"/></svg>`,
+  "ozur-cicekleri": `<svg class="w-7 h-7 transition-transform duration-300 group-hover/item:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg>`,
+  "erkege-cicek": `<svg class="w-7 h-7 transition-transform duration-300 group-hover/item:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>`,
+  "gecmis-olsun-cicekleri": `<svg class="w-7 h-7 transition-transform duration-300 group-hover/item:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`,
+  "tebrik-cicekleri": `<svg class="w-7 h-7 transition-transform duration-300 group-hover/item:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>`,
+  "yeni-yil-cicekleri": `<svg class="w-7 h-7 transition-transform duration-300 group-hover/item:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+  default: `<svg class="w-7 h-7 transition-transform duration-300 group-hover/item:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>`,
+};
 ---
 
-<div class="flex flex-col gap-8 py-2">
+<div class="flex flex-col gap-9 py-4">
   <!-- Row 1: Çiçek Türleri (Sola akıcı) -->
   <div class="relative">
-    <h3 class="text-xs lg:text-sm font-bold text-forest-700 uppercase tracking-widest mb-4 px-2 flex items-center gap-1.5">
-      <span>🌸</span> {t(locale, "ui.flower_types", "Çiçek Türleri")}
+    <h3
+      class="text-xs lg:text-sm font-bold text-forest-700 uppercase tracking-widest mb-4 px-3 flex items-center gap-2"
+    >
+      <span class="text-forest-600">
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          ><path
+            d="M12 7.5a4.5 4.5 0 1 1 4.5 4.5M12 7.5A4.5 4.5 0 1 0 7.5 12M12 7.5V3m0 9a4.5 4.5 0 1 0 4.5 4.5M12 12v9m-4.5-4.5A4.5 4.5 0 1 1 12 12"
+          ></path></svg
+        >
+      </span>
+      {t(locale, "ui.flower_types", "Çiçek Türleri")}
     </h3>
-    
+
     <div class="marquee-scroller-wrap relative group/marquee">
-      <div 
-        class="marquee-scroller flex gap-5 lg:gap-7 overflow-x-auto scrollbar-hide select-none py-2 px-1 cursor-grab active:cursor-grabbing"
+      <div
+        class="marquee-scroller flex gap-5 lg:gap-7 overflow-x-auto scrollbar-hide select-none py-3 px-1 cursor-grab active:cursor-grabbing"
         data-interactive-marquee="normal"
       >
-        {[...Array(4)].map(() => (
-          <div class="flex gap-5 lg:gap-7 shrink-0">
-            {nonEmptyCategories.map((category) => {
-              const catProducts = getProductsByCategory(category.id);
-              const thumbImage = catProducts.length > 0
-                ? (catProducts[0].image || "/images/placeholder.svg")
-                : "/images/placeholder.svg";
-              return (
-                <a
-                  href={`#cat-${category.slug}`}
-                  class="shrink-0 flex flex-col items-center gap-2.5 group/item transition-transform duration-200 hover:-translate-y-1"
-                >
-                  <div class="w-[74px] h-[74px] lg:w-[92px] lg:h-[92px] rounded-full border-[3px] border-forest-500 p-[3px] transition-all duration-300 group-hover/item:border-forest-600 group-hover/item:shadow-lg group-hover/item:shadow-forest-500/25 group-hover/item:scale-105 bg-white">
-                    <div class="w-full h-full rounded-full overflow-hidden bg-neutral-100">
-                      <img
-                        src={thumbImage}
-                        alt={category.name}
-                        loading="lazy"
-                        width="92"
-                        height="92"
-                        class="w-full h-full object-cover pointer-events-none"
-                      />
+        {
+          [...Array(4)].map(() => (
+            <div class="flex gap-5 lg:gap-7 shrink-0">
+              {nonEmptyCategories.map((category, index) => {
+                const pastel = pastelPalettes[index % pastelPalettes.length];
+                const catProducts = getProductsByCategory(category.id);
+                const thumbImage =
+                  catProducts.length > 0
+                    ? catProducts[0].image || "/images/placeholder.svg"
+                    : "/images/placeholder.svg";
+                return (
+                  <a
+                    href={`#cat-${category.slug}`}
+                    class="shrink-0 flex flex-col items-center gap-2.5 group/item transition-transform duration-300 hover:-translate-y-1"
+                  >
+                    <div
+                      class={`w-[76px] h-[76px] lg:w-[92px] lg:h-[92px] rounded-full border ${pastel.border} ${pastel.hoverBorder} p-[2px] ${pastel.bg} shadow-[0_2px_10px_-2px_rgba(0,0,0,0.06),0_1px_3px_0_rgba(0,0,0,0.02)] transition-all duration-300 group-hover/item:shadow-[0_10px_22px_-4px_rgba(0,0,0,0.12),0_4px_6px_-2px_rgba(0,0,0,0.04)] group-hover/item:scale-105`}
+                    >
+                      <div class="w-full h-full rounded-full overflow-hidden bg-white shadow-inner">
+                        <img
+                          src={thumbImage}
+                          alt={category.name}
+                          loading="lazy"
+                          width="92"
+                          height="92"
+                          class="w-full h-full object-cover pointer-events-none transition-transform duration-500 group-hover/item:scale-110"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <span class="text-[11px] lg:text-xs font-semibold text-neutral-700 text-center leading-tight max-w-[80px] lg:max-w-[96px] group-hover/item:text-forest-700 transition-colors duration-200">
-                    {category.name}
-                  </span>
-                </a>
-              );
-            })}
-          </div>
-        ))}
+                    <span
+                      class={`text-[11px] lg:text-xs font-medium text-neutral-600 text-center leading-tight max-w-[84px] lg:max-w-[96px] ${pastel.groupText} transition-colors duration-200`}
+                    >
+                      {category.name}
+                    </span>
+                  </a>
+                );
+              })}
+            </div>
+          ))
+        }
       </div>
     </div>
   </div>
 
   <!-- Row 2: Gönderim Amacı (Sağa akıcı / reverse) -->
   <div class="relative">
-    <h3 class="text-xs lg:text-sm font-bold text-amber-600 uppercase tracking-widest mb-4 px-2 flex items-center gap-1.5">
-      <span>🎁</span> {t(locale, "ui.delivery_purpose", "Gönderim Amacı")}
+    <h3
+      class="text-xs lg:text-sm font-bold text-amber-700/90 uppercase tracking-widest mb-4 px-3 flex items-center gap-2"
+    >
+      <span class="text-amber-600/90">
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          ><path d="M20 12v10H4V12"></path><path d="M2 7h20v5H2z"></path><path
+            d="M12 22V7"></path><path
+            d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path
+            d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg
+        >
+      </span>
+      {t(locale, "ui.delivery_purpose", "Gönderim Amacı")}
     </h3>
-    
+
     <div class="marquee-scroller-wrap relative group/marquee">
-      <div 
-        class="marquee-scroller flex gap-5 lg:gap-7 overflow-x-auto scrollbar-hide select-none py-2 px-1 cursor-grab active:cursor-grabbing"
+      <div
+        class="marquee-scroller flex gap-5 lg:gap-7 overflow-x-auto scrollbar-hide select-none py-3 px-1 cursor-grab active:cursor-grabbing"
         data-interactive-marquee="reverse"
       >
-        {[...Array(4)].map(() => (
-          <div class="flex gap-5 lg:gap-7 shrink-0">
-            {occasions.map((occasion) => (
-              <a
-                href={`/firsatlar/${occasion.slug}`}
-                class="shrink-0 flex flex-col items-center gap-2.5 group/item transition-transform duration-200 hover:-translate-y-1"
-              >
-                <div class="w-[74px] h-[74px] lg:w-[92px] lg:h-[92px] rounded-full border-[3px] border-amber-400 p-[3px] transition-all duration-300 group-hover/item:border-amber-500 group-hover/item:shadow-lg group-hover/item:shadow-amber-400/25 group-hover/item:scale-105 bg-white">
-                  <div class="w-full h-full rounded-full overflow-hidden bg-amber-50 flex items-center justify-center">
-                    <span class="text-2xl lg:text-3xl pointer-events-none">{occasion.icon}</span>
-                  </div>
-                </div>
-                <span class="text-[11px] lg:text-xs font-semibold text-neutral-700 text-center leading-tight max-w-[80px] lg:max-w-[96px] group-hover/item:text-amber-700 transition-colors duration-200">
-                  {occasion.name}
-                </span>
-              </a>
-            ))}
-          </div>
-        ))}
+        {
+          [...Array(4)].map(() => (
+            <div class="flex gap-5 lg:gap-7 shrink-0">
+              {occasions.map((occasion, index) => {
+                const pastel =
+                  pastelPalettes[(index + 2) % pastelPalettes.length];
+                const svgIcon =
+                  outlineIcons[occasion.slug] || outlineIcons["default"];
+                return (
+                  <a
+                    href={`/firsatlar/${occasion.slug}`}
+                    class="shrink-0 flex flex-col items-center gap-2.5 group/item transition-transform duration-300 hover:-translate-y-1"
+                  >
+                    <div
+                      class={`w-[76px] h-[76px] lg:w-[92px] lg:h-[92px] rounded-full border ${pastel.border} ${pastel.hoverBorder} p-[2px] ${pastel.bg} shadow-[0_2px_10px_-2px_rgba(0,0,0,0.06),0_1px_3px_0_rgba(0,0,0,0.02)] transition-all duration-300 group-hover/item:shadow-[0_10px_22px_-4px_rgba(0,0,0,0.12),0_4px_6px_-2px_rgba(0,0,0,0.04)] group-hover/item:scale-105`}
+                    >
+                      <div
+                        class={`w-full h-full rounded-full overflow-hidden bg-white/80 flex items-center justify-center ${pastel.text} transition-colors duration-300 shadow-inner`}
+                      >
+                        <div
+                          set:html={svgIcon}
+                          class="pointer-events-none flex items-center justify-center"
+                        />
+                      </div>
+                    </div>
+                    <span
+                      class={`text-[11px] lg:text-xs font-medium text-neutral-600 text-center leading-tight max-w-[84px] lg:max-w-[96px] ${pastel.groupText} transition-colors duration-200`}
+                    >
+                      {occasion.name}
+                    </span>
+                  </a>
+                );
+              })}
+            </div>
+          ))
+        }
       </div>
     </div>
   </div>
@@ -96,8 +233,20 @@ const nonEmptyCategories = categories.filter((c) => getProductsByCategory(c.id).
   .marquee-scroller {
     scrollbar-width: none;
     -ms-overflow-style: none;
-    -webkit-mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
-    mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 4%,
+      black 96%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 4%,
+      black 96%,
+      transparent
+    );
   }
   .marquee-scroller::-webkit-scrollbar {
     display: none;
@@ -114,134 +263,159 @@ const nonEmptyCategories = categories.filter((c) => getProductsByCategory(c.id).
 
 <script is:inline>
   function initInteractiveMarquees() {
-    document.querySelectorAll("[data-interactive-marquee]").forEach(function (scroller) {
-      if (scroller.hasAttribute("data-scroller-init")) return;
-      scroller.setAttribute("data-scroller-init", "true");
+    document
+      .querySelectorAll("[data-interactive-marquee]")
+      .forEach(function (scroller) {
+        if (scroller.hasAttribute("data-scroller-init")) return;
+        scroller.setAttribute("data-scroller-init", "true");
 
-      var type = scroller.getAttribute("data-interactive-marquee");
-      var speed = type === "reverse" ? -0.45 : 0.45; // Zarif ve pürüzsüz akış hızı
-      
-      var isPaused = false;
-      var isDragging = false;
-      var hasDragged = false;
-      var startX = 0;
-      var startScrollLeft = 0;
-      var resumeTimeout = null;
+        var type = scroller.getAttribute("data-interactive-marquee");
+        var speed = type === "reverse" ? -0.45 : 0.45; // Zarif ve pürüzsüz akış hızı
 
-      // Tersten akıcı olanı orta noktadan başlat ki hemen sağa doğru kayabilsin
-      if (type === "reverse") {
-        scroller.scrollLeft = scroller.scrollWidth / 2;
-      }
+        var isPaused = false;
+        var isDragging = false;
+        var hasDragged = false;
+        var startX = 0;
+        var startScrollLeft = 0;
+        var resumeTimeout = null;
 
-      var lastTime = performance.now();
-      var currentPos = scroller.scrollLeft;
+        // Tersten akıcı olanı orta noktadan başlat ki hemen sağa doğru kayabilsin
+        if (type === "reverse") {
+          scroller.scrollLeft = scroller.scrollWidth / 2;
+        }
 
-      function step(now) {
-        var dt = (now - lastTime) / 16.666; 
-        lastTime = now;
-        if (isNaN(dt) || dt > 4) dt = 1;
+        var lastTime = performance.now();
+        var currentPos = scroller.scrollLeft;
 
-        if (!isPaused && !isDragging) {
-          // Kullanıcı parmağıyla veya mola sırasında manuel kaydırdıysa pozisyonu güncelle
-          if (Math.abs(scroller.scrollLeft - currentPos) > 2) {
-            currentPos = scroller.scrollLeft;
-          }
+        function step(now) {
+          var dt = (now - lastTime) / 16.666;
+          lastTime = now;
+          if (isNaN(dt) || dt > 4) dt = 1;
 
-          // Tarayıcıların küçük ondalık kaydırmaları sıfıra yuvarlamasını engellemek için float tutuyoruz!
-          currentPos += speed * dt;
-          scroller.scrollLeft = currentPos;
-
-          // Sonsuz kaydırma kesimi (başa/sona sardığında çaktırmadan orta noktaya zıplat)
-          var maxScroll = scroller.scrollWidth - scroller.clientWidth;
-          if (maxScroll > 0) {
-            if (scroller.scrollLeft >= maxScroll - 10 || scroller.scrollLeft <= 10) {
-              scroller.scrollLeft = maxScroll / 2;
+          if (!isPaused && !isDragging) {
+            // Kullanıcı parmağıyla veya mola sırasında manuel kaydırdıysa pozisyonu güncelle
+            if (Math.abs(scroller.scrollLeft - currentPos) > 2) {
               currentPos = scroller.scrollLeft;
             }
+
+            // Tarayıcıların küçük ondalık kaydırmaları sıfıra yuvarlamasını engellemek için float tutuyoruz!
+            currentPos += speed * dt;
+            scroller.scrollLeft = currentPos;
+
+            // Sonsuz kaydırma kesimi (başa/sona sardığında çaktırmadan orta noktaya zıplat)
+            var maxScroll = scroller.scrollWidth - scroller.clientWidth;
+            if (maxScroll > 0) {
+              if (
+                scroller.scrollLeft >= maxScroll - 10 ||
+                scroller.scrollLeft <= 10
+              ) {
+                scroller.scrollLeft = maxScroll / 2;
+                currentPos = scroller.scrollLeft;
+              }
+            }
+          } else {
+            // Mola veya elle sürükleme esnasında gerçek scroll değerine kilitlen
+            currentPos = scroller.scrollLeft;
           }
-        } else {
-          // Mola veya elle sürükleme esnasında gerçek scroll değerine kilitlen
-          currentPos = scroller.scrollLeft;
+          requestAnimationFrame(step);
         }
         requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
 
-      function pauseForWhile() {
-        isPaused = true;
-        if (resumeTimeout) clearTimeout(resumeTimeout);
-        resumeTimeout = setTimeout(function () {
-          if (!isDragging) isPaused = false;
-        }, 1200);
-      }
-
-      // Hover / Touch / Wheel molaları (Not: 'scroll' eventi JS animasyonu tarafından tetiklendiği için dinlenmez!)
-      scroller.addEventListener("mouseenter", function () {
-        isPaused = true;
-        if (resumeTimeout) clearTimeout(resumeTimeout);
-      });
-      scroller.addEventListener("mouseleave", function () {
-        if (!isDragging) {
+        function pauseForWhile() {
+          isPaused = true;
           if (resumeTimeout) clearTimeout(resumeTimeout);
-          isPaused = false;
+          resumeTimeout = setTimeout(function () {
+            if (!isDragging) isPaused = false;
+          }, 1200);
         }
-      });
-      scroller.addEventListener("touchstart", function () {
-        isPaused = true;
-        if (resumeTimeout) clearTimeout(resumeTimeout);
-      }, { passive: true });
-      scroller.addEventListener("touchend", function () {
-        pauseForWhile();
-      }, { passive: true });
-      scroller.addEventListener("touchcancel", function () {
-        pauseForWhile();
-      }, { passive: true });
-      scroller.addEventListener("wheel", function () {
-        pauseForWhile();
-      }, { passive: true });
 
-      // Masaüstü Mouse Sürükleme (Drag-to-Scroll)
-      scroller.addEventListener("mousedown", function (e) {
-        if (resumeTimeout) clearTimeout(resumeTimeout);
-        isDragging = true;
-        isPaused = true;
-        hasDragged = false;
-        scroller.classList.add("is-dragging");
-        startX = e.pageX - scroller.offsetLeft;
-        startScrollLeft = scroller.scrollLeft;
-      });
+        // Hover / Touch / Wheel molaları (Not: 'scroll' eventi JS animasyonu tarafından tetiklendiği için dinlenmez!)
+        scroller.addEventListener("mouseenter", function () {
+          isPaused = true;
+          if (resumeTimeout) clearTimeout(resumeTimeout);
+        });
+        scroller.addEventListener("mouseleave", function () {
+          if (!isDragging) {
+            if (resumeTimeout) clearTimeout(resumeTimeout);
+            isPaused = false;
+          }
+        });
+        scroller.addEventListener(
+          "touchstart",
+          function () {
+            isPaused = true;
+            if (resumeTimeout) clearTimeout(resumeTimeout);
+          },
+          { passive: true },
+        );
+        scroller.addEventListener(
+          "touchend",
+          function () {
+            pauseForWhile();
+          },
+          { passive: true },
+        );
+        scroller.addEventListener(
+          "touchcancel",
+          function () {
+            pauseForWhile();
+          },
+          { passive: true },
+        );
+        scroller.addEventListener(
+          "wheel",
+          function () {
+            pauseForWhile();
+          },
+          { passive: true },
+        );
 
-      window.addEventListener("mousemove", function (e) {
-        if (!isDragging) return;
-        e.preventDefault();
-        var x = e.pageX - scroller.offsetLeft;
-        var walk = (x - startX) * 1.5;
-        if (Math.abs(walk) > 5) hasDragged = true;
-        scroller.scrollLeft = startScrollLeft - walk;
-      });
-
-      function stopDrag() {
-        if (!isDragging) return;
-        isDragging = false;
-        scroller.classList.remove("is-dragging");
-        pauseForWhile();
-      }
-
-      window.addEventListener("mouseup", stopDrag);
-
-      // Sürükleme sonrası linke gitmeyi kesin engelle
-      scroller.addEventListener("click", function (e) {
-        if (hasDragged) {
-          e.preventDefault();
-          e.stopPropagation();
+        // Masaüstü Mouse Sürükleme (Drag-to-Scroll)
+        scroller.addEventListener("mousedown", function (e) {
+          if (resumeTimeout) clearTimeout(resumeTimeout);
+          isDragging = true;
+          isPaused = true;
           hasDragged = false;
-        }
-      }, true);
+          scroller.classList.add("is-dragging");
+          startX = e.pageX - scroller.offsetLeft;
+          startScrollLeft = scroller.scrollLeft;
+        });
 
-      scroller.addEventListener("dragstart", function (e) {
-        e.preventDefault();
+        window.addEventListener("mousemove", function (e) {
+          if (!isDragging) return;
+          e.preventDefault();
+          var x = e.pageX - scroller.offsetLeft;
+          var walk = (x - startX) * 1.5;
+          if (Math.abs(walk) > 5) hasDragged = true;
+          scroller.scrollLeft = startScrollLeft - walk;
+        });
+
+        function stopDrag() {
+          if (!isDragging) return;
+          isDragging = false;
+          scroller.classList.remove("is-dragging");
+          pauseForWhile();
+        }
+
+        window.addEventListener("mouseup", stopDrag);
+
+        // Sürükleme sonrası linke gitmeyi kesin engelle
+        scroller.addEventListener(
+          "click",
+          function (e) {
+            if (hasDragged) {
+              e.preventDefault();
+              e.stopPropagation();
+              hasDragged = false;
+            }
+          },
+          true,
+        );
+
+        scroller.addEventListener("dragstart", function (e) {
+          e.preventDefault();
+        });
       });
-    });
   }
 
   document.addEventListener("DOMContentLoaded", initInteractiveMarquees);
