@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import HeroSection from "../components/HeroSection.astro";
 import CategoryMarquee from "../components/CategoryMarquee.astro";
+import WhyChooseUs from "../components/WhyChooseUs.astro";
 import CategoryTabs from "../components/CategoryTabs.astro";
 import ProductCard from "../components/ProductCard.astro";
 import Steps from "../components/Steps.astro";
@@ -21,13 +22,16 @@ const featuredProducts = allProducts.slice(0, 8);
 <BaseLayout>
   <HeroSection />
 
-  <section id="kategoriler" class="py-8 lg:py-12 bg-gradient-to-b from-white to-forest-50/30 overflow-hidden">
+  <section id="kategoriler" class="py-10 lg:py-14 bg-gradient-to-b from-white to-neutral-50/50 overflow-hidden border-b border-neutral-100/80">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-6 lg:mb-8">
-        <h2 class="text-2xl lg:text-3xl font-display font-bold text-neutral-900 mb-2">
+        <span class="inline-block text-[11px] font-bold tracking-widest uppercase text-forest-600 px-3 py-1 rounded-full bg-forest-50 border border-forest-100 mb-2">
+          {t(locale, "ui.categories_tag", "BUTİK KOLEKSİYONLAR")}
+        </span>
+        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-2 tracking-tight">
           {t(locale, "ui.categories_title", "Kategoriler")}
         </h2>
-        <p class="text-neutral-500 max-w-xl mx-auto text-xs lg:text-sm">
+        <p class="text-neutral-500 max-w-xl mx-auto text-xs sm:text-sm lg:text-base font-normal">
           {t(locale, "ui.home_subtitle", "Her anı özel kılan el yapımı çiçek aranjmanları")}
         </p>
       </div>
@@ -36,16 +40,17 @@ const featuredProducts = allProducts.slice(0, 8);
     </div>
   </section>
 
+  <WhyChooseUs />
 
   <CategoryTabs categories={categories} />
 
-  <section id="one-cikanlar" class="py-16 lg:py-24 bg-gradient-to-b from-forest-50/30 to-white">
+  <section id="one-cikanlar" class="py-16 lg:py-24 bg-[#FAFBF9] border-y border-neutral-200/60 shadow-inner">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-10 lg:mb-14">
-        <span class="inline-block text-xs uppercase tracking-widest text-forest-600 font-bold mb-2">
+        <span class="inline-block text-[11px] uppercase tracking-widest text-forest-700 font-bold mb-2 bg-forest-100/70 px-3 py-1 rounded-full border border-forest-200/60">
           {t(locale, "ui.most_preferred", "En Çok Tercih Edilenler")}
         </span>
-        <h2 class="text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-3">
+        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-3 tracking-tight">
           {t(locale, "ui.featured_products", "Öne Çıkan Ürünler")}
         </h2>
         <p class="text-neutral-500 max-w-xl mx-auto text-sm lg:text-base">

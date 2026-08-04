@@ -14,26 +14,26 @@ const { categories, locale = (Astro.locals.locale as Locale) || "tr" } = Astro.p
 const nonEmptyCategories = categories.filter((c) => getProductsByCategory(c.id).length > 0);
 ---
 
-<section class="py-16 lg:py-24 bg-white">
+<section class="py-12 lg:py-16 bg-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-10 lg:mb-14">
-      <h2 class="text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-3">
+    <div class="text-center mb-8 lg:mb-10">
+      <h2 class="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-2 tracking-tight">
         {t(locale, "ui.category", "Kategoriler")}
       </h2>
-      <p class="text-neutral-500 max-w-xl mx-auto text-sm lg:text-base">
+      <p class="text-neutral-500 max-w-xl mx-auto text-xs sm:text-sm lg:text-base font-normal">
         {t(locale, "ui.collection_desc", "Her kategoriye özel en taze çiçekler ve aranjmanlar")}
       </p>
     </div>
 
-    <div class="flex flex-wrap justify-center gap-2 mb-8 lg:mb-10" id="category-tabs">
+    <div class="flex flex-wrap justify-center gap-2 sm:gap-2.5 mb-8 lg:mb-12" id="category-tabs">
       {nonEmptyCategories.map((category, index) => (
         <button
           type="button"
           data-tab={category.slug}
-          class={`tab-btn px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
+          class={`tab-btn px-5 py-2.5 rounded-full text-xs sm:text-sm transition-all duration-200 ${
             index === 0
-              ? 'bg-forest-700 text-white shadow-lg shadow-forest-700/20'
-              : 'bg-forest-50 text-forest-800 hover:bg-forest-100'
+              ? 'bg-forest-800 text-white font-bold ring-2 ring-forest-600/30 shadow-[0_4px_16px_rgba(20,50,40,0.22)] scale-[1.02] -translate-y-0.5'
+              : 'bg-neutral-100/80 border border-neutral-200/60 text-neutral-600 font-medium hover:bg-white hover:border-neutral-300 hover:text-neutral-900 hover:shadow-xs'
           }`}
         >
           {t(locale, `category.${category.id}`, category.name)}
@@ -49,7 +49,7 @@ const nonEmptyCategories = categories.filter((c) => getProductsByCategory(c.id).
             id={`tab-${category.slug}`}
             class={`tab-content ${index === 0 ? 'block' : 'hidden'}`}
           >
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
               {products.map((product) => (
                 <ProductCard product={product} locale={locale} />
               ))}
@@ -65,17 +65,19 @@ const nonEmptyCategories = categories.filter((c) => getProductsByCategory(c.id).
 (function() {
   var tabs = document.querySelectorAll('.tab-btn');
   var contents = document.querySelectorAll('.tab-content');
+  var activeClasses = ['bg-forest-800', 'text-white', 'font-bold', 'ring-2', 'ring-forest-600/30', 'shadow-[0_4px_16px_rgba(20,50,40,0.22)]', 'scale-[1.02]', '-translate-y-0.5'];
+  var inactiveClasses = ['bg-neutral-100/80', 'border', 'border-neutral-200/60', 'text-neutral-600', 'font-medium', 'hover:bg-white', 'hover:border-neutral-300', 'hover:text-neutral-900', 'hover:shadow-xs'];
 
   tabs.forEach(function(tab) {
     tab.addEventListener('click', function() {
       var targetSlug = this.getAttribute('data-tab');
 
       tabs.forEach(function(t) {
-        t.classList.remove('bg-forest-700', 'text-white', 'shadow-lg', 'shadow-forest-700/20');
-        t.classList.add('bg-forest-50', 'text-forest-800', 'hover:bg-forest-100');
+        activeClasses.forEach(function(c) { t.classList.remove(c); });
+        inactiveClasses.forEach(function(c) { t.classList.add(c); });
       });
-      this.classList.remove('bg-forest-50', 'text-forest-800', 'hover:bg-forest-100');
-      this.classList.add('bg-forest-700', 'text-white', 'shadow-lg', 'shadow-forest-700/20');
+      inactiveClasses.forEach(function(c) { this.classList.remove(c); });
+      activeClasses.forEach(function(c) { this.classList.add(c); });
 
       contents.forEach(function(content) {
         content.classList.add('hidden');
