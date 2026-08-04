@@ -16,5 +16,5 @@ const dictionaries: Record<string, Record<string, string>> = {
 
 export function t(locale: Locale, key: string, fallback?: string): string {
   const dict = dictionaries[locale] || dictionaries.tr;
-  return dict[key] || dictionaries.en[key] || dictionaries.tr[key] || fallback || key;
+  return dict[key] || fallback || dictionaries.tr[key] || dictionaries.en[key] || key;
 }
