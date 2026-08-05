@@ -203,10 +203,13 @@ const initialCategory = nonEmptyCategories[0] || propsCategories[0];
       // 2. Tab Başlıklarının Karşı Çapraz Listesi (Sadece ürün barındıranlar eklenir)
       if (currentSelection.type === "category") {
         Object.keys(occasionsMap).forEach(function(slug) {
+          var occInfo = occasionsMap[slug];
           var hasProducts = productItems.some(function(item) {
             var catId = item.getAttribute("data-category-id");
             var occStr = item.getAttribute("data-occasions") || "[]";
-            return (catId === currentSelection.id && occStr.indexOf(slug) !== -1);
+            var isCat = (catId === currentSelection.id || catId === currentSelection.slug);
+            var isOcc = (occStr.indexOf(slug) !== -1 || occStr.indexOf(occInfo.id) !== -1);
+            return (isCat && isOcc);
           });
           if (!hasProducts) return;
 
@@ -230,10 +233,13 @@ const initialCategory = nonEmptyCategories[0] || propsCategories[0];
         });
       } else if (currentSelection.type === "occasion") {
         Object.keys(categoriesMap).forEach(function(catId) {
+          var catInfo = categoriesMap[catId];
           var hasProducts = productItems.some(function(item) {
             var cId = item.getAttribute("data-category-id");
             var occStr = item.getAttribute("data-occasions") || "[]";
-            return (cId === catId && occStr.indexOf(currentSelection.slug) !== -1);
+            var isCat = (cId === catId || cId === catInfo.slug);
+            var isOcc = (occStr.indexOf(currentSelection.slug) !== -1 || occStr.indexOf(currentSelection.id) !== -1);
+            return (isCat && isOcc);
           });
           if (!hasProducts) return;
 
@@ -287,21 +293,23 @@ const initialCategory = nonEmptyCategories[0] || propsCategories[0];
         var occArr = [];
         try { occArr = JSON.parse(occStr); } catch(e){}
 
-        // 1. Ana seçime uyuşma
+        // 1. Ana seçime (Parent Route) uyması
         var matchMain = false;
         if (currentSelection.type === "category") {
-          matchMain = (catId === currentSelection.id);
+          matchMain = (catId === currentSelection.id || catId === currentSelection.slug);
         } else if (currentSelection.type === "occasion") {
-          matchMain = (occArr.indexOf(currentSelection.slug) !== -1);
+          matchMain = (occArr.indexOf(currentSelection.slug) !== -1 || occArr.indexOf(currentSelection.id) !== -1);
         }
 
-        // 2. Alt Tab seçimiyle uyuşma
+        // 2. Alt Tab seçimi ile (Child Route) uyması
         var matchTab = true;
         if (activeTabId !== null) {
           if (currentSelection.type === "category") {
-            matchTab = (occArr.indexOf(activeTabId) !== -1);
+            var occObj = occasionsMap[activeTabId];
+            matchTab = (occArr.indexOf(activeTabId) !== -1 || (occObj && occArr.indexOf(occObj.id) !== -1));
           } else if (currentSelection.type === "occasion") {
-            matchTab = (catId === activeTabId);
+            var catObj = categoriesMap[activeTabId];
+            matchTab = (catId === activeTabId || (catObj && catId === catObj.slug));
           }
         }
 
