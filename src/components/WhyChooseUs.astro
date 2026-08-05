@@ -38,40 +38,40 @@ const features = [
 ];
 ---
 
-<section class="py-16 lg:py-24 bg-gradient-to-b from-white via-neutral-50/40 to-white overflow-hidden border-b border-neutral-100/70">
+<section class="py-8 sm:py-16 lg:py-24 bg-gradient-to-b from-white via-neutral-50/40 to-white overflow-hidden border-b border-neutral-100/70">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="text-center max-w-2xl mx-auto mb-12 lg:mb-16">
-      <span class="inline-block text-[11px] font-bold tracking-widest uppercase text-forest-600 px-3 py-1 rounded-full bg-forest-50 border border-forest-100 mb-3">
+    <div class="text-center max-w-2xl mx-auto mb-6 sm:mb-12 lg:mb-16">
+      <span class="inline-block text-[11px] font-bold tracking-widest uppercase text-forest-600 px-3 py-1 rounded-full bg-forest-50 border border-forest-100 mb-2 sm:mb-3">
         {t(locale, "ui.why_choose_tag", "GÜVENCE & KALİTE")}
       </span>
-      <h2 class="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-neutral-900 tracking-tight">
+      <h2 class="text-xl sm:text-3xl lg:text-4xl font-display font-bold text-neutral-900 tracking-tight">
         {t(locale, "ui.why_choose_title", "Neden Antalya Çiçek Evni?")}
       </h2>
-      <p class="text-neutral-500 text-xs sm:text-sm lg:text-base mt-3 font-normal">
+      <p class="text-neutral-500 text-xs sm:text-sm lg:text-base mt-2 sm:mt-3 font-normal">
         {t(locale, "ui.why_choose_subtitle", "Modern tasarım anlayışı, VIP hız ve her adımda Apple/Stripe netliğinde prestijli müşteri deneyimi.")}
       </p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 lg:gap-6">
       {features.map((item, idx) => (
-        <div class={`group/card rounded-2xl bg-white border border-neutral-200/60 p-6 sm:p-7 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.04)] hover:shadow-[0_16px_36px_-6px_rgba(0,0,0,0.09)] transition-all duration-300 hover:border-neutral-300/80 hover:-translate-y-1 flex flex-col justify-between ${idx === 4 ? 'md:col-span-2 lg:col-span-1' : ''}`}>
+        <div class={`group/card rounded-2xl bg-white border border-neutral-200/60 p-4 sm:p-7 shadow-[0_2px_14px_-4px_rgba(0,0,0,0.03)] sm:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_30px_-6px_rgba(0,0,0,0.08)] transition-all duration-200 hover:border-neutral-300/80 hover:-translate-y-0.5 sm:hover:-translate-y-1 flex flex-col justify-between ${idx === 4 ? 'md:col-span-2 lg:col-span-1' : ''}`}>
           <div>
-            <div class="flex items-center justify-between gap-3 mb-5">
-              <div class="w-12 h-12 rounded-xl bg-neutral-50 border border-neutral-100 flex items-center justify-center transition-transform duration-300 group-hover/card:scale-110 shadow-sm">
+            <div class="flex items-center justify-between gap-2 sm:gap-3 mb-2.5 sm:mb-5">
+              <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-neutral-50 border border-neutral-100 flex items-center justify-center transition-transform duration-200 group-hover/card:scale-105 shadow-xs">
                 <div set:html={item.icon} />
               </div>
-              <span class="text-[11px] font-semibold tracking-wide text-neutral-500 bg-neutral-100/80 px-2.5 py-1 rounded-md border border-neutral-200/40">
+              <span class="text-[10px] sm:text-[11px] font-semibold tracking-wide text-neutral-500 bg-neutral-100/80 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md border border-neutral-200/40">
                 {item.badge}
               </span>
             </div>
-            <h3 class="text-base sm:text-lg font-bold text-neutral-900 mb-2 tracking-tight group-hover/card:text-forest-700 transition-colors duration-200">
+            <h3 class="text-[15px] sm:text-lg font-bold text-neutral-900 mb-1 sm:mb-2 tracking-tight group-hover/card:text-forest-700 transition-colors duration-200">
               {item.title}
             </h3>
-            <p class="text-neutral-500 text-xs sm:text-sm leading-relaxed font-normal">
+            <p class="text-neutral-500 text-xs sm:text-sm leading-snug sm:leading-relaxed font-normal">
               {item.desc}
             </p>
           </div>
-          <div class="w-8 h-0.5 bg-neutral-200 group-hover/card:bg-forest-500 transition-all duration-300 mt-6 rounded-full group-hover/card:w-12"></div>
+          <div class="w-8 h-0.5 bg-neutral-200 group-hover/card:bg-forest-500 transition-all duration-200 mt-3 sm:mt-6 rounded-full group-hover/card:w-12"></div>
         </div>
       ))}
     </div>

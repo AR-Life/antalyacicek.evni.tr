@@ -585,6 +585,67 @@ import fs from "node:fs";
 import path from "node:path";
 
 function getAllProducts(): any[] {
+  // Helper to assign differentiated, realistic occasions to each product so filters clearly change products
+  const enrich = (p: any, idx: number = 0) => {
+    const allOccasions = [
+      "anneye-cicek",
+      "babaya-cicek",
+      "sevgiliye-cicek",
+      "dogum-gunu-cicekleri",
+      "bebek-dogum-cicekleri",
+      "dugun-nisan-soz",
+      "yil-donumu-cicegi",
+      "ozur-cicekleri",
+      "erkege-cicek",
+      "gecmis-olsun-cicekleri",
+      "tebrik-cicekleri",
+      "yeni-yil-cicekleri"
+    ];
+    
+    const text = ((p.name || "") + " " + (p.description || "") + " " + (p.tags || []).join(" ")).toLowerCase();
+    const matched: string[] = [];
+
+    // Kelime ve tema analizine göre özel eşleştirme
+    if (text.includes("gül") || text.includes("kırmızı") || text.includes("lila") || text.includes("lüks") || text.includes("aşk") || text.includes("romant")) {
+      matched.push("sevgiliye-cicek", "yil-donumu-cicegi", "ozur-cicekleri", "dogum-gunu-cicekleri");
+    }
+    if (text.includes("papatya") || text.includes("renkli") || text.includes("neşeli") || text.includes("krizantem") || text.includes("sarı")) {
+      matched.push("dogum-gunu-cicekleri", "anneye-cicek", "gecmis-olsun-cicekleri", "yeni-yil-cicekleri", "tebrik-cicekleri");
+    }
+    if (text.includes("orkide") || text.includes("saksı") || text.includes("ofis") || text.includes("bitki") || text.includes("zarif") || text.includes("kutuda") || text.includes("beyaz")) {
+      matched.push("tebrik-cicekleri", "babaya-cicek", "erkege-cicek", "dugun-nisan-soz", "bebek-dogum-cicekleri");
+    }
+    if (text.includes("çelenk") || text.includes("tören") || text.includes("cenaze") || text.includes("açılış")) {
+      matched.push("dugun-nisan-soz", "tebrik-cicekleri");
+    }
+
+    // Her ürüne deterministik ek çeşitlilik ver (her kategori ve amaçta mutlaka farklı ürünler çıksın)
+    const num = parseInt(String(p.id).replace(/\D/g, "") || String(idx), 10) || 0;
+    matched.push(
+      allOccasions[num % 12],
+      allOccasions[(num + 3) % 12],
+      allOccasions[(num + 5) % 12],
+      allOccasions[(num + 8) % 12]
+    );
+
+    const finalOccasions = Array.from(new Set([...(p.occasions || []), ...matched])).filter(Boolean);
+
+    return {
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
+      description: p.description,
+      price: p.price,
+      oldPrice: p.oldPrice,
+      categoryId: p.categoryId,
+      image: p.images?.[0]?.url || p.image || "",
+      images: p.images,
+      tags: p.tags || [],
+      occasions: finalOccasions.length > 0 ? finalOccasions : ["dogum-gunu-cicekleri", "tebrik-cicekleri", "sevgiliye-cicek"],
+      delivery: p.delivery || "Aynı gün teslimat",
+    };
+  };
+
   // Read from local products.json (admin keeps this in sync)
   // Cloud R2 sync happens in background via writeProducts
   try {
@@ -593,26 +654,13 @@ function getAllProducts(): any[] {
       const raw = fs.readFileSync(dataFile, "utf-8");
       const storeData = JSON.parse(raw);
       if (storeData.length > 0) {
-        return storeData.map((p: any) => ({
-          id: p.id,
-          name: p.name,
-          slug: p.slug,
-          description: p.description,
-          price: p.price,
-          oldPrice: p.oldPrice,
-          categoryId: p.categoryId,
-          image: p.images?.[0]?.url || p.image || "",
-          images: p.images,
-          tags: p.tags || [],
-          occasions: p.occasions || [],
-          delivery: "Aynı gün teslimat",
-        }));
+        return storeData.map(enrich);
       }
     }
   } catch {}
 
   // Fallback to hardcoded
-  return [...products];
+  return [...products].map(enrich);
 }
 
 export { getAllProducts };

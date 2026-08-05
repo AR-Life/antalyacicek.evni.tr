@@ -88,11 +88,11 @@ const outlineIcons: Record<string, string> = {
 };
 ---
 
-<div class="flex flex-col gap-9 py-4">
+<div class="flex flex-col gap-5 sm:gap-9 py-1.5 sm:py-4">
   <!-- Row 1: Çiçek Türleri (Sola akıcı) -->
   <div class="relative">
     <h3
-      class="text-xs lg:text-sm font-bold text-forest-700 uppercase tracking-widest mb-2 px-3 flex items-center gap-2"
+      class="text-xs lg:text-sm font-bold text-forest-700 uppercase tracking-widest mb-1 sm:mb-2 px-3 flex items-center gap-2"
     >
       <span class="text-forest-600">
         <svg
@@ -128,7 +128,11 @@ const outlineIcons: Record<string, string> = {
                     : "/images/placeholder.svg";
                 return (
                   <a
-                    href={`#cat-${category.slug}`}
+                    href={`#collection-cat-${category.id}`}
+                    data-marquee-type="category"
+                    data-marquee-id={category.id}
+                    data-marquee-slug={category.slug}
+                    data-marquee-name={category.name}
                     class="shrink-0 flex flex-col items-center gap-2.5 group/item transition-transform duration-300 hover:-translate-y-1"
                   >
                     <div
@@ -163,7 +167,7 @@ const outlineIcons: Record<string, string> = {
   <!-- Row 2: Gönderim Amacı (Sağa akıcı / reverse) -->
   <div class="relative">
     <h3
-      class="text-xs lg:text-sm font-bold text-amber-700/90 uppercase tracking-widest mb-2 px-3 flex items-center gap-2"
+      class="text-xs lg:text-sm font-bold text-amber-700/90 uppercase tracking-widest mb-1 sm:mb-2 px-3 flex items-center gap-2"
     >
       <span class="text-amber-600/90">
         <svg
@@ -198,7 +202,11 @@ const outlineIcons: Record<string, string> = {
                   outlineIcons[occasion.slug] || outlineIcons["default"];
                 return (
                   <a
-                    href={`/firsatlar/${occasion.slug}`}
+                    href={`#collection-occ-${occasion.slug}`}
+                    data-marquee-type="occasion"
+                    data-marquee-id={occasion.id}
+                    data-marquee-slug={occasion.slug}
+                    data-marquee-name={occasion.name}
                     class="shrink-0 flex flex-col items-center gap-2.5 group/item transition-transform duration-300 hover:-translate-y-1"
                   >
                     <div
@@ -255,9 +263,6 @@ const outlineIcons: Record<string, string> = {
     cursor: grabbing !important;
     cursor: -webkit-grabbing !important;
     scroll-behavior: auto !important;
-  }
-  .marquee-scroller.is-dragging * {
-    pointer-events: none !important;
   }
 </style>
 
@@ -376,7 +381,6 @@ const outlineIcons: Record<string, string> = {
           isDragging = true;
           isPaused = true;
           hasDragged = false;
-          scroller.classList.add("is-dragging");
           startX = e.pageX - scroller.offsetLeft;
           startScrollLeft = scroller.scrollLeft;
         });
@@ -386,7 +390,10 @@ const outlineIcons: Record<string, string> = {
           e.preventDefault();
           var x = e.pageX - scroller.offsetLeft;
           var walk = (x - startX) * 1.5;
-          if (Math.abs(walk) > 5) hasDragged = true;
+          if (Math.abs(walk) > 15) {
+            hasDragged = true;
+            scroller.classList.add("is-dragging");
+          }
           scroller.scrollLeft = startScrollLeft - walk;
         });
 
@@ -399,7 +406,7 @@ const outlineIcons: Record<string, string> = {
 
         window.addEventListener("mouseup", stopDrag);
 
-        // Sürükleme sonrası linke gitmeyi kesin engelle
+        // Sürükleme sonrası linke gitmeyi engelle ve tab sistemini anında tetikle
         scroller.addEventListener(
           "click",
           function (e) {
@@ -407,6 +414,12 @@ const outlineIcons: Record<string, string> = {
               e.preventDefault();
               e.stopPropagation();
               hasDragged = false;
+              return;
+            }
+            var link = e.target.closest('a[data-marquee-type]');
+            if (link) {
+              e.preventDefault();
+              triggerMarqueeNavigation(link);
             }
           },
           true,
@@ -416,6 +429,50 @@ const outlineIcons: Record<string, string> = {
           e.preventDefault();
         });
       });
+
+    function triggerMarqueeNavigation(link) {
+      var type = link.getAttribute('data-marquee-type');
+      var id = link.getAttribute('data-marquee-id');
+      var slug = link.getAttribute('data-marquee-slug');
+      var name = link.getAttribute('data-marquee-name');
+      var href = link.getAttribute('href');
+      
+      if (href && href.startsWith('#')) {
+        if (window.history && window.history.pushState) {
+          window.history.pushState(null, null, href);
+        } else {
+          window.location.hash = href;
+        }
+      }
+
+      var payload = { type: type, id: id, slug: slug, name: name };
+      if (typeof window.switchCollectionTab === "function") {
+        window.switchCollectionTab(payload);
+      }
+      window.dispatchEvent(new CustomEvent('select-marquee-filter', { detail: payload }));
+      window.dispatchEvent(new Event('hashchange'));
+
+      // CategoryTabs (koleksiyon-listesi) bölümüne anında ve pürüzsüz kaydır!
+      var targetEl = document.getElementById('koleksiyon-listesi');
+      if (targetEl) {
+        try {
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch(err) {
+          var offset = targetEl.getBoundingClientRect().top + window.pageYOffset - 80;
+          window.scrollTo({ top: offset, behavior: 'smooth' });
+        }
+      }
+    }
+
+    // Doğrudan tüm butonlara kesin tetikleyici ekle (sarsılmaz garanti)
+    document.querySelectorAll('a[data-marquee-type]').forEach(function(btn) {
+      if (btn.dataset.clickInit) return;
+      btn.dataset.clickInit = "true";
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        triggerMarqueeNavigation(this);
+      });
+    });
   }
 
   document.addEventListener("DOMContentLoaded", initInteractiveMarquees);

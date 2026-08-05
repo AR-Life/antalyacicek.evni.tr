@@ -10,7 +10,7 @@ const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
   href={`https://wa.me/${SITE.phoneDigits}?text=Merhaba, yardımcı olabilir misiniz?`}
   target="_blank"
   rel="noopener noreferrer"
-  class="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-5 py-3.5 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-full shadow-xl shadow-green-500/30 hover:shadow-2xl hover:shadow-green-500/40 transition-all duration-300 group"
+  class="flex fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 items-center gap-2.5 px-4 py-3 sm:px-5 sm:py-3.5 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-full shadow-xl shadow-green-500/30 hover:shadow-2xl hover:shadow-green-500/40 transition-all duration-300 group"
   aria-label={t(locale, "ui.whatsapp_contact", "WhatsApp ile iletişim")}
 >
   <svg class="w-5 h-5 group-hover:scale-110 transition-transform duration-300" viewBox="0 0 24 24" fill="currentColor">

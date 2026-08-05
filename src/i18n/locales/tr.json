@@ -295,5 +295,9 @@
   "ui.discount": "%İndirim",
   "ui.previous": "Önceki",
   "ui.next": "Sonraki",
-  "ui.category_empty": "Bu kategoride henüz ürün yok."
+  "ui.category_empty": "Bu kategoride henüz ürün yok.",
+  "ui.filter_all": "Tümü",
+  "ui.filter_by_occasion": "Gönderim Amacına Göre Daralt:",
+  "ui.filter_by_type": "Çiçek Türüne Göre Daralt:",
+  "ui.no_matching_filter": "Seçtiğiniz kriterlere uygun ürün bulunamadı."
 }

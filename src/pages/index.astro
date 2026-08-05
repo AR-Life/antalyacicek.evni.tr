@@ -22,13 +22,13 @@ const featuredProducts = allProducts.slice(0, 8);
 <BaseLayout>
   <HeroSection />
 
-  <section id="kategoriler" class="py-10 lg:py-14 bg-gradient-to-b from-white to-neutral-50/50 overflow-hidden border-b border-neutral-100/80">
+  <section id="kategoriler" class="py-6 sm:py-10 lg:py-14 bg-gradient-to-b from-white to-neutral-50/50 overflow-hidden border-b border-neutral-100/80">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-6 lg:mb-8">
+      <div class="text-center mb-4 sm:mb-6 lg:mb-8">
         <span class="inline-block text-[11px] font-bold tracking-widest uppercase text-forest-600 px-3 py-1 rounded-full bg-forest-50 border border-forest-100 mb-2">
           {t(locale, "ui.categories_tag", "BUTİK KOLEKSİYONLAR")}
         </span>
-        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-2 tracking-tight">
+        <h2 class="text-xl sm:text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-1.5 sm:mb-2 tracking-tight">
           {t(locale, "ui.categories_title", "Kategoriler")}
         </h2>
         <p class="text-neutral-500 max-w-xl mx-auto text-xs sm:text-sm lg:text-base font-normal">
@@ -40,37 +40,37 @@ const featuredProducts = allProducts.slice(0, 8);
     </div>
   </section>
 
-  <WhyChooseUs />
-
   <CategoryTabs categories={categories} />
 
-  <section id="one-cikanlar" class="py-16 lg:py-24 bg-[#FAFBF9] border-y border-neutral-200/60 shadow-inner">
+  <WhyChooseUs />
+
+  <section id="one-cikanlar" class="py-8 sm:py-16 lg:py-24 bg-[#FAFBF9] border-y border-neutral-200/60 shadow-inner">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-10 lg:mb-14">
-        <span class="inline-block text-[11px] uppercase tracking-widest text-forest-700 font-bold mb-2 bg-forest-100/70 px-3 py-1 rounded-full border border-forest-200/60">
+      <div class="text-center mb-6 sm:mb-10 lg:mb-14">
+        <span class="inline-block text-[11px] uppercase tracking-widest text-forest-700 font-bold mb-1.5 sm:mb-2 bg-forest-100/70 px-3 py-1 rounded-full border border-forest-200/60">
           {t(locale, "ui.most_preferred", "En Çok Tercih Edilenler")}
         </span>
-        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-3 tracking-tight">
+        <h2 class="text-xl sm:text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-2 sm:mb-3 tracking-tight">
           {t(locale, "ui.featured_products", "Öne Çıkan Ürünler")}
         </h2>
-        <p class="text-neutral-500 max-w-xl mx-auto text-sm lg:text-base">
+        <p class="text-neutral-500 max-w-xl mx-auto text-xs sm:text-sm lg:text-base">
           {t(locale, "ui.featured_products_subtitle", "Müşterilerimizin en çok beğendiği çiçek aranjmanları")}
         </p>
       </div>
 
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-6">
         {featuredProducts.map((product) => (
           <ProductCard product={product} />
         ))}
       </div>
 
-      <div class="text-center mt-10 lg:mt-14">
+      <div class="text-center mt-6 sm:mt-10 lg:mt-14">
         <a
           href="/cicekler"
-          class="inline-flex items-center gap-2 px-8 py-4 bg-forest-700 hover:bg-forest-800 text-white font-semibold rounded-full transition-all duration-300 shadow-lg shadow-forest-700/20 hover:shadow-xl hover:shadow-forest-700/30 hover:-translate-y-0.5"
+          class="inline-flex items-center justify-center gap-2 px-8 py-3.5 min-h-[46px] bg-forest-700 hover:bg-forest-800 text-white text-sm sm:text-base font-bold rounded-full transition-all duration-200 shadow-lg shadow-forest-700/20 hover:shadow-xl hover:-translate-y-0.5 active:scale-95"
         >
           {t(locale, "ui.view_all_products", "Tüm Ürünleri Gör")}
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
           </svg>
         </a>
@@ -80,25 +80,31 @@ const featuredProducts = allProducts.slice(0, 8);
 
   <Steps />
 
-  <section class="py-16 lg:py-24 bg-gradient-to-br from-forest-50 via-white to-rose-50/30">
+  <section class="py-10 sm:py-16 lg:py-24 bg-gradient-to-br from-forest-50 via-white to-rose-50/30">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-      <h2 class="text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-4">
+      <h2 class="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-2 sm:mb-4 tracking-tight">
         {t(locale, "ui.order_now_title", "Siparişinizi Hemen Verin")}
       </h2>
-      <p class="text-neutral-500 max-w-xl mx-auto mb-8 text-sm lg:text-base">
+      <p class="text-neutral-500 max-w-xl mx-auto mb-6 sm:mb-8 text-xs sm:text-base">
         {t(locale, "ui.order_now_subtitle", "WhatsApp üzerinden siparişinizi iletin, çiçekleriniz aynı gün kapınızda olsun.")}
       </p>
-      <a
-        href={`https://wa.me/${contactInfo.whatsapp}?text=${encodeURIComponent(contactInfo.whatsappMessage)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="inline-flex items-center gap-2.5 px-8 py-4 bg-green-500 hover:bg-green-600 text-white text-base font-semibold rounded-full transition-all duration-300 shadow-xl shadow-green-500/25 hover:shadow-2xl hover:shadow-green-500/30 hover:-translate-y-1"
-      >
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
-        </svg>
-        {t(locale, "ui.order_via_whatsapp_button", "WhatsApp ile Sipariş Ver")}
-      </a>
+      <div class="flex flex-col items-center justify-center gap-2 mt-2">
+        <a
+          href={`https://wa.me/${contactInfo.whatsapp}?text=${encodeURIComponent(contactInfo.whatsappMessage)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="w-full max-w-[310px] sm:max-w-[360px] min-h-[52px] inline-flex items-center justify-center gap-2.5 px-7 py-4 bg-[#25D366] hover:bg-[#20bd5a] text-white text-base sm:text-lg font-black tracking-wide rounded-full transition-all duration-200 shadow-xl shadow-[#25D366]/30 hover:shadow-2xl hover:-translate-y-0.5 active:scale-[0.98]"
+        >
+          <svg class="w-6 h-6 shrink-0 fill-current" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+          </svg>
+          {t(locale, "ui.order_via_whatsapp_button", "WhatsApp ile Sipariş Ver")}
+        </a>
+        <div class="inline-flex items-center gap-1.5 text-xs sm:text-sm text-neutral-500 font-medium pt-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>⚡ {t(locale, "ui.wa_response_time", "Ortalama yanıt süresi: 2 dakikanın altında")}</span>
+        </div>
+      </div>
     </div>
   </section>
 </BaseLayout>

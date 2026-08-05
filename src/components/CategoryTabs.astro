@@ -1,6 +1,7 @@
 ---
 import type { Category } from "../data/categories";
-import { getProductsByCategory } from "../data/products";
+import { occasions } from "../data/occasions";
+import { getAllProducts, type Product } from "../data/products";
 import ProductCard from "./ProductCard.astro";
 import { type Locale } from "../i18n/config";
 import { t } from "../i18n/translations";
@@ -10,85 +11,405 @@ interface Props {
   locale?: Locale;
 }
 
-const { categories, locale = (Astro.locals.locale as Locale) || "tr" } = Astro.props;
-const nonEmptyCategories = categories.filter((c) => getProductsByCategory(c.id).length > 0);
+const { categories: propsCategories, locale = (Astro.locals.locale as Locale) || "tr" } = Astro.props;
+
+// Tüm ürünleri çek (zenginleştirilmiş occasions ve taglar ile)
+const allProducts: Product[] = getAllProducts();
+
+// Boş Olmayan Kategoriler
+const nonEmptyCategories = propsCategories.filter(
+  (c) => allProducts.some((p) => p.categoryId === c.id)
+);
+
+// İstemci tarafı (JS) için tam lookup haritaları (JSON)
+const categoriesMap = propsCategories.reduce((acc, cat) => {
+  acc[cat.id] = { name: t(locale, `category.${cat.id}`, cat.name), slug: cat.slug, id: cat.id };
+  return acc;
+}, {} as Record<string, { name: string; slug: string; id: string }>);
+
+const occasionsMap = occasions.reduce((acc, occ) => {
+  acc[occ.slug] = { name: occ.name, icon: occ.icon, id: occ.id, slug: occ.slug };
+  return acc;
+}, {} as Record<string, { name: string; icon: string; id: string; slug: string }>);
+
+// Varsayılan olarak başlangıçta ilk çiçek kategorisini seçiyoruz
+const initialCategory = nonEmptyCategories[0] || propsCategories[0];
 ---
 
-<section class="py-12 lg:py-16 bg-white">
+<section id="koleksiyon-listesi" class="py-10 sm:py-16 lg:py-20 bg-white min-h-[600px] scroll-mt-20">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-8 lg:mb-10">
-      <h2 class="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-2 tracking-tight">
-        {t(locale, "ui.category", "Kategoriler")}
+    
+    <!-- Başlık Alanı -->
+    <div class="text-center mb-6 sm:mb-8 transition-all duration-300">
+      <span id="listing-badge" class="inline-block text-[11px] font-bold tracking-widest uppercase text-forest-600 px-3 py-1 rounded-full bg-forest-50 border border-forest-100 mb-2 shadow-xs">
+        {t(locale, "ui.categories_tag", "KATEGORİ KOLEKSİYONU")}
+      </span>
+      <h2 id="listing-title" class="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-2 tracking-tight transition-colors duration-200">
+        {t(locale, `category.${initialCategory.id}`, initialCategory.name)}
       </h2>
-      <p class="text-neutral-500 max-w-xl mx-auto text-xs sm:text-sm lg:text-base font-normal">
-        {t(locale, "ui.collection_desc", "Her kategoriye özel en taze çiçekler ve aranjmanlar")}
+      <p id="listing-subtitle" class="text-neutral-500 max-w-xl mx-auto text-xs sm:text-sm lg:text-base font-normal">
+        {t(locale, "ui.collection_desc", "Seçtiğiniz başlığa özel en taze çiçekler ve butik aranjmanlar")}
       </p>
     </div>
 
-    <div class="flex flex-wrap justify-center gap-2 sm:gap-2.5 mb-8 lg:mb-12" id="category-tabs">
-      {nonEmptyCategories.map((category, index) => (
-        <button
-          type="button"
-          data-tab={category.slug}
-          class={`tab-btn px-5 py-2.5 rounded-full text-xs sm:text-sm transition-all duration-200 ${
-            index === 0
-              ? 'bg-forest-800 text-white font-bold ring-2 ring-forest-600/30 shadow-[0_4px_16px_rgba(20,50,40,0.22)] scale-[1.02] -translate-y-0.5'
-              : 'bg-neutral-100/80 border border-neutral-200/60 text-neutral-600 font-medium hover:bg-white hover:border-neutral-300 hover:text-neutral-900 hover:shadow-xs'
-          }`}
+    <!-- Dinamik Sekmeler (Kaydırmalı Tab Bar) -->
+    <div class="relative max-w-7xl mx-auto mb-8 sm:mb-12">
+      <!-- Kenar Yumuşatma (Fade) Gölgeleri -->
+      <div class="pointer-events-none absolute left-0 top-0 bottom-0 w-6 sm:w-10 bg-gradient-to-r from-white to-transparent z-10"></div>
+      <div class="pointer-events-none absolute right-0 top-0 bottom-0 w-6 sm:w-10 bg-gradient-to-l from-white to-transparent z-10"></div>
+
+      <!-- Kaydırmalı ve ortalamalı tab alanı -->
+      <div 
+        class="flex flex-nowrap items-center gap-2 sm:gap-2.5 overflow-x-auto w-fit max-w-full mx-auto py-2.5 px-6 sm:px-10 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [-webkit-overflow-scrolling:touch] select-none" 
+        id="dynamic-tabs" 
+        role="tablist"
+        aria-label="Koleksiyon Alt Sekmeleri"
+      >
+        <!-- İstemci (JS) tarafında doldurulacak -->
+      </div>
+    </div>
+
+    <!-- Ürün TabPanel ve Grid Alanı -->
+    <div 
+      id="product-grid" 
+      role="tabpanel"
+      class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-5 lg:gap-6 min-h-[380px]"
+    >
+      {allProducts.map((product) => (
+        <div
+          class="product-item transition-all duration-300 ease-out"
+          data-category-id={product.categoryId}
+          data-occasions={JSON.stringify(product.occasions || [])}
         >
-          {t(locale, `category.${category.id}`, category.name)}
-        </button>
+          <ProductCard product={product} locale={locale} />
+        </div>
       ))}
     </div>
 
-    <div id="category-content" class="min-h-[400px]">
-      {nonEmptyCategories.map((category, index) => {
-        const products = getProductsByCategory(category.id).slice(0, 8);
-        return (
-          <div
-            id={`tab-${category.slug}`}
-            class={`tab-content ${index === 0 ? 'block' : 'hidden'}`}
-          >
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
-              {products.map((product) => (
-                <ProductCard product={product} locale={locale} />
-              ))}
-            </div>
-          </div>
-        );
-      })}
+    <!-- Hiçbir ürün çıkmaması durumunda geri dönüş alanı -->
+    <div id="no-results" class="hidden text-center py-14 sm:py-20 bg-neutral-50 rounded-3xl border border-neutral-200/60 max-w-2xl mx-auto my-6 shadow-xs">
+      <div class="text-4xl sm:text-5xl mb-3 animate-bounce">🌿</div>
+      <h3 class="text-base sm:text-lg font-bold text-neutral-900 mb-1.5">
+        {t(locale, "ui.no_matching_filter", "Seçilen sekmeye uygun ürün bulunamadı.")}
+      </h3>
+      <p class="text-xs sm:text-sm text-neutral-500 mb-5 max-w-sm mx-auto">
+        {t(locale, "ui.try_another_filter", "Lütfen diğer sekmeleri inceleyerek devam ediniz.")}
+      </p>
+      <button
+        type="button"
+        id="reset-tabs-btn"
+        class="px-6 py-3 bg-forest-700 hover:bg-forest-800 text-white text-xs sm:text-sm font-bold rounded-full transition-all duration-200 shadow-lg shadow-forest-700/20 active:scale-95"
+      >
+        {t(locale, "ui.filter_all", "Tümü")} - Tümünü Göster
+      </button>
     </div>
+
   </div>
 </section>
 
-<script is:inline>
+<script is:inline define:vars={{
+  categoriesMap,
+  occasionsMap,
+  initialCategory,
+  textAll: t(locale, "ui.filter_all", "Tümü"),
+  textCategoryBadge: t(locale, "ui.categories_tag", "KATEGORİ KOLEKSİYONU"),
+  textOccasionBadge: "GÖNDERİM AMACI KOLEKSİYONU"
+}}>
 (function() {
-  var tabs = document.querySelectorAll('.tab-btn');
-  var contents = document.querySelectorAll('.tab-content');
-  var activeClasses = ['bg-forest-800', 'text-white', 'font-bold', 'ring-2', 'ring-forest-600/30', 'shadow-[0_4px_16px_rgba(20,50,40,0.22)]', 'scale-[1.02]', '-translate-y-0.5'];
-  var inactiveClasses = ['bg-neutral-100/80', 'border', 'border-neutral-200/60', 'text-neutral-600', 'font-medium', 'hover:bg-white', 'hover:border-neutral-300', 'hover:text-neutral-900', 'hover:shadow-xs'];
+  function initTabSystem() {
+    var section = document.getElementById("koleksiyon-listesi");
+    if (!section) return;
 
-  tabs.forEach(function(tab) {
-    tab.addEventListener('click', function() {
-      var targetSlug = this.getAttribute('data-tab');
+    var badgeEl = document.getElementById("listing-badge");
+    var titleEl = document.getElementById("listing-title");
+    var tabsContainer = document.getElementById("dynamic-tabs");
+    var productItems = Array.from(document.querySelectorAll(".product-item"));
+    var noResultsEl = document.getElementById("no-results");
+    var resetBtn = document.getElementById("reset-tabs-btn");
 
-      tabs.forEach(function(t) {
-        activeClasses.forEach(function(c) { t.classList.remove(c); });
-        inactiveClasses.forEach(function(c) { t.classList.add(c); });
+    // Apple / Stripe tadında Tab stilleri (Aktif vs Pasif)
+    var activeTabClasses = [
+      "bg-forest-800", "text-white", "font-bold", "ring-2", "ring-forest-600/30", 
+      "shadow-[0_4px_16px_rgba(20,50,40,0.22)]", "scale-[1.02]", "-translate-y-0.5", "is-active"
+    ];
+    var inactiveTabClasses = [
+      "bg-neutral-100/80", "border", "border-neutral-200/60", "text-neutral-600", 
+      "font-medium", "hover:bg-white", "hover:border-neutral-300", "hover:text-neutral-900", "hover:shadow-xs"
+    ];
+    
+    var tabBtnClass = "shrink-0 whitespace-nowrap px-4 py-2 sm:px-5 sm:py-2.5 min-h-[42px] rounded-full text-xs sm:text-sm transition-all duration-200 flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer select-none";
+
+    // Masaüstü fare ile sürükleyerek kaydırma desteği (Touch scroll zaten aktif)
+    var isDraggingTab = false;
+    var tabStartX = 0;
+    var tabScrollLeft = 0;
+    if (tabsContainer && !tabsContainer.dataset.dragInit) {
+      tabsContainer.dataset.dragInit = "true";
+      tabsContainer.addEventListener("mousedown", function(e) {
+        isDraggingTab = true;
+        tabStartX = e.pageX - tabsContainer.offsetLeft;
+        tabScrollLeft = tabsContainer.scrollLeft;
+        tabsContainer.style.cursor = "grabbing";
       });
-      inactiveClasses.forEach(function(c) { this.classList.remove(c); });
-      activeClasses.forEach(function(c) { this.classList.add(c); });
-
-      contents.forEach(function(content) {
-        content.classList.add('hidden');
-        content.classList.remove('block');
+      tabsContainer.addEventListener("mouseleave", function() {
+        isDraggingTab = false;
+        tabsContainer.style.cursor = "";
       });
-      var targetContent = document.getElementById('tab-' + targetSlug);
-      if (targetContent) {
-        targetContent.classList.remove('hidden');
-        targetContent.classList.add('block');
+      tabsContainer.addEventListener("mouseup", function() {
+        isDraggingTab = false;
+        tabsContainer.style.cursor = "";
+      });
+      tabsContainer.addEventListener("mousemove", function(e) {
+        if (!isDraggingTab) return;
+        e.preventDefault();
+        var x = e.pageX - tabsContainer.offsetLeft;
+        var walk = (x - tabStartX) * 1.5;
+        tabsContainer.scrollLeft = tabScrollLeft - walk;
+      });
+    }
+
+    // Aktif Ana Seçim (Marquee'den gelen başlık)
+    var currentSelection = {
+      type: "category",
+      id: initialCategory ? initialCategory.id : "cat-28",
+      slug: initialCategory ? initialCategory.slug : "premium-buketler",
+      name: initialCategory ? initialCategory.name : "Premium Buketler"
+    };
+    
+    // Aktif alt sekme (null = Tümü tabı)
+    var activeTabId = null;
+
+    function buildTabs() {
+      if (!tabsContainer) return;
+      tabsContainer.innerHTML = "";
+
+      // 1. "Tümü" Sekmesi
+      var allTab = document.createElement("button");
+      allTab.type = "button";
+      allTab.setAttribute("role", "tab");
+      allTab.setAttribute("data-tab-id", "all");
+      allTab.className = tabBtnClass;
+      allTab.innerHTML = "✨ " + textAll;
+      applyTabStyles(allTab, activeTabId === null);
+      
+      allTab.addEventListener("click", function() {
+        activeTabId = null;
+        syncTabStyles();
+        filterProducts();
+        try { allTab.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" }); } catch(e){}
+      });
+      tabsContainer.appendChild(allTab);
+
+      // 2. Tab Başlıklarının Karşı Çapraz Listesi (Sadece ürün barındıranlar eklenir)
+      if (currentSelection.type === "category") {
+        Object.keys(occasionsMap).forEach(function(slug) {
+          var hasProducts = productItems.some(function(item) {
+            var catId = item.getAttribute("data-category-id");
+            var occStr = item.getAttribute("data-occasions") || "[]";
+            return (catId === currentSelection.id && occStr.indexOf(slug) !== -1);
+          });
+          if (!hasProducts) return;
+
+          var info = occasionsMap[slug];
+          var tabBtn = document.createElement("button");
+          tabBtn.type = "button";
+          tabBtn.setAttribute("role", "tab");
+          tabBtn.setAttribute("data-tab-id", slug);
+          tabBtn.className = tabBtnClass;
+          tabBtn.innerHTML = (info.icon ? "<span>" + info.icon + "</span> " : "") + info.name;
+          
+          applyTabStyles(tabBtn, activeTabId === slug);
+
+          tabBtn.addEventListener("click", function() {
+            activeTabId = slug;
+            syncTabStyles();
+            filterProducts();
+            try { tabBtn.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" }); } catch(e){}
+          });
+          tabsContainer.appendChild(tabBtn);
+        });
+      } else if (currentSelection.type === "occasion") {
+        Object.keys(categoriesMap).forEach(function(catId) {
+          var hasProducts = productItems.some(function(item) {
+            var cId = item.getAttribute("data-category-id");
+            var occStr = item.getAttribute("data-occasions") || "[]";
+            return (cId === catId && occStr.indexOf(currentSelection.slug) !== -1);
+          });
+          if (!hasProducts) return;
+
+          var info = categoriesMap[catId];
+          var tabBtn = document.createElement("button");
+          tabBtn.type = "button";
+          tabBtn.setAttribute("role", "tab");
+          tabBtn.setAttribute("data-tab-id", catId);
+          tabBtn.className = tabBtnClass;
+          tabBtn.innerHTML = "💐 " + info.name;
+          
+          applyTabStyles(tabBtn, activeTabId === catId);
+
+          tabBtn.addEventListener("click", function() {
+            activeTabId = catId;
+            syncTabStyles();
+            filterProducts();
+            try { tabBtn.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" }); } catch(e){}
+          });
+          tabsContainer.appendChild(tabBtn);
+        });
+      }
+    }
+
+    function applyTabStyles(btn, isActive) {
+      activeTabClasses.forEach(function(c) { btn.classList.toggle(c, isActive); });
+      inactiveTabClasses.forEach(function(c) { btn.classList.toggle(c, !isActive); });
+      btn.setAttribute("aria-selected", isActive ? "true" : "false");
+    }
+
+    function syncTabStyles() {
+      var buttons = tabsContainer.querySelectorAll("button[data-tab-id]");
+      buttons.forEach(function(btn) {
+        var tid = btn.getAttribute("data-tab-id");
+        var isMatch = (tid === "all" && activeTabId === null) || (tid === activeTabId);
+        applyTabStyles(btn, isMatch);
+      });
+    }
+
+    function filterProducts() {
+      var count = 0;
+      var grid = document.getElementById("product-grid");
+      if (grid) {
+        grid.style.opacity = "0.3";
+        grid.style.transform = "scale(0.99)";
+      }
+
+      productItems.forEach(function(item) {
+        var catId = item.getAttribute("data-category-id");
+        var occStr = item.getAttribute("data-occasions") || "[]";
+        var occArr = [];
+        try { occArr = JSON.parse(occStr); } catch(e){}
+
+        // 1. Ana seçime uyuşma
+        var matchMain = false;
+        if (currentSelection.type === "category") {
+          matchMain = (catId === currentSelection.id);
+        } else if (currentSelection.type === "occasion") {
+          matchMain = (occArr.indexOf(currentSelection.slug) !== -1);
+        }
+
+        // 2. Alt Tab seçimiyle uyuşma
+        var matchTab = true;
+        if (activeTabId !== null) {
+          if (currentSelection.type === "category") {
+            matchTab = (occArr.indexOf(activeTabId) !== -1);
+          } else if (currentSelection.type === "occasion") {
+            matchTab = (catId === activeTabId);
+          }
+        }
+
+        if (matchMain && matchTab) {
+          item.style.display = "";
+          item.classList.remove("hidden");
+          count++;
+        } else {
+          item.style.display = "none";
+          item.classList.add("hidden");
+        }
+      });
+
+      setTimeout(function() {
+        if (grid) {
+          grid.style.transition = "opacity 0.25s ease, transform 0.25s ease";
+          grid.style.opacity = "1";
+          grid.style.transform = "scale(1)";
+        }
+      }, 50);
+
+      if (noResultsEl) {
+        noResultsEl.classList.toggle("hidden", count > 0);
+      }
+    }
+
+    function changeMainSelection(newSelection) {
+      if (!newSelection || (!newSelection.id && !newSelection.slug)) return;
+      currentSelection = {
+        type: newSelection.type || "category",
+        id: newSelection.id || newSelection.slug,
+        slug: newSelection.slug || newSelection.id,
+        name: newSelection.name || ""
+      };
+      activeTabId = null; // Başlık değişince otomatik Tümü sekmesini aktif yap
+
+      if (titleEl && currentSelection.name) titleEl.textContent = currentSelection.name;
+      if (badgeEl) {
+        badgeEl.textContent = currentSelection.type === "category" ? textCategoryBadge : textOccasionBadge;
+      }
+
+      buildTabs();
+      filterProducts();
+    }
+
+    // CategoryMarquee gibi dış kaynaklardan kolayca çağrılabilmesi için global fonsiyona bağla
+    window.switchCollectionTab = changeMainSelection;
+
+    // Olay (Event) Dinleyicisi
+    window.addEventListener("select-marquee-filter", function(e) {
+      if (e.detail && e.detail.type) {
+        changeMainSelection(e.detail);
       }
     });
-  });
+
+    // Hash (URL) değiştiğinde doğrudan yakalayan yapı (Vue Router child / iç içe route mantığı!)
+    function handleHashChange() {
+      var hash = window.location.hash || "";
+      if (!hash || hash === "#koleksiyon-listesi") return;
+      
+      var matched = false;
+      if (hash.indexOf("collection-cat-") !== -1) {
+        var catId = hash.replace("#collection-cat-", "").split("/")[0];
+        var info = categoriesMap[catId];
+        if (info) {
+          changeMainSelection({ type: "category", id: info.id, slug: info.slug, name: info.name });
+          matched = true;
+        }
+      } else if (hash.indexOf("collection-occ-") !== -1) {
+        var occSlug = hash.replace("#collection-occ-", "").split("/")[0];
+        var infoOcc = occasionsMap[occSlug];
+        if (infoOcc) {
+          changeMainSelection({ type: "occasion", id: infoOcc.id, slug: infoOcc.slug, name: infoOcc.name });
+          matched = true;
+        }
+      }
+
+      if (matched) {
+        var sectionEl = document.getElementById("koleksiyon-listesi");
+        if (sectionEl) {
+          try {
+            sectionEl.scrollIntoView({ behavior: "smooth", block: "start" });
+          } catch(e) {
+            var offset = sectionEl.getBoundingClientRect().top + window.pageYOffset - 90;
+            window.scrollTo({ top: offset, behavior: "smooth" });
+          }
+        }
+      }
+    }
+    window.addEventListener("hashchange", handleHashChange);
+
+    // Sıfırla veya Tümü butonu
+    if (resetBtn) {
+      resetBtn.addEventListener("click", function() {
+        activeTabId = null;
+        syncTabStyles();
+        filterProducts();
+      });
+    }
+
+    // Başlangıç Kurulumu
+    buildTabs();
+    filterProducts();
+    setTimeout(handleHashChange, 50);
+  }
+
+  document.addEventListener("DOMContentLoaded", initTabSystem);
+  document.addEventListener("astro:page-load", initTabSystem);
+  initTabSystem();
 })();
 </script>
