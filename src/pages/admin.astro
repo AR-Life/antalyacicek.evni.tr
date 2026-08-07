@@ -77,7 +77,7 @@ const translationsJson = JSON.stringify({
           <h1 class="font-display font-bold text-lg text-neutral-900">{t(locale, "ui.product_management")}</h1>
         </div>
         <div class="flex items-center gap-4">
-          <button id="add-product-btn" class="px-4 py-2 bg-forest-700 hover:bg-forest-800 text-white text-sm font-semibold rounded-xl transition-all shadow-md shadow-forest-700/20">
+          <button id="add-product-btn" class="add-action-btn px-4 py-2 bg-forest-700 hover:bg-forest-800 text-white text-sm font-semibold rounded-xl transition-all shadow-md shadow-forest-700/20">
             + {t(locale, "ui.add_new_product")}
           </button>
           <button id="logout-btn" class="text-sm text-neutral-500 hover:text-red-500 transition-colors">
@@ -85,11 +85,39 @@ const translationsJson = JSON.stringify({
           </button>
         </div>
       </div>
+      <div class="border-t border-neutral-200">
+        <div class="mx-auto max-w-6xl px-4 sm:px-6 flex gap-6">
+          <button class="admin-tab-btn active px-1 py-3 text-sm font-semibold text-forest-700 border-b-2 border-forest-700" data-tab="products">Ürünler</button>
+          <button class="admin-tab-btn px-1 py-3 text-sm font-medium text-neutral-500 hover:text-neutral-800 border-b-2 border-transparent transition-colors" data-tab="categories">Kategoriler</button>
+          <button class="admin-tab-btn px-1 py-3 text-sm font-medium text-neutral-500 hover:text-neutral-800 border-b-2 border-transparent transition-colors" data-tab="occasions">Özel Günler</button>
+        </div>
+      </div>
     </header>
 
     <main class="mx-auto max-w-6xl px-4 sm:px-6 py-8">
-      <div id="product-count" class="text-sm text-neutral-500 mb-4"></div>
-      <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      <!-- PRODUCTS TAB -->
+      <div id="tab-content-products" class="admin-tab-content">
+        <div id="product-count" class="text-sm text-neutral-500 mb-4"></div>
+        <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
+
+      <!-- CATEGORIES TAB -->
+      <div id="tab-content-categories" class="admin-tab-content hidden">
+        <div class="flex items-center justify-between mb-4">
+          <div id="category-count" class="text-sm text-neutral-500"></div>
+          <button id="add-category-btn" class="px-3 py-1.5 bg-forest-700 hover:bg-forest-800 text-white text-xs font-semibold rounded-lg transition-all shadow-sm">+ Yeni Kategori</button>
+        </div>
+        <div id="category-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
+
+      <!-- OCCASIONS TAB -->
+      <div id="tab-content-occasions" class="admin-tab-content hidden">
+        <div class="flex items-center justify-between mb-4">
+          <div id="occasion-count" class="text-sm text-neutral-500"></div>
+          <button id="add-occasion-btn" class="px-3 py-1.5 bg-forest-700 hover:bg-forest-800 text-white text-xs font-semibold rounded-lg transition-all shadow-sm">+ Yeni Özel Gün</button>
+        </div>
+        <div id="occasion-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
     </main>
   </div>
 
@@ -198,6 +226,79 @@ const translationsJson = JSON.stringify({
           <button type="button" id="modal-cancel" class="px-6 py-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 font-semibold rounded-xl transition-all text-sm">
             {t(locale, "ui.cancel_button")}
           </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Category Modal -->
+  <div id="category-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="category-modal-backdrop"></div>
+    <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6 lg:p-8">
+      <h2 id="category-modal-title" class="text-xl font-display font-bold text-neutral-900 mb-6">Yeni Kategori</h2>
+      <form id="category-form" class="space-y-5">
+        <input type="hidden" id="cat-edit-id" value="" />
+        <div>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Kategori Adı</label>
+          <input id="cat-input-name" type="text" required class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" />
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Slug (URL)</label>
+          <input id="cat-input-slug" type="text" required class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" />
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Açıklama</label>
+          <textarea id="cat-input-desc" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Kategori Resmi / İkonu (SVG veya WebP)</label>
+          <div class="flex gap-3 mb-2">
+            <input id="cat-input-image" type="text" placeholder="/images/ornek.svg" required class="flex-1 px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" />
+            <label class="inline-flex items-center justify-center px-4 bg-neutral-100 hover:bg-neutral-200 rounded-xl cursor-pointer transition-all text-sm font-medium text-neutral-600 border border-neutral-200 whitespace-nowrap">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              Yükle
+              <input type="file" id="cat-upload-image" accept="image/*" class="hidden" />
+            </label>
+          </div>
+          <span id="cat-upload-status" class="text-xs text-neutral-500"></span>
+          <div id="cat-image-preview-container" class="mt-2 hidden">
+            <img id="cat-image-preview" src="" class="w-16 h-16 object-cover rounded-xl border border-neutral-200" />
+          </div>
+        </div>
+        <div class="flex gap-3 pt-4">
+          <button type="submit" class="flex-1 py-3 bg-forest-700 hover:bg-forest-800 text-white font-semibold rounded-xl transition-all shadow-lg shadow-forest-700/20 text-sm">Kaydet</button>
+          <button type="button" id="cat-modal-cancel" class="px-6 py-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 font-semibold rounded-xl transition-all text-sm">İptal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Occasion Modal -->
+  <div id="occasion-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="occasion-modal-backdrop"></div>
+    <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6 lg:p-8">
+      <h2 id="occasion-modal-title" class="text-xl font-display font-bold text-neutral-900 mb-6">Yeni Özel Gün</h2>
+      <form id="occasion-form" class="space-y-5">
+        <input type="hidden" id="occ-edit-id" value="" />
+        <div>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Özel Gün Adı</label>
+          <input id="occ-input-name" type="text" required class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" />
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Slug (URL)</label>
+          <input id="occ-input-slug" type="text" required class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" />
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Açıklama</label>
+          <textarea id="occ-input-desc" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-neutral-700 mb-1.5">İkon (Emoji)</label>
+          <input id="occ-input-icon" type="text" placeholder="🎉" required class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" />
+        </div>
+        <div class="flex gap-3 pt-4">
+          <button type="submit" class="flex-1 py-3 bg-forest-700 hover:bg-forest-800 text-white font-semibold rounded-xl transition-all shadow-lg shadow-forest-700/20 text-sm">Kaydet</button>
+          <button type="button" id="occ-modal-cancel" class="px-6 py-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 font-semibold rounded-xl transition-all text-sm">İptal</button>
         </div>
       </form>
     </div>
@@ -459,6 +560,257 @@ function resetForm() {
   $id('upload-status').textContent = '';
   $id('discount-preview').classList.add('hidden');
 }
+
+// ----------------------------------------------------
+// TABS & NEW SECTIONS LOGIC
+// ----------------------------------------------------
+
+var currentTab = 'products';
+
+document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.admin-tab-btn').forEach(b => {
+      b.classList.remove('active', 'text-forest-700', 'border-forest-700');
+      b.classList.add('text-neutral-500', 'border-transparent');
+    });
+    this.classList.remove('text-neutral-500', 'border-transparent');
+    this.classList.add('active', 'text-forest-700', 'border-forest-700');
+    
+    document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.add('hidden'));
+    currentTab = this.dataset.tab;
+    $id('tab-content-' + currentTab).classList.remove('hidden');
+
+    if (currentTab === 'products') loadProducts();
+    if (currentTab === 'categories') loadCategories();
+    if (currentTab === 'occasions') loadOccasions();
+  });
+});
+
+// Category Logic
+var _categories = [];
+async function loadCategories() {
+  var res = await fetch('/api/categories');
+  if (!res.ok) return;
+  _categories = await res.json();
+  renderCategories();
+}
+
+function renderCategories() {
+  $id('category-count').textContent = _categories.length + ' Kategori bulundu.';
+  $id('category-list').innerHTML = _categories.map(function(c) {
+    return `
+      <div class="bg-white rounded-2xl border border-neutral-200 p-4 shadow-sm flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 bg-neutral-50 rounded-lg flex items-center justify-center p-2 border border-neutral-100">
+             <img src="${c.image}" class="max-w-full max-h-full object-contain" onerror="this.src='/images/placeholder.svg'" />
+          </div>
+          <div>
+            <h3 class="font-bold text-neutral-800 text-sm">${c.name}</h3>
+            <p class="text-xs text-neutral-500 truncate max-w-[150px]">${c.slug}</p>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="editCategory('${c.id}')" class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">✏️</button>
+          <button onclick="deleteCategory('${c.id}')" class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">🗑️</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+$id('category-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  var editId = $id('cat-edit-id').value;
+  var data = {
+    name: $id('cat-input-name').value,
+    slug: slugify($id('cat-input-slug').value),
+    description: $id('cat-input-desc').value,
+    image: $id('cat-input-image').value,
+  };
+  var url = editId ? '/api/categories/' + editId : '/api/categories';
+  var method = editId ? 'PUT' : 'POST';
+
+  var res = await fetch(url, {
+    method: method,
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data),
+  });
+
+  if (res.ok) {
+    closeCategoryModal();
+    loadCategories();
+  } else {
+    alert('Kaydetme başarısız!');
+  }
+});
+
+window.editCategory = function(id) {
+  var c = _categories.find(x => x.id === id);
+  if (!c) return;
+  $id('cat-edit-id').value = id;
+  $id('cat-input-name').value = c.name;
+  $id('cat-input-slug').value = c.slug;
+  $id('cat-input-desc').value = c.description || '';
+  $id('cat-input-image').value = c.image || '';
+  
+  if (c.image) {
+    $id('cat-image-preview').src = c.image;
+    $id('cat-image-preview-container').classList.remove('hidden');
+  } else {
+    $id('cat-image-preview-container').classList.add('hidden');
+  }
+  
+  $id('category-modal-title').textContent = 'Kategori Düzenle';
+  $id('category-modal').classList.remove('hidden');
+};
+
+$id('cat-upload-image').addEventListener('change', async function(e) {
+  var files = e.target.files;
+  if (!files || files.length === 0) return;
+
+  var status = $id('cat-upload-status');
+  status.textContent = 'Yükleniyor...';
+
+  var formData = new FormData();
+  formData.append('files', files[0]); // Sadece tek resim
+
+  try {
+    var res = await fetch('/api/upload', { method: 'POST', body: formData });
+    var data = await res.json();
+    if (data.urls && data.urls.length > 0) {
+      $id('cat-input-image').value = data.urls[0];
+      $id('cat-image-preview').src = data.urls[0];
+      $id('cat-image-preview-container').classList.remove('hidden');
+      status.textContent = 'Görsel yüklendi';
+    }
+  } catch (err) {
+    status.textContent = 'Yükleme başarısız!';
+  }
+  e.target.value = '';
+});
+
+window.deleteCategory = async function(id) {
+  if (!confirm('Bu kategoriyi silmek istediğinize emin misiniz?')) return;
+  var res = await fetch('/api/categories/' + id, { method: 'DELETE' });
+  if (res.ok) loadCategories();
+};
+
+function openCategoryModal() {
+  $id('category-form').reset();
+  $id('cat-edit-id').value = '';
+  $id('cat-image-preview-container').classList.add('hidden');
+  $id('cat-image-preview').src = '';
+  $id('cat-upload-status').textContent = '';
+  $id('category-modal-title').textContent = 'Yeni Kategori';
+  $id('category-modal').classList.remove('hidden');
+}
+
+function closeCategoryModal() {
+  $id('category-modal').classList.add('hidden');
+}
+
+if ($id('add-category-btn')) $id('add-category-btn').addEventListener('click', openCategoryModal);
+$id('cat-modal-cancel').addEventListener('click', closeCategoryModal);
+$id('category-modal-backdrop').addEventListener('click', closeCategoryModal);
+
+// Occasion Logic
+var _occasions = [];
+async function loadOccasions() {
+  var res = await fetch('/api/occasions');
+  if (!res.ok) return;
+  _occasions = await res.json();
+  renderOccasions();
+}
+
+function renderOccasions() {
+  $id('occasion-count').textContent = _occasions.length + ' Özel Gün bulundu.';
+  $id('occasion-list').innerHTML = _occasions.map(function(o) {
+    return `
+      <div class="bg-white rounded-2xl border border-neutral-200 p-4 shadow-sm flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 bg-neutral-50 rounded-lg flex items-center justify-center text-2xl border border-neutral-100">
+             ${o.icon}
+          </div>
+          <div>
+            <h3 class="font-bold text-neutral-800 text-sm">${o.name}</h3>
+            <p class="text-xs text-neutral-500 truncate max-w-[150px]">${o.slug}</p>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="editOccasion('${o.id}')" class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">✏️</button>
+          <button onclick="deleteOccasion('${o.id}')" class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">🗑️</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+$id('occasion-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  var editId = $id('occ-edit-id').value;
+  var data = {
+    name: $id('occ-input-name').value,
+    slug: slugify($id('occ-input-slug').value),
+    description: $id('occ-input-desc').value,
+    icon: $id('occ-input-icon').value,
+  };
+  var url = editId ? '/api/occasions/' + editId : '/api/occasions';
+  var method = editId ? 'PUT' : 'POST';
+
+  var res = await fetch(url, {
+    method: method,
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data),
+  });
+
+  if (res.ok) {
+    closeOccasionModal();
+    loadOccasions();
+  } else {
+    alert('Kaydetme başarısız!');
+  }
+});
+
+window.editOccasion = function(id) {
+  var o = _occasions.find(x => x.id === id);
+  if (!o) return;
+  $id('occ-edit-id').value = id;
+  $id('occ-input-name').value = o.name;
+  $id('occ-input-slug').value = o.slug;
+  $id('occ-input-desc').value = o.description || '';
+  $id('occ-input-icon').value = o.icon || '';
+  
+  $id('occasion-modal-title').textContent = 'Özel Gün Düzenle';
+  $id('occasion-modal').classList.remove('hidden');
+};
+
+window.deleteOccasion = async function(id) {
+  if (!confirm('Bu özel günü silmek istediğinize emin misiniz?')) return;
+  var res = await fetch('/api/occasions/' + id, { method: 'DELETE' });
+  if (res.ok) loadOccasions();
+};
+
+function openOccasionModal() {
+  $id('occasion-form').reset();
+  $id('occ-edit-id').value = '';
+  $id('occasion-modal-title').textContent = 'Yeni Özel Gün';
+  $id('occasion-modal').classList.remove('hidden');
+}
+
+function closeOccasionModal() {
+  $id('occasion-modal').classList.add('hidden');
+}
+
+if ($id('add-occasion-btn')) $id('add-occasion-btn').addEventListener('click', openOccasionModal);
+$id('occ-modal-cancel').addEventListener('click', closeOccasionModal);
+$id('occasion-modal-backdrop').addEventListener('click', closeOccasionModal);
+
+// Helper for "Add New" button in tab content headers
+document.addEventListener('click', function(e) {
+  if (e.target && e.target.id === 'add-category-btn') openCategoryModal();
+  if (e.target && e.target.id === 'add-occasion-btn') openOccasionModal();
+});
+
 </script>
 
 </body>

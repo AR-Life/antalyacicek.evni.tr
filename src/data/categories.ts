@@ -6,7 +6,7 @@ export interface Category {
   image: string;
 }
 
-export const categories: Category[] = [
+export const defaultCategories: Category[] = [
   {
     id: "cat-28",
     name: "Premium Buketler",
@@ -64,3 +64,24 @@ export const categories: Category[] = [
     image: "/images/ev-ofis-bitkileri.svg",
   },
 ];
+
+import fs from "node:fs";
+import path from "node:path";
+
+export function getAllCategories(): Category[] {
+  try {
+    const dataFile = path.join(process.cwd(), "src", "data", "categories.json");
+    if (fs.existsSync(dataFile)) {
+      const raw = fs.readFileSync(dataFile, "utf-8");
+      const storeData = JSON.parse(raw);
+      if (storeData.length > 0) {
+        return storeData;
+      }
+    }
+  } catch (err) {
+    // Ignore errors in browser/client environment, or parsing issues
+  }
+  return [...defaultCategories];
+}
+
+export const categories: Category[] = getAllCategories();

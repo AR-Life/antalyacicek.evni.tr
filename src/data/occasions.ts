@@ -6,7 +6,7 @@ export interface Occasion {
   icon: string;
 }
 
-export const occasions: Occasion[] = [
+export const defaultOccasions: Occasion[] = [
   {
     id: "occ-1",
     name: "Anneye Çiçek",
@@ -92,3 +92,24 @@ export const occasions: Occasion[] = [
     icon: "🎄",
   },
 ];
+
+import fs from "node:fs";
+import path from "node:path";
+
+export function getAllOccasions(): Occasion[] {
+  try {
+    const dataFile = path.join(process.cwd(), "src", "data", "occasions.json");
+    if (fs.existsSync(dataFile)) {
+      const raw = fs.readFileSync(dataFile, "utf-8");
+      const storeData = JSON.parse(raw);
+      if (storeData.length > 0) {
+        return storeData;
+      }
+    }
+  } catch (err) {
+    // Ignore errors in browser/client environment, or parsing issues
+  }
+  return [...defaultOccasions];
+}
+
+export const occasions: Occasion[] = getAllOccasions();
