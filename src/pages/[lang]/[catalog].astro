@@ -5,6 +5,7 @@ import { getAllProducts } from "../../data/products";
 import { SITE } from "../../data/site.config";
 import { isValidLocale, type Locale, LOCALE_SLUGS, LOCALE_NAMES } from "../../i18n/config";
 import { t } from "../../i18n/translations";
+import { buildCollectionPageSchema, buildCollectionSchema } from "../../lib/schema";
 
 const { lang, catalog } = Astro.params;
 if (!isValidLocale(lang || "") || lang === "tr") {
@@ -22,6 +23,23 @@ const tDesc = t(locale, "ui.collection_desc", "Sevdiklerinize en uygun, taze ve 
 const pageTitle = `${tTitle} | ${SITE.name}`;
 const pageDescription = tDesc;
 const canonicalURL = `${SITE.url}/${locale}/${catalog}`;
+const collectionSchema = buildCollectionSchema(
+  allProducts.slice(0, 20).map((product) => ({
+    name: product.name,
+    url: `${SITE.url}/${locale}/${LOCALE_SLUGS[locale].flower}/${product.slug}`,
+    image: product.image || product.images?.[0]?.url,
+  })),
+  {
+    name: pageTitle,
+    description: pageDescription,
+    url: canonicalURL,
+  }
+);
+const collectionPageSchema = buildCollectionPageSchema({
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalURL,
+});
 ---
 
 <BaseLayout
@@ -30,6 +48,8 @@ const canonicalURL = `${SITE.url}/${locale}/${catalog}`;
   canonicalURL={canonicalURL}
   locale={locale}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(collectionPageSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(collectionSchema)} />
   <div class="pt-24 pb-20 bg-gradient-to-b from-forest-50/30 to-white min-h-screen">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Header -->

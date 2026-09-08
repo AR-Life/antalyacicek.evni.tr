@@ -7,6 +7,7 @@ import { getAllProducts } from "../data/products";
 import { SITE } from "../data/site.config";
 import { t } from "../i18n/translations";
 import { DEFAULT_LOCALE, type Locale } from "../i18n/config";
+import { buildCollectionPageSchema, buildCollectionSchema } from "../lib/schema";
 
 const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
 
@@ -24,6 +25,23 @@ const maxPrice = Math.ceil(Math.max(...prices) / 100) * 100;
 const pageTitle = "Tüm Çiçek Tasarımları | Antalya Çiçek Sipariş - Aynı Gün Teslimat";
 const pageDescription = `${allProducts.length}+ el yapımı çiçek aranjmanı, gül buketi, orkide, papatya ve daha fazlası. Antalya genelinde aynı gün teslimat. Sevgiliye, doğum günü, yıldönümü ve tüm özel günler için çiçek gönder.`;
 const canonicalURL = `${SITE.url}/cicekler`;
+const collectionSchema = buildCollectionSchema(
+  allProducts.slice(0, 20).map((product) => ({
+    name: product.name,
+    url: `${SITE.url}/cicek/${product.slug}`,
+    image: product.image || product.images?.[0]?.url,
+  })),
+  {
+    name: pageTitle,
+    description: pageDescription,
+    url: canonicalURL,
+  }
+);
+const collectionPageSchema = buildCollectionPageSchema({
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalURL,
+});
 ---
 
 <BaseLayout
@@ -31,6 +49,8 @@ const canonicalURL = `${SITE.url}/cicekler`;
   description={pageDescription}
   canonicalURL={canonicalURL}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(collectionPageSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(collectionSchema)} />
   <div class="pt-20 lg:pt-24 pb-16 lg:pb-24 bg-gradient-to-b from-forest-50/30 to-white min-h-screen">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 

@@ -317,8 +317,22 @@ var TRANSLATIONS = JSON.parse(document.getElementById('translations-data').datas
 var products = [];
 var currentImages = [];
 var editingId = null;
-
+  
 function $id(id) { return document.getElementById(id); }
+function escapeHtml(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+function normalizeImageUrl(value) {
+  var candidate = String(value || '');
+  if (!candidate) return '/images/placeholder.svg';
+  if (/^(https?:)?\/\//i.test(candidate) || candidate.startsWith('/')) return candidate;
+  return '/images/placeholder.svg';
+}
 
 $id('login-form').addEventListener('submit', async function(e) {
   e.preventDefault();
@@ -339,7 +353,8 @@ $id('login-form').addEventListener('submit', async function(e) {
 });
 
 $id('logout-btn').addEventListener('click', function() {
-  document.cookie = 'admin_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+  document.cookie = 'admin_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax';
+  document.cookie = 'admin_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax';
   location.reload();
 });
 
@@ -361,28 +376,31 @@ function renderList() {
 
   container.innerHTML = products.map(function(p) {
     var cat = CATEGORIES.find(function(c) { return c.id === p.categoryId; });
-    var img = (p.images && p.images[0] && p.images[0].url) || 'https://placehold.co/400x500/f5f5f5/fda4af?text=No+Image';
+    var img = normalizeImageUrl((p.images && p.images[0] && p.images[0].url) || 'https://placehold.co/400x500/f5f5f5/fda4af?text=No+Image');
+    var safeName = escapeHtml(p.name || '');
+    var safeCategoryName = escapeHtml(cat ? cat.name : 'Kategorisiz');
     var hasDiscount = p.oldPrice && p.oldPrice > p.price;
     var discountPct = hasDiscount ? Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100) : 0;
+    var tagsHtml = ((p.tags || []).slice(0, 3).map(function(t) {
+      return '<span class="text-[10px] px-2 py-0.5 bg-forest-50 text-forest-800 rounded-full">' + escapeHtml(t) + '</span>';
+    }).join('') || '');
     return '<div class="bg-white rounded-2xl shadow-sm border border-neutral-100 overflow-hidden group">'+
       '<div class="aspect-[4/5] bg-neutral-50 overflow-hidden relative">'+
-        '<img src="'+img+'" alt="'+p.name+'" class="w-full h-full object-cover" />'+
+        '<img src="'+escapeHtml(img)+'" alt="'+safeName+'" class="w-full h-full object-cover" />'+
         (hasDiscount ? '<span class="absolute top-3 left-3 px-2.5 py-1 bg-forest-700 text-white text-[11px] font-bold rounded-full shadow-lg shadow-forest-700/30">%'+discountPct+' İndirim</span>' : '')+
       '</div>'+
       '<div class="p-4">'+
         (hasDiscount ? '<div class="flex items-baseline gap-2 mb-2"><span class="text-xs font-bold text-forest-700">%'+discountPct+' indirimli</span></div>' : '')+
-        '<div class="flex gap-1 mb-2">'+
-          ((p.tags||[]).slice(0,3).map(function(t){return '<span class="text-[10px] px-2 py-0.5 bg-forest-50 text-forest-800 rounded-full">'+t+'</span>';}).join('') || '')+
-        '</div>'+
-        '<h3 class="text-sm font-semibold text-neutral-900 mb-1 line-clamp-2">'+p.name+'</h3>'+
-        '<p class="text-[11px] text-neutral-400 mb-2">'+(cat ? cat.name : 'Kategorisiz')+'</p>'+
+        '<div class="flex gap-1 mb-2">'+tagsHtml+'</div>'+
+        '<h3 class="text-sm font-semibold text-neutral-900 mb-1 line-clamp-2">'+safeName+'</h3>'+
+        '<p class="text-[11px] text-neutral-400 mb-2">'+safeCategoryName+'</p>'+
         '<div class="flex items-baseline gap-2 mb-1">'+
           '<span class="text-base font-bold text-neutral-900">'+p.price.toLocaleString('tr-TR', {minimumFractionDigits: 2})+' ₺</span>'+
           (hasDiscount ? '<span class="text-xs text-neutral-400 line-through">'+p.oldPrice.toLocaleString('tr-TR', {minimumFractionDigits: 2})+' ₺</span>' : '')+
         '</div>'+
         '<div class="flex gap-2 mt-3">'+
-          '<button onclick="editProduct(\''+p.id+'\')" class="flex-1 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 text-xs font-semibold rounded-lg transition-all">'+TRANSLATIONS.dzenle+'</button>'+
-          '<button onclick="deleteProduct(\''+p.id+'\')" class="py-2 px-3 bg-red-50 hover:bg-red-100 text-red-500 text-xs font-semibold rounded-lg transition-all">'+TRANSLATIONS.sil+'</button>'+
+          '<button onclick="editProduct(\''+p.id+'\')" class="flex-1 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 text-xs font-semibold rounded-lg transition-all">'+escapeHtml(TRANSLATIONS.dzenle)+'</button>'+
+          '<button onclick="deleteProduct(\''+p.id+'\')" class="py-2 px-3 bg-red-50 hover:bg-red-100 text-red-500 text-xs font-semibold rounded-lg transition-all">'+escapeHtml(TRANSLATIONS.sil)+'</button>'+
         '</div>'+
       '</div>'+
     '</div>';
@@ -442,7 +460,7 @@ function renderImagePreviews() {
   var container = $id('images-preview');
   container.innerHTML = currentImages.map(function(img, i) {
     return '<div class="relative w-20 h-20 rounded-xl overflow-hidden border-2 border-neutral-100 group/img">'+
-      '<img src="'+img.url+'" alt="" class="w-full h-full object-cover" />'+
+      '<img src="'+escapeHtml(normalizeImageUrl(img.url))+'" alt="" class="w-full h-full object-cover" />'+
       '<button onclick="removeImage('+i+')" class="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-[10px] opacity-0 group-hover/img:opacity-100 transition-opacity">&times;</button>'+
     '</div>';
   }).join('');
@@ -602,16 +620,16 @@ function renderCategories() {
       <div class="bg-white rounded-2xl border border-neutral-200 p-4 shadow-sm flex items-center justify-between">
         <div class="flex items-center gap-4">
           <div class="w-12 h-12 bg-neutral-50 rounded-lg flex items-center justify-center p-2 border border-neutral-100">
-             <img src="${c.image}" class="max-w-full max-h-full object-contain" onerror="this.src='/images/placeholder.svg'" />
+             <img src="${escapeHtml(normalizeImageUrl(c.image))}" class="max-w-full max-h-full object-contain" onerror="this.src='/images/placeholder.svg'" />
           </div>
           <div>
-            <h3 class="font-bold text-neutral-800 text-sm">${c.name}</h3>
-            <p class="text-xs text-neutral-500 truncate max-w-[150px]">${c.slug}</p>
+            <h3 class="font-bold text-neutral-800 text-sm">${escapeHtml(c.name)}</h3>
+            <p class="text-xs text-neutral-500 truncate max-w-[150px]">${escapeHtml(c.slug)}</p>
           </div>
         </div>
         <div class="flex gap-2">
-          <button onclick="editCategory('${c.id}')" class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">✏️</button>
-          <button onclick="deleteCategory('${c.id}')" class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">🗑️</button>
+          <button onclick="editCategory('${escapeHtml(c.id)}')" class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">✏️</button>
+          <button onclick="deleteCategory('${escapeHtml(c.id)}')" class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">🗑️</button>
         </div>
       </div>
     `;
@@ -729,16 +747,16 @@ function renderOccasions() {
       <div class="bg-white rounded-2xl border border-neutral-200 p-4 shadow-sm flex items-center justify-between">
         <div class="flex items-center gap-4">
           <div class="w-12 h-12 bg-neutral-50 rounded-lg flex items-center justify-center text-2xl border border-neutral-100">
-             ${o.icon}
+             ${escapeHtml(o.icon || '')}
           </div>
           <div>
-            <h3 class="font-bold text-neutral-800 text-sm">${o.name}</h3>
-            <p class="text-xs text-neutral-500 truncate max-w-[150px]">${o.slug}</p>
+            <h3 class="font-bold text-neutral-800 text-sm">${escapeHtml(o.name)}</h3>
+            <p class="text-xs text-neutral-500 truncate max-w-[150px]">${escapeHtml(o.slug)}</p>
           </div>
         </div>
         <div class="flex gap-2">
-          <button onclick="editOccasion('${o.id}')" class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">✏️</button>
-          <button onclick="deleteOccasion('${o.id}')" class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">🗑️</button>
+          <button onclick="editOccasion('${escapeHtml(o.id)}')" class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">✏️</button>
+          <button onclick="deleteOccasion('${escapeHtml(o.id)}')" class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">🗑️</button>
         </div>
       </div>
     `;

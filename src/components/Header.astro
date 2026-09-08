@@ -274,6 +274,22 @@ const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
     var fuse = null;
     var fuseLoading = false;
 
+    function escapeHtml(value) {
+      return String(value == null ? "" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function normalizeImageUrl(value) {
+      var candidate = String(value || "");
+      if (!candidate) return "";
+      if (/^(https?:)?\/\//i.test(candidate) || candidate.startsWith("/")) return candidate;
+      return "";
+    }
+
     fetch("/api/products/search")
       .then(function (r) {
         return r.json();
@@ -331,26 +347,25 @@ const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
           searchResults.innerHTML = results
             .map(function (r) {
               var p = r.item;
-              var img =
-                (p.images && p.images[0] && p.images[0].url) || p.image || "";
+              var img = normalizeImageUrl((p.images && p.images[0] && p.images[0].url) || p.image || "");
               return (
                 '<a href="/urun/' +
-                p.slug +
+                escapeHtml(String(p.slug || '')) +
                 '" class="flex items-center gap-4 p-4 hover:bg-forest-50 transition-colors border-b border-forest-100 last:border-0">' +
                 (img
                   ? '<img src="' +
-                    img +
+                    escapeHtml(img) +
                     '" alt="" class="w-16 h-16 rounded-xl object-cover flex-shrink-0" />'
                   : "") +
                 '<div class="flex-1 min-w-0">' +
                 '<div class="text-sm font-semibold text-neutral-900 mb-1">' +
-                p.name +
+                escapeHtml(String(p.name || '')) +
                 "</div>" +
                 '<div class="text-xs text-neutral-500 line-clamp-1">' +
-                p.description +
+                escapeHtml(String(p.description || '')) +
                 "</div>" +
                 '<div class="text-sm text-forest-700 font-bold mt-1">' +
-                p.price.toLocaleString("tr-TR") +
+                escapeHtml(Number(p.price || 0).toLocaleString("tr-TR")) +
                 " ₺</div>" +
                 "</div>" +
                 "</a>"

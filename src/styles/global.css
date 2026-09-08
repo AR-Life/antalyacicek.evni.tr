@@ -54,9 +54,11 @@
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
   body {
     @apply bg-white text-neutral-900 font-sans;
+    font-display: swap;
   }
 
   :focus-visible {

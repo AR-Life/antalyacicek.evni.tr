@@ -6,6 +6,7 @@ import { categories } from "../../data/categories";
 import { SITE } from "../../data/site.config";
 import { t } from "../../i18n/translations";
 import { DEFAULT_LOCALE, type Locale } from "../../i18n/config";
+import { buildBreadcrumbSchema, buildFaqSchema, buildProductSchema, buildReviewSchema } from "../../lib/schema";
 
 const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
 
@@ -32,6 +33,34 @@ const productDescription = `${product.description} | ${product.price.toLocaleStr
 const canonicalUrl = `${SITE.url}/cicek/${product.slug}`;
 
 const galleryImages = product.images?.length ? product.images : (product.image ? [{ url: product.image, alt: product.name }] : [{ url: mainImage, alt: product.name }]);
+const productSchema = buildProductSchema(product, {
+  canonicalUrl,
+  categoryName: category?.name || "Çiçek",
+});
+const breadcrumbSchema = buildBreadcrumbSchema([
+  { name: "Ana Sayfa", item: SITE.url },
+  { name: "Çiçekler", item: `${SITE.url}/cicekler` },
+  { name: product.name, item: canonicalUrl },
+]);
+const faqSchema = buildFaqSchema([
+  {
+    question: "Aynı gün teslimat mümkün mü?",
+    answer: "Evet, Antalya içinde uygun saatlerde ve stok durumunda aynı gün teslimat yapılmaktadır. Siparişinizi erken saatlerde verdiğinizde teslim süresi kısalır.",
+  },
+  {
+    question: "Çiçekler taze mi gelir?",
+    answer: "Evet, tüm aranjmanlar taze kesim çiçeklerle hazırlanır ve teslimat öncesi kalite kontrolünden geçirilir.",
+  },
+  {
+    question: "Özel günler için kişiye özel buket hazırlatabilir miyim?",
+    answer: "Evet, özel mesaj, renk tercihleri ve ürün kombinasyonları için kurye ve müşteri temsilcisi ile iletişim kurulabilir.",
+  },
+]);
+const reviewSchema = buildReviewSchema({
+  reviewBody: "Hızlı teslimat, taze çiçekler ve özel tasarım yaklaşımı ile müşterilere güvenli ve keyifli bir sipariş deneyimi sunuluyor.",
+  itemName: product.name,
+  url: canonicalUrl,
+});
 ---
 
 <BaseLayout
@@ -41,73 +70,10 @@ const galleryImages = product.images?.length ? product.images : (product.image ?
   type="product"
   canonicalURL={canonicalUrl}
 >
-  <script type="application/ld+json" set:html={`{
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Ana Sayfa", "item": "${SITE.url}" },
-      { "@type": "ListItem", "position": 2, "name": "Çiçekler", "item": "${SITE.url}/cicekler" },
-      { "@type": "ListItem", "position": 3, "name": "${product.name}", "item": "${canonicalUrl}" }
-    ]
-  }`} />
-
-  <script type="application/ld+json" set:html={`{
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": "${product.name}",
-    "description": "${product.description}",
-    "sku": "${product.id}",
-    "mpn": "${product.mpn || product.id}",
-    "gtin13": "${product.gtin || ''}",
-    "brand": {
-      "@type": "Brand",
-      "name": "${product.brand}"
-    },
-    "image": ${JSON.stringify(product.images?.map((i: ProductImage) => i.url) || [mainImage])},
-    "offers": {
-      "@type": "Offer",
-      "url": "${canonicalUrl}",
-      "priceCurrency": "TRY",
-      "price": "${product.price}",
-      "priceValidUntil": "${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}",
-      "availability": "https://schema.org/${product.availability}",
-      "itemCondition": "https://schema.org/NewCondition",
-      "hasMerchantReturnPolicy": {
-        "@type": "MerchantReturnPolicy",
-        "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
-        "merchantReturnDays": 14
-      },
-      "shippingDetails": {
-        "@type": "OfferShippingDetails",
-        "shippingRate": {
-          "@type": "MonetaryAmount",
-          "value": "0",
-          "currency": "TRY"
-        },
-        "shippingDestination": {
-          "@type": "DefinedRegion",
-          "addressCountry": "TR",
-          "addressRegion": ["Antalya"]
-        },
-        "deliveryTime": {
-          "@type": "ShippingDeliveryTime",
-          "handlingTime": { "@type": "QuantitativeValue", "minValue": 0, "maxValue": 1, "unitCode": "DAY" },
-          "transitTime": { "@type": "QuantitativeValue", "minValue": 0, "maxValue": 1, "unitCode": "DAY" }
-        }
-      }
-    },
-    "category": "${category?.name || 'Çiçek'}",
-    "isRelatedTo": {
-      "@type": "Product",
-      "name": "${product.name}",
-      "offers": {
-        "@type": "Offer",
-        "availability": "https://schema.org/InStock",
-        "price": "${product.price}",
-        "priceCurrency": "TRY"
-      }
-    }
-  }`} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(productSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(reviewSchema)} />
 
   <section class="pt-28 pb-8 lg:pt-32 lg:pb-12 bg-white">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

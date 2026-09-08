@@ -8,6 +8,7 @@ import { contactInfo } from "../../../data/contact-info";
 import { isValidLocale, type Locale, LOCALE_SLUGS, localePath } from "../../../i18n/config";
 import { t } from "../../../i18n/translations";
 import { formatPrice } from "../../../lib/currency";
+import { buildBreadcrumbSchema, buildFaqSchema, buildProductSchema, buildReviewSchema } from "../../../lib/schema";
 
 const { lang, flower, slug } = Astro.params;
 
@@ -45,6 +46,36 @@ const waUrl = `https://wa.me/${contactInfo.whatsapp}?text=${encodeURIComponent(w
 const productTitle = `${tName} | ${SITE.name}`;
 const productDescription = `${tDesc} | ${formattedPrice}`;
 const canonicalUrl = `${SITE.url}/${locale}/${flower}/${product.slug}`;
+const productSchema = buildProductSchema(product, {
+  canonicalUrl,
+  categoryName: category?.name || "Çiçek",
+});
+const breadcrumbSchema = buildBreadcrumbSchema([
+  { name: "Home", item: SITE.url },
+  { name: "Flowers", item: `${SITE.url}/${locale}/${LOCALE_SLUGS[locale].flowers}` },
+  { name: tName, item: canonicalUrl },
+]);
+const faqSchema = buildFaqSchema([
+  {
+    question: "Can you deliver the same day?",
+    answer: "Yes, same-day delivery is available in Antalya for eligible orders and stock availability.",
+  },
+  {
+    question: "Are the flowers fresh?",
+    answer: "Yes, all arrangements are prepared with fresh-cut flowers and checked before dispatch.",
+  },
+  {
+    question: "Can I request a custom floral arrangement?",
+    answer: "Yes, custom requests for colors, messages, and special themes can be arranged through WhatsApp.",
+  },
+]);
+const reviewSchema = buildReviewSchema({
+  author: "Customer",
+  reviewBody: "Fast delivery, fresh flowers, and personalized service create a smooth shopping experience for special occasions.",
+  itemName: tName,
+  url: canonicalUrl,
+  ratingValue: "4.9",
+});
 ---
 
 <BaseLayout
@@ -55,6 +86,10 @@ const canonicalUrl = `${SITE.url}/${locale}/${flower}/${product.slug}`;
   canonicalURL={canonicalUrl}
   locale={locale}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(productSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(reviewSchema)} />
   <main class="pt-24 pb-20 bg-neutral-50/50 min-h-screen">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <nav class="text-xs uppercase tracking-widest text-neutral-400 mb-8 flex items-center gap-2">

@@ -2,10 +2,10 @@ import { db } from "../../../db";
 import { categories, categoryTranslations, media } from "../../../db/schema";
 import { eq } from "drizzle-orm";
 import crypto from "node:crypto";
+import { isAdminRequest } from "../../../lib/admin-auth";
 
 export const GET = async ({ request }: { request: Request }) => {
-  const token = request.headers.get("cookie")?.includes("admin_token=authenticated");
-  if (!token) return new Response("Unauthorized", { status: 401 });
+  if (!isAdminRequest(request)) return new Response("Unauthorized", { status: 401 });
 
   // Fetch from DB
   const rows = await db
@@ -34,8 +34,7 @@ export const GET = async ({ request }: { request: Request }) => {
 };
 
 export const POST = async ({ request }: { request: Request }) => {
-  const token = request.headers.get("cookie")?.includes("admin_token=authenticated");
-  if (!token) return new Response("Unauthorized", { status: 401 });
+  if (!isAdminRequest(request)) return new Response("Unauthorized", { status: 401 });
 
   const body = await request.json();
   const { name, slug, description, image } = body;

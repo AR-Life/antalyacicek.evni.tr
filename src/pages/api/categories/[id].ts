@@ -1,12 +1,12 @@
-import { db } from "../../../../db";
-import { categories, categoryTranslations, media } from "../../../../db/schema";
+import { db } from "../../../db";
+import { categories, categoryTranslations, media } from "../../../db/schema";
 import { eq } from "drizzle-orm";
 import type { APIContext } from "astro";
 import crypto from "node:crypto";
+import { isAdminRequest } from "../../../lib/admin-auth";
 
 export const PUT = async ({ request, params }: APIContext) => {
-  const token = request.headers.get("cookie")?.includes("admin_token=authenticated");
-  if (!token) return new Response("Unauthorized", { status: 401 });
+  if (!isAdminRequest(request)) return new Response("Unauthorized", { status: 401 });
 
   const id = params.id;
   if (!id) return new Response("Missing ID", { status: 400 });
@@ -70,8 +70,7 @@ export const PUT = async ({ request, params }: APIContext) => {
 };
 
 export const DELETE = async ({ request, params }: APIContext) => {
-  const token = request.headers.get("cookie")?.includes("admin_token=authenticated");
-  if (!token) return new Response("Unauthorized", { status: 401 });
+  if (!isAdminRequest(request)) return new Response("Unauthorized", { status: 401 });
 
   const id = params.id;
   if (!id) return new Response("Missing ID", { status: 400 });

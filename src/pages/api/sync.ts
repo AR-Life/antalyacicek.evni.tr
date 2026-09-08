@@ -1,9 +1,9 @@
 import { readProducts } from "../../lib/products-store";
 import { uploadProductsToCloud } from "../../lib/product-cloud";
+import { isAdminRequest } from "../../lib/admin-auth";
 
 export const POST = async ({ request }: { request: Request }) => {
-  const token = request.headers.get("cookie")?.includes("admin_token=authenticated");
-  if (!token) return new Response("Unauthorized", { status: 401 });
+  if (!isAdminRequest(request)) return new Response("Unauthorized", { status: 401 });
 
   const products = readProducts();
   await uploadProductsToCloud(products);
