@@ -5,6 +5,7 @@ import {
   productVariants,
   productMedia,
   media,
+  productFaqs,
 } from "../../../db/schema";
 import { eq } from "drizzle-orm";
 import { requireAuth } from "../../../lib/auth-guard";
@@ -74,7 +75,7 @@ export const POST = async (context: import("astro").APIContext) => {
   const body = await request.json();
   const { 
     translations, price, oldPrice, categoryId, image,
-    sku, stock, status, occasions: occList
+    sku, stock, status, occasions: occList, faqs: faqList
   } = body;
 
   const prodId = `p-${crypto.randomUUID()}`;
@@ -131,6 +132,17 @@ export const POST = async (context: import("astro").APIContext) => {
 
   if (occList && Array.isArray(occList)) {
     // In a full implementation, we'd insert into productOccasions mapping table
+  }
+
+  if (faqList && Array.isArray(faqList)) {
+    const faqRows = faqList.map((fId: string, idx: number) => ({
+      productId: prodId,
+      faqId: fId,
+      sortOrder: idx,
+    }));
+    if (faqRows.length > 0) {
+      await db.insert(productFaqs).values(faqRows);
+    }
   }
 
   // --- AI VECTORIZE INTEGRATION ---

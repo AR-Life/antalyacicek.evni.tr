@@ -5,6 +5,7 @@ import {
   productVariants,
   productMedia,
   media,
+  productFaqs,
 } from "../../../db/schema";
 import { eq } from "drizzle-orm";
 import type { APIContext } from "astro";
@@ -70,7 +71,7 @@ export const PUT = async ({ request, params }: APIContext) => {
   if (!id) return new Response("Missing ID", { status: 400 });
 
   const body = await request.json();
-  const { name, slug, description, price, oldPrice, categoryId, image } = body;
+  const { name, slug, description, price, oldPrice, categoryId, image, faqs: faqList } = body;
 
   const existingProd = await db.select().from(products).where(eq(products.id, id)).get();
   if (!existingProd) return new Response("Not found", { status: 404 });
@@ -144,6 +145,20 @@ export const PUT = async ({ request, params }: APIContext) => {
     });
   }
 
+  if (faqList && Array.isArray(faqList)) {
+    await db.delete(productFaqs).where(eq(productFaqs.productId, id));
+    const faqRows = faqList.map((fId: string, idx: number) => ({
+      productId: id,
+      faqId: fId,
+      sortOrder: idx,
+    }));
+    if (faqRows.length > 0) {
+      await db.insert(productFaqs).values(faqRows);
+    }
+  } else if (faqList && faqList.length === 0) {
+    await db.delete(productFaqs).where(eq(productFaqs.productId, id));
+  }
+
   const updated = { id, name, slug, description, price, oldPrice, categoryId, image };
 
   return new Response(JSON.stringify(updated), {
@@ -159,6 +174,7 @@ export const DELETE = async ({ request, params }: APIContext) => {
   const id = params.id;
   if (!id) return new Response("Missing ID", { status: 400 });
 
+  await db.delete(productFaqs).where(eq(productFaqs.productId, id));
   await db.delete(productVariants).where(eq(productVariants.productId, id));
   await db.delete(productTranslations).where(eq(productTranslations.productId, id));
   await db.delete(productMedia).where(eq(productMedia.productId, id));

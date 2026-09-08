@@ -189,7 +189,7 @@ const initialCategory = nonEmptyCategories[0] || propsCategories[0];
       allTab.setAttribute("role", "tab");
       allTab.setAttribute("data-tab-id", "all");
       allTab.className = tabBtnClass;
-      allTab.innerHTML = "✨ " + textAll;
+      allTab.textContent = "✨ " + textAll;
       applyTabStyles(allTab, activeTabId === null);
       
       allTab.addEventListener("click", function() {
@@ -219,7 +219,14 @@ const initialCategory = nonEmptyCategories[0] || propsCategories[0];
           tabBtn.setAttribute("role", "tab");
           tabBtn.setAttribute("data-tab-id", slug);
           tabBtn.className = tabBtnClass;
-          tabBtn.innerHTML = (info.icon ? "<span>" + info.icon + "</span> " : "") + info.name;
+          if (info.icon) {
+            var iconSpan = document.createElement("span");
+            iconSpan.textContent = info.icon;
+            tabBtn.appendChild(iconSpan);
+            tabBtn.appendChild(document.createTextNode(" " + info.name));
+          } else {
+            tabBtn.textContent = info.name;
+          }
           
           applyTabStyles(tabBtn, activeTabId === slug);
 
@@ -249,7 +256,7 @@ const initialCategory = nonEmptyCategories[0] || propsCategories[0];
           tabBtn.setAttribute("role", "tab");
           tabBtn.setAttribute("data-tab-id", catId);
           tabBtn.className = tabBtnClass;
-          tabBtn.innerHTML = "💐 " + info.name;
+          tabBtn.textContent = "💐 " + info.name;
           
           applyTabStyles(tabBtn, activeTabId === catId);
 

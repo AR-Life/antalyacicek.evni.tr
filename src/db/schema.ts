@@ -920,3 +920,37 @@ export const deliveryFeePrices = sqliteTable(
     uniqueIdx: uniqueIndex("idx_del_fee_unique").on(table.deliveryZoneId, table.currency),
   }),
 );
+
+// 15. SSS (FAQ) Yönetimi
+export const faqs = sqliteTable("faqs", {
+  id: text("id").primaryKey(),
+  status: text("status").default("published"), // published, draft
+  sortOrder: integer("sort_order").default(0),
+  createdAt: integer("created_at", { mode: "timestamp" }).defaultNow(),
+});
+
+export const faqTranslations = sqliteTable(
+  "faq_translations",
+  {
+    id: text("id").primaryKey(),
+    faqId: text("faq_id").references(() => faqs.id, { onDelete: "cascade" }),
+    languageCode: text("language_code").notNull(),
+    question: text("question").notNull(),
+    answer: text("answer").notNull(),
+  },
+  (table) => ({
+    transIdx: uniqueIndex("idx_faq_lang").on(table.faqId, table.languageCode),
+  }),
+);
+
+export const productFaqs = sqliteTable(
+  "product_faqs",
+  {
+    productId: text("product_id").references(() => products.id, { onDelete: "cascade" }),
+    faqId: text("faq_id").references(() => faqs.id, { onDelete: "cascade" }),
+    sortOrder: integer("sort_order").default(0),
+  },
+  (table) => ({
+    pk: primaryKey(table.productId, table.faqId),
+  }),
+);

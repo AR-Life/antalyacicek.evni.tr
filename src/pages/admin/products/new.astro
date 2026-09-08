@@ -1,7 +1,7 @@
 ---
 import AdminLayout from "../../../layouts/AdminLayout.astro";
 import { db } from "../../../db";
-import { categories, categoryTranslations, occasions, occasionTranslations, languages } from "../../../db/schema";
+import { categories, categoryTranslations, occasions, occasionTranslations, languages, faqs, faqTranslations } from "../../../db/schema";
 import { eq, desc } from "drizzle-orm";
 import ImagePicker from "../../../components/admin/ImagePicker.astro";
 
@@ -18,6 +18,12 @@ const occs = await db
   .from(occasions)
   .leftJoin(occasionTranslations, eq(occasions.id, occasionTranslations.occasionId))
   .where(eq(occasionTranslations.languageCode, "tr"));
+
+const allFaqs = await db
+  .select({ id: faqs.id, question: faqTranslations.question })
+  .from(faqs)
+  .leftJoin(faqTranslations, eq(faqs.id, faqTranslations.faqId))
+  .where(eq(faqTranslations.languageCode, "tr"));
 ---
 
 <AdminLayout title="Yeni Ürün Ekle">
@@ -155,6 +161,18 @@ const occs = await db
             ))}
           </div>
         </div>
+
+        <div class="mt-4">
+          <label class="block text-xs font-semibold text-neutral-500 mb-1.5 uppercase">S.S.S. (Sıkça Sorulan Sorular)</label>
+          <div class="space-y-2 max-h-40 overflow-y-auto pr-2">
+            {allFaqs.map(f => (
+              <label class="flex items-center gap-2 cursor-pointer text-sm text-neutral-700">
+                <input type="checkbox" name="faqs" value={f.id} class="w-4 h-4 rounded border-neutral-300 text-forest-700 focus:ring-forest-500" />
+                {f.question}
+              </label>
+            ))}
+          </div>
+        </div>
       </section>
 
       <!-- Medya -->
@@ -223,6 +241,7 @@ const occs = await db
         categoryId: formData.get('categoryId'),
         image: formData.get('image'),
         occasions: formData.getAll('occasions'),
+        faqs: formData.getAll('faqs'),
       };
 
       const res = await fetch('/api/products', {

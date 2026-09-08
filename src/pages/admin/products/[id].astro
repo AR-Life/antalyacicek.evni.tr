@@ -1,7 +1,7 @@
 ---
 import AdminLayout from "../../../layouts/AdminLayout.astro";
 import { db } from "../../../db";
-import { products, productTranslations, productVariants, categories, categoryTranslations, occasions, occasionTranslations, languages, media } from "../../../db/schema";
+import { products, productTranslations, productVariants, categories, categoryTranslations, occasions, occasionTranslations, languages, media, faqs, faqTranslations, productFaqs } from "../../../db/schema";
 import { eq, desc } from "drizzle-orm";
 import ImagePicker from "../../../components/admin/ImagePicker.astro";
 
@@ -18,11 +18,15 @@ if (!prod) return Astro.redirect("/admin/products");
 
 const transMap = new Map(allTrans.map(t => [t.languageCode, t]));
 
-const [activeLangs, cats, occs] = await Promise.all([
+const [activeLangs, cats, occs, allFaqs, productFaqList] = await Promise.all([
   db.select().from(languages).where(eq(languages.isActive, true)).orderBy(desc(languages.isDefault), languages.sortOrder),
   db.select({ id: categories.id, name: categoryTranslations.name }).from(categories).leftJoin(categoryTranslations, eq(categories.id, categoryTranslations.categoryId)).where(eq(categoryTranslations.languageCode, "tr")),
   db.select({ id: occasions.id, name: occasionTranslations.name, slug: occasionTranslations.slug }).from(occasions).leftJoin(occasionTranslations, eq(occasions.id, occasionTranslations.occasionId)).where(eq(occasionTranslations.languageCode, "tr")),
+  db.select({ id: faqs.id, question: faqTranslations.question }).from(faqs).leftJoin(faqTranslations, eq(faqs.id, faqTranslations.faqId)).where(eq(faqTranslations.languageCode, "tr")),
+  db.select({ faqId: productFaqs.faqId }).from(productFaqs).where(eq(productFaqs.productId, id)),
 ]);
+
+const selectedFaqs = new Set(productFaqList.map(f => f.faqId));
 ---
 
 <AdminLayout title={`Ürün Düzenle: ${transMap.get("tr")?.name || id}`}>
@@ -155,6 +159,18 @@ const [activeLangs, cats, occs] = await Promise.all([
             ))}
           </div>
         </div>
+
+        <div class="mt-4">
+          <label class="block text-xs font-semibold text-neutral-500 mb-1.5 uppercase">S.S.S. (Sıkça Sorulan Sorular)</label>
+          <div class="space-y-2 max-h-40 overflow-y-auto pr-2">
+            {allFaqs.map(f => (
+              <label class="flex items-center gap-2 cursor-pointer text-sm text-neutral-700">
+                <input type="checkbox" name="faqs" value={f.id} checked={selectedFaqs.has(f.id)} class="w-4 h-4 rounded border-neutral-300 text-forest-700 focus:ring-forest-500" />
+                {f.question}
+              </label>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section class="bg-white p-6 rounded-2xl shadow-sm border border-neutral-200">
@@ -218,6 +234,7 @@ const [activeLangs, cats, occs] = await Promise.all([
         oldPrice: formData.get('oldPrice') ? parseFloat(formData.get('oldPrice') as string) : undefined,
         categoryId: formData.get('categoryId') || undefined,
         image: formData.get('image') || undefined,
+        faqs: formData.getAll('faqs'),
       };
 
       const res = await fetch(`/api/products/${entityId}`, {

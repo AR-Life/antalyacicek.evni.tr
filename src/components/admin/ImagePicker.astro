@@ -83,8 +83,12 @@ const pickerId = `image-picker-${name}`;
 
     function selectImage(url: string) {
       hiddenInput.value = url;
+      preview.innerHTML = '';
       if (url) {
-        preview.innerHTML = `<img src="${url}" alt="" class="w-full h-full object-cover" />`;
+        const img = document.createElement('img');
+        img.src = url;
+        img.className = 'w-full h-full object-cover';
+        preview.appendChild(img);
       } else {
         preview.innerHTML = `<svg class="w-6 h-6 text-neutral-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>`;
       }
@@ -100,13 +104,23 @@ const pickerId = `image-picker-${name}`;
           gallery.innerHTML = '<div class="col-span-4 text-center text-sm text-neutral-400 py-8">Henüz görsel yok.</div>';
           return;
         }
-        gallery.innerHTML = data.map((m: any) => `
-          <button type="button" class="gallery-item aspect-square rounded-lg border border-neutral-200 overflow-hidden hover:ring-2 hover:ring-forest-400 transition-all bg-neutral-50 cursor-pointer" data-url="${m.url}">
-            <img src="${m.url}" alt="" class="w-full h-full object-cover" loading="lazy" onerror="this.parentElement.remove()" />
-          </button>
-        `).join('');
-        gallery.querySelectorAll('.gallery-item').forEach(item => {
-          item.addEventListener('click', () => selectImage((item as HTMLElement).dataset.url || ''));
+        gallery.innerHTML = '';
+        data.forEach((m: any) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'gallery-item aspect-square rounded-lg border border-neutral-200 overflow-hidden hover:ring-2 hover:ring-forest-400 transition-all bg-neutral-50 cursor-pointer';
+          btn.dataset.url = m.url;
+          
+          const img = document.createElement('img');
+          img.src = m.url;
+          img.alt = '';
+          img.className = 'w-full h-full object-cover';
+          img.loading = 'lazy';
+          img.onerror = function() { btn.remove(); };
+          
+          btn.appendChild(img);
+          btn.addEventListener('click', () => selectImage(m.url || ''));
+          gallery.appendChild(btn);
         });
       } catch {
         gallery.innerHTML = '<div class="col-span-4 text-center text-sm text-red-400 py-8">Yüklenemedi.</div>';
