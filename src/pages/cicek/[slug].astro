@@ -19,7 +19,7 @@ if (!product) {
 }
 
 if (!product) {
-  return Astro.redirect("/404");
+  return new Response("Sayfa Bulunamadı", { status: 404, statusText: "Not Found" });
 }
 
 const category = categories.find((c) => c.id === product.categoryId);

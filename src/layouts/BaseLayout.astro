@@ -25,11 +25,13 @@ const {
   description = SITE.description,
   image = `${SITE.url}/images/og-default.svg`,
   type = "website",
-  canonicalURL = SITE.url,
+  canonicalURL,
   locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE,
 } = Astro.props;
 
 const basePath = getBasePath(Astro.url.pathname);
+const currentUrl = new URL(Astro.url.pathname, SITE.url).toString().replace(/\/$/, "");
+const resolvedCanonicalURL = canonicalURL || (Astro.url.pathname === '/' ? SITE.url : currentUrl) || SITE.url;
 ---
 
 <!doctype html>
@@ -69,7 +71,7 @@ const basePath = getBasePath(Astro.url.pathname);
       description={description}
       image={image}
       type={type}
-      canonicalURL={canonicalURL}
+      canonicalURL={resolvedCanonicalURL}
     />
     {LOCALES.map((l) => (
       <link rel="alternate" hreflang={l} href={`${SITE.url}${localePath(l, basePath)}`} />

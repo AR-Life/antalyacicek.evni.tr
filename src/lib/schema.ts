@@ -86,42 +86,6 @@ export function buildProductSchema(product: Record<string, any>, options: { cano
       price: String(product.price ?? 0),
       availability: getAvailability(product.availability),
       itemCondition: "https://schema.org/NewCondition",
-      priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-      shippingDetails: {
-        "@type": "OfferShippingDetails",
-        shippingRate: {
-          "@type": "MonetaryAmount",
-          value: "0",
-          currency: "TRY",
-        },
-        shippingDestination: {
-          "@type": "DefinedRegion",
-          addressCountry: "TR",
-          addressRegion: ["Antalya"],
-        },
-        deliveryTime: {
-          "@type": "ShippingDeliveryTime",
-          handlingTime: {
-            "@type": "QuantitativeValue",
-            minValue: 0,
-            maxValue: 1,
-            unitCode: "DAY",
-          },
-          transitTime: {
-            "@type": "QuantitativeValue",
-            minValue: 0,
-            maxValue: 1,
-            unitCode: "DAY",
-          },
-        },
-      },
-    },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.9",
-      reviewCount: "128",
-      bestRating: "5",
-      worstRating: "1",
     },
   };
 }
@@ -186,21 +150,6 @@ export function buildLocalBusinessSchema() {
       { "@type": "OpeningHoursSpecification", dayOfWeek: ["Sunday"], opens: "10:00", closes: "20:00" },
     ],
     sameAs: [SITE.social.instagram, SITE.social.facebook],
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.9",
-      reviewCount: "128",
-      bestRating: "5",
-      worstRating: "1",
-    },
-    review: [
-      {
-        "@type": "Review",
-        author: { "@type": "Organization", name: SITE.name },
-        reviewBody: "Aynı gün teslimat, taze çiçekler ve kişiye özel aranjmanlar ile müşteriler için güvenli ve hızlı bir sipariş deneyimi sunuyor.",
-        reviewRating: { "@type": "Rating", ratingValue: "4.9", bestRating: "5", worstRating: "1" },
-      },
-    ],
   };
 }
 

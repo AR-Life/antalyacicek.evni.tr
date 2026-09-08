@@ -1,7 +1,7 @@
 ---
 import { SITE } from "../data/site.config";
 import { contactInfo } from "../data/contact-info";
-import { type Locale } from "../i18n/config";
+import { type Locale, localePath } from "../i18n/config";
 import { t } from "../i18n/translations";
 import { formatPrice } from "../lib/currency";
 
@@ -40,13 +40,11 @@ const formattedOldPrice = hasDiscount ? await formatPrice(product.oldPrice!, loc
 
 const waMsg = `Hello, I would like to order: ${tName} - ${formattedPrice} (${SITE.url}/cicek/${product.slug})`;
 const waUrl = `https://wa.me/${contactInfo.whatsapp}?text=${encodeURIComponent(waMsg)}`;
-const cardHref = isTR ? `/cicek/${productSlug}` : waUrl;
+const cardHref = localePath(locale, `/cicek/${productSlug}`);
 ---
 
 <a
   href={cardHref}
-  target={isTR ? "_self" : "_blank"}
-  rel={isTR ? undefined : "noopener noreferrer"}
   class="group relative bg-white rounded-2xl sm:rounded-3xl shadow-[0_2px_12px_-3px_rgba(0,0,0,0.04)] sm:shadow-[0_4px_16px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_30px_-6px_rgba(0,0,0,0.09)] border border-neutral-200/60 hover:border-neutral-300 transition-all duration-200 overflow-hidden flex flex-col hover:-translate-y-1 sm:hover:-translate-y-1.5 hover:scale-[1.015] active:scale-[0.99]"
   aria-label={`${tName} - Detayları gör`}
 >

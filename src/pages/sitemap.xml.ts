@@ -19,15 +19,21 @@ export async function GET() {
     resolvedUrls.add(url);
   };
 
-  const staticPaths = [
+  const staticPathsTR = [
     "/",
     "/cicekler",
     "/hakkinda",
     "/iletisim",
   ];
 
+  const staticPathsOthers = [
+    "/",
+    "/cicekler",
+  ];
+
   for (const locale of LOCALES) {
-    for (const path of staticPaths) {
+    const paths = locale === "tr" ? staticPathsTR : staticPathsOthers;
+    for (const path of paths) {
       addUrl(`${SITE.url}${localePath(locale, path)}`);
     }
 
@@ -48,7 +54,6 @@ export async function GET() {
       (url) => `
   <url>
     <loc>${escapeXml(url)}</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>`
