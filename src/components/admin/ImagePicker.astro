@@ -1,0 +1,174 @@
+---
+interface Props {
+  name: string;
+  value?: string;
+  label?: string;
+}
+const { name, value = "", label = "Görsel" } = Astro.props;
+const pickerId = `image-picker-${name}`;
+---
+
+<div class="image-picker" data-picker-id={pickerId} data-input-name={name}>
+  <input type="hidden" name={name} value={value} />
+  <div class="flex items-center gap-3">
+    <div class="image-picker-preview w-16 h-16 rounded-xl border border-neutral-200 bg-neutral-50 flex items-center justify-center overflow-hidden flex-shrink-0">
+      {value ? <img src={value} alt="" class="w-full h-full object-cover" /> : <svg class="w-6 h-6 text-neutral-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
+    </div>
+    <button type="button" class="image-picker-btn px-4 py-2 text-sm font-semibold bg-white border border-neutral-200 hover:bg-neutral-50 rounded-xl transition-colors">{label} Seç</button>
+  </div>
+</div>
+
+<dialog id={`modal-${pickerId}`} class="image-picker-modal backdrop:bg-neutral-900/60 backdrop:backdrop-blur-sm rounded-2xl shadow-2xl border-0 p-0 w-[720px] max-w-[95vw] m-auto">
+  <div class="bg-white rounded-2xl overflow-hidden max-h-[85vh] flex flex-col">
+    <div class="p-4 border-b border-neutral-200 flex items-center justify-between flex-shrink-0">
+      <h3 class="font-semibold text-neutral-800">Görsel Seç</h3>
+      <button type="button" class="image-picker-close text-neutral-400 hover:text-neutral-600 text-xl leading-none">&times;</button>
+    </div>
+
+    <div class="p-4 border-b border-neutral-100 flex-shrink-0">
+      <div class="flex gap-2 mb-3">
+        <button type="button" class="picker-tab px-3 py-1.5 text-sm font-semibold rounded-lg bg-forest-50 text-forest-700" data-tab="gallery">Galeri</button>
+        <button type="button" class="picker-tab px-3 py-1.5 text-sm font-semibold rounded-lg text-neutral-500 hover:bg-neutral-50" data-tab="upload">Yükle</button>
+        <button type="button" class="picker-tab px-3 py-1.5 text-sm font-semibold rounded-lg text-neutral-500 hover:bg-neutral-50" data-tab="url">URL</button>
+      </div>
+
+      <div data-pane="gallery" class="picker-pane">
+        <div class="image-picker-gallery grid grid-cols-4 gap-2 max-h-[400px] overflow-y-auto p-1">
+          <div class="col-span-4 text-center text-sm text-neutral-400 py-8">Yükleniyor...</div>
+        </div>
+      </div>
+
+      <div data-pane="upload" class="picker-pane hidden">
+        <div class="image-picker-dropzone border-2 border-dashed border-neutral-300 rounded-xl p-8 text-center cursor-pointer hover:border-forest-400 transition-colors">
+          <svg class="w-10 h-10 text-neutral-300 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+          <p class="text-sm text-neutral-500">Sürükle bırak veya <span class="text-forest-600 font-semibold">tıkla</span></p>
+          <input type="file" accept="image/*" multiple class="hidden" />
+        </div>
+        <div class="image-picker-uploading hidden mt-3 text-center text-sm text-neutral-500">Yükleniyor...</div>
+      </div>
+
+      <div data-pane="url" class="picker-pane hidden">
+        <div class="flex gap-2">
+          <input type="text" placeholder="https://..." class="picker-url-input flex-1 px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 outline-none text-sm" />
+          <button type="button" class="picker-url-apply px-4 py-2.5 bg-forest-700 text-white text-sm font-semibold rounded-xl hover:bg-forest-800">Uygula</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4 border-t border-neutral-200 flex justify-end flex-shrink-0">
+      <button type="button" class="image-picker-close px-5 py-2 bg-white border border-neutral-200 text-neutral-700 font-semibold rounded-xl hover:bg-neutral-50 text-sm">Kapat</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  document.querySelectorAll('.image-picker').forEach(picker => {
+    const pickerId = picker.dataset.pickerId;
+    const inputName = picker.dataset.inputName;
+    const hiddenInput = picker.querySelector('input[type="hidden"]') as HTMLInputElement;
+    const preview = picker.querySelector('.image-picker-preview') as HTMLElement;
+    const modal = document.getElementById(`modal-${pickerId}`) as HTMLDialogElement;
+    if (!modal) return;
+
+    const openBtn = picker.querySelector('.image-picker-btn') as HTMLElement;
+    const closeBtns = modal.querySelectorAll('.image-picker-close');
+    const gallery = modal.querySelector('.image-picker-gallery') as HTMLElement;
+    const dropzone = modal.querySelector('.image-picker-dropzone') as HTMLElement;
+    const fileInput = dropzone?.querySelector('input[type="file"]') as HTMLInputElement;
+    const uploadingEl = modal.querySelector('.image-picker-uploading') as HTMLElement;
+    const urlInput = modal.querySelector('.picker-url-input') as HTMLInputElement;
+    const urlApply = modal.querySelector('.picker-url-apply') as HTMLElement;
+    const tabs = modal.querySelectorAll('.picker-tab');
+    const panes = modal.querySelectorAll('.picker-pane');
+
+    function selectImage(url: string) {
+      hiddenInput.value = url;
+      if (url) {
+        preview.innerHTML = `<img src="${url}" alt="" class="w-full h-full object-cover" />`;
+      } else {
+        preview.innerHTML = `<svg class="w-6 h-6 text-neutral-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>`;
+      }
+      modal.close();
+    }
+
+    async function loadGallery() {
+      gallery.innerHTML = '<div class="col-span-4 text-center text-sm text-neutral-400 py-8">Yükleniyor...</div>';
+      try {
+        const res = await fetch('/api/media');
+        const data = await res.json();
+        if (!Array.isArray(data) || data.length === 0) {
+          gallery.innerHTML = '<div class="col-span-4 text-center text-sm text-neutral-400 py-8">Henüz görsel yok.</div>';
+          return;
+        }
+        gallery.innerHTML = data.map((m: any) => `
+          <button type="button" class="gallery-item aspect-square rounded-lg border border-neutral-200 overflow-hidden hover:ring-2 hover:ring-forest-400 transition-all bg-neutral-50 cursor-pointer" data-url="${m.url}">
+            <img src="${m.url}" alt="" class="w-full h-full object-cover" loading="lazy" onerror="this.parentElement.remove()" />
+          </button>
+        `).join('');
+        gallery.querySelectorAll('.gallery-item').forEach(item => {
+          item.addEventListener('click', () => selectImage((item as HTMLElement).dataset.url || ''));
+        });
+      } catch {
+        gallery.innerHTML = '<div class="col-span-4 text-center text-sm text-red-400 py-8">Yüklenemedi.</div>';
+      }
+    }
+
+    openBtn.addEventListener('click', () => {
+      loadGallery();
+      modal.showModal();
+    });
+
+    closeBtns.forEach(b => b.addEventListener('click', () => modal.close()));
+
+    modal.addEventListener('click', (e) => {
+      const rect = modal.getBoundingClientRect();
+      if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) {
+        modal.close();
+      }
+    });
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.dataset.tab;
+        tabs.forEach(t => { t.classList.remove('bg-forest-50', 'text-forest-700'); t.classList.add('text-neutral-500'); });
+        tab.classList.add('bg-forest-50', 'text-forest-700');
+        tab.classList.remove('text-neutral-500');
+        panes.forEach(p => p.classList.add('hidden'));
+        modal.querySelector(`[data-pane="${target}"]`)?.classList.remove('hidden');
+      });
+    });
+
+    urlApply?.addEventListener('click', () => {
+      if (urlInput?.value.trim()) selectImage(urlInput.value.trim());
+    });
+
+    if (dropzone && fileInput) {
+      dropzone.addEventListener('click', () => fileInput.click());
+      dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('border-forest-400'); });
+      dropzone.addEventListener('dragleave', () => dropzone.classList.remove('border-forest-400'));
+      dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('border-forest-400');
+        uploadFiles(e.dataTransfer?.files || null);
+      });
+      fileInput.addEventListener('change', () => uploadFiles(fileInput.files));
+    }
+
+    async function uploadFiles(fileList: FileList | null) {
+      if (!fileList || fileList.length === 0) return;
+      const formData = new FormData();
+      Array.from(fileList).forEach(f => formData.append('files', f));
+      uploadingEl?.classList.remove('hidden');
+      try {
+        const res = await fetch('/api/media', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (data.uploaded?.length) {
+          selectImage(data.uploaded[0].url);
+        }
+      } catch {
+        showToast?.('Yükleme başarısız.', 'error');
+      }
+      uploadingEl?.classList.add('hidden');
+    }
+  });
+</script>

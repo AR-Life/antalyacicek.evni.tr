@@ -1,11 +1,11 @@
 import { db } from "../../../db";
 import { occasions, occasionTranslations, media } from "../../../db/schema";
 import { eq } from "drizzle-orm";
-import crypto from "node:crypto";
-import { isAdminRequest } from "../../../lib/admin-auth";
+import { requireAuth } from "../../../lib/auth-guard";
 
 export const GET = async ({ request }: { request: Request }) => {
-  if (!isAdminRequest(request)) return new Response("Unauthorized", { status: 401 });
+  const auth = await requireAuth(request);
+  if (auth instanceof Response) return auth;
 
   const rows = await db
     .select({
@@ -32,10 +32,11 @@ export const GET = async ({ request }: { request: Request }) => {
 };
 
 export const POST = async ({ request }: { request: Request }) => {
-  if (!isAdminRequest(request)) return new Response("Unauthorized", { status: 401 });
+  const auth = await requireAuth(request);
+  if (auth instanceof Response) return auth;
 
   const body = await request.json();
-  const { name, slug, description, icon } = body;
+  const { translations, icon, status, sortOrder } = body;
 
   const occId = `occ-${crypto.randomUUID()}`;
   let mediaId: string | null = null;
@@ -51,18 +52,26 @@ export const POST = async ({ request }: { request: Request }) => {
 
   await db.insert(occasions).values({
     id: occId,
+    status: status || "published",
+    sortOrder: sortOrder || 0,
     imageId: mediaId,
   });
 
-  await db.insert(occasionTranslations).values({
-    id: `ot-${crypto.randomUUID()}`,
-    occasionId: occId,
-    languageCode: "tr",
-    name: name || "",
-    slug: slug || "",
-  });
+  if (translations && Array.isArray(translations)) {
+    const translationRows = translations.map(t => ({
+      id: `ot-${crypto.randomUUID()}`,
+      occasionId: occId,
+      languageCode: t.languageCode,
+      name: t.name,
+      slug: t.slug,
+    }));
+    
+    if (translationRows.length > 0) {
+      await db.insert(occasionTranslations).values(translationRows);
+    }
+  }
 
-  const occasion = { id: occId, name, slug, description, icon };
+  const occasion = { id: occId, translations, icon };
 
   return new Response(JSON.stringify(occasion), {
     status: 201,

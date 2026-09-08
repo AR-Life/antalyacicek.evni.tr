@@ -1,0 +1,14 @@
+name = "antalyacicek-evni-tr"
+compatibility_date = "2024-08-01"
+
+# AI Binding for generating embeddings
+[ai]
+binding = "AI"
+
+# Vectorize Binding for storing/searching embeddings
+[[vectorize]]
+binding = "VECTOR_INDEX"
+index_name = "product-search"
+
+[placement]
+mode = "smart"

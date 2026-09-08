@@ -581,8 +581,7 @@ export function getDiscounted(): Product[] {
   return all.filter((p: any) => p.oldPrice !== undefined && p.oldPrice > p.price);
 }
 
-import fs from "node:fs";
-import path from "node:path";
+// Local JSON reading is disabled for Cloudflare Edge compatibility
 
 function getAllProducts(): any[] {
   // Helper to assign differentiated, realistic occasions to each product so filters clearly change products
@@ -646,19 +645,7 @@ function getAllProducts(): any[] {
     };
   };
 
-  // Read from local products.json (admin keeps this in sync)
-  // Cloud R2 sync happens in background via writeProducts
-  try {
-    const dataFile = path.join(process.cwd(), "src", "data", "products.json");
-    if (fs.existsSync(dataFile)) {
-      const raw = fs.readFileSync(dataFile, "utf-8");
-      const storeData = JSON.parse(raw);
-      if (storeData.length > 0) {
-        return storeData.map(enrich);
-      }
-    }
-  } catch {}
-
+  // Read from local products.json removed since this runs in Cloudflare Edge environments where fs is unavailable.
   // Fallback to hardcoded
   return [...products].map(enrich);
 }

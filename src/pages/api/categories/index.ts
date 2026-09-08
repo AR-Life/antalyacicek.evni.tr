@@ -1,11 +1,11 @@
 import { db } from "../../../db";
 import { categories, categoryTranslations, media } from "../../../db/schema";
 import { eq } from "drizzle-orm";
-import crypto from "node:crypto";
-import { isAdminRequest } from "../../../lib/admin-auth";
+import { requireAuth } from "../../../lib/auth-guard";
 
 export const GET = async ({ request }: { request: Request }) => {
-  if (!isAdminRequest(request)) return new Response("Unauthorized", { status: 401 });
+  const auth = await requireAuth(request);
+  if (auth instanceof Response) return auth;
 
   // Fetch from DB
   const rows = await db
@@ -34,10 +34,11 @@ export const GET = async ({ request }: { request: Request }) => {
 };
 
 export const POST = async ({ request }: { request: Request }) => {
-  if (!isAdminRequest(request)) return new Response("Unauthorized", { status: 401 });
+  const auth = await requireAuth(request);
+  if (auth instanceof Response) return auth;
 
   const body = await request.json();
-  const { name, slug, description, image } = body;
+  const { translations, image, parentId, status, sortOrder } = body;
 
   const catId = `cat-${crypto.randomUUID()}`;
   let mediaId: string | null = null;
@@ -53,19 +54,30 @@ export const POST = async ({ request }: { request: Request }) => {
 
   await db.insert(categories).values({
     id: catId,
+    parentId: parentId || null,
+    status: status || "published",
+    sortOrder: sortOrder || 0,
     imageId: mediaId,
   });
 
-  await db.insert(categoryTranslations).values({
-    id: `ct-${crypto.randomUUID()}`,
-    categoryId: catId,
-    languageCode: "tr",
-    name: name || "",
-    slug: slug || "",
-    description: description || "",
-  });
+  if (translations && Array.isArray(translations)) {
+    const translationRows = translations.map(t => ({
+      id: `ct-${crypto.randomUUID()}`,
+      categoryId: catId,
+      languageCode: t.languageCode,
+      name: t.name,
+      slug: t.slug,
+      description: t.description || null,
+      metaTitle: t.seoTitle || null,
+      metaDescription: t.seoDescription || null,
+    }));
+    
+    if (translationRows.length > 0) {
+      await db.insert(categoryTranslations).values(translationRows);
+    }
+  }
 
-  const category = { id: catId, name, slug, description, image };
+  const category = { id: catId, image, translations };
 
   return new Response(JSON.stringify(category), {
     status: 201,

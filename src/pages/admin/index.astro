@@ -1,0 +1,55 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import { db } from "../../db";
+import { products, orders, users } from "../../db/schema";
+import { count, sum, eq } from "drizzle-orm";
+
+// Fetch some basic stats
+const [productCount] = await db.select({ value: count() }).from(products);
+const [orderCount] = await db.select({ value: count() }).from(orders);
+const [customerCount] = await db.select({ value: count() }).from(users).where(eq(users.role, "customer"));
+const [revenueData] = await db.select({ value: sum(orders.totalAmount) }).from(orders).where(eq(orders.status, "delivered"));
+
+const revenue = revenueData.value || 0;
+---
+
+<AdminLayout title="Dashboard">
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-neutral-900 mb-2">Hoş Geldiniz, Admin 👋</h1>
+    <p class="text-neutral-500">Mağazanızın genel durumunu buradan takip edebilirsiniz.</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-neutral-200 flex items-center">
+      <div class="w-14 h-14 bg-blue-50 text-blue-700 rounded-xl flex items-center justify-center text-2xl mr-4">📦</div>
+      <div>
+        <p class="text-sm text-neutral-500 font-medium">Toplam Sipariş</p>
+        <p class="text-2xl font-bold text-neutral-900">{orderCount.value}</p>
+      </div>
+    </div>
+    
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-neutral-200 flex items-center">
+      <div class="w-14 h-14 bg-emerald-50 text-emerald-700 rounded-xl flex items-center justify-center text-2xl mr-4">💰</div>
+      <div>
+        <p class="text-sm text-neutral-500 font-medium">Toplam Gelir</p>
+        <p class="text-2xl font-bold text-neutral-900">{revenue.toLocaleString('tr-TR')} ₺</p>
+      </div>
+    </div>
+    
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-neutral-200 flex items-center">
+      <div class="w-14 h-14 bg-purple-50 text-purple-700 rounded-xl flex items-center justify-center text-2xl mr-4">👥</div>
+      <div>
+        <p class="text-sm text-neutral-500 font-medium">Kayıtlı Müşteri</p>
+        <p class="text-2xl font-bold text-neutral-900">{customerCount.value}</p>
+      </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-neutral-200 flex items-center">
+      <div class="w-14 h-14 bg-forest-50 text-forest-700 rounded-xl flex items-center justify-center text-2xl mr-4">🛍️</div>
+      <div>
+        <p class="text-sm text-neutral-500 font-medium">Katalogda Ürün</p>
+        <p class="text-2xl font-bold text-neutral-900">{productCount.value}</p>
+      </div>
+    </div>
+  </div>
+</AdminLayout>

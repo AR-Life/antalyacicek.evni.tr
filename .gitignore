@@ -22,3 +22,20 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# database and cloudflare
+.data/
+.wrangler/
+
+# Database
+local.db
+local.db.bak
+local.db-*
+
+# Debug files
+watch_debug.js
+watch_debug.mjs
+
+# Scraper
+scraper/storage/
+scraper/temp_product.html

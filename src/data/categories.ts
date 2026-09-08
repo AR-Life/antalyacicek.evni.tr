@@ -65,22 +65,7 @@ export const defaultCategories: Category[] = [
   },
 ];
 
-import fs from "node:fs";
-import path from "node:path";
-
 export function getAllCategories(): Category[] {
-  try {
-    const dataFile = path.join(process.cwd(), "src", "data", "categories.json");
-    if (fs.existsSync(dataFile)) {
-      const raw = fs.readFileSync(dataFile, "utf-8");
-      const storeData = JSON.parse(raw);
-      if (storeData.length > 0) {
-        return storeData;
-      }
-    }
-  } catch (err) {
-    // Ignore errors in browser/client environment, or parsing issues
-  }
   return [...defaultCategories];
 }
 

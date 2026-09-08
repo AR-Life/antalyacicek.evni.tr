@@ -1,0 +1,105 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { db } from "../../../db";
+import { products, productTranslations, productVariants, media, categories, categoryTranslations } from "../../../db/schema";
+import { eq } from "drizzle-orm";
+import TableActions from "../../../components/admin/TableActions.astro";
+
+// Fetch products with translations and price
+const rows = await db
+  .select({
+    id: products.id,
+    name: productTranslations.name,
+    status: products.status,
+    price: productVariants.price,
+    stock: productVariants.stock,
+    imageId: productVariants.imageId,
+    categoryName: categoryTranslations.name,
+  })
+  .from(products)
+  .leftJoin(productTranslations, eq(products.id, productTranslations.productId))
+  .leftJoin(productVariants, eq(products.id, productVariants.productId))
+  .leftJoin(categories, eq(products.categoryId, categories.id))
+  .leftJoin(categoryTranslations, eq(categories.id, categoryTranslations.categoryId))
+  .where(eq(productTranslations.languageCode, "tr"));
+
+// Get unique products (in case of multiple variants, just grab the first one for the list)
+const productMap = new Map();
+for (const row of rows) {
+  if (!productMap.has(row.id)) {
+    productMap.set(row.id, row);
+  }
+}
+const productList = Array.from(productMap.values());
+
+// Get media map
+const allMedia = await db.select().from(media);
+const mediaMap = new Map(allMedia.map(m => [m.id, m.url]));
+
+---
+
+<AdminLayout title="Ürün Yönetimi">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-bold text-neutral-900">Ürünler</h1>
+      <p class="text-sm text-neutral-500 mt-1">Toplam {productList.length} ürün bulundu.</p>
+    </div>
+    <a href="/admin/products/new" class="px-5 py-2.5 bg-forest-700 hover:bg-forest-800 text-white font-semibold rounded-xl transition-all shadow-md shadow-forest-700/20">
+      + Yeni Ürün Ekle
+    </a>
+  </div>
+
+  <div class="bg-white border border-neutral-200 rounded-2xl shadow-sm overflow-hidden">
+    <table class="w-full text-left text-sm text-neutral-600">
+      <thead class="bg-neutral-50 text-neutral-700 font-semibold border-b border-neutral-200">
+        <tr>
+          <th class="px-6 py-4">Ürün</th>
+          <th class="px-6 py-4">Kategori</th>
+          <th class="px-6 py-4">Fiyat</th>
+          <th class="px-6 py-4">Stok</th>
+          <th class="px-6 py-4">Durum</th>
+          <th class="px-6 py-4 text-right">İşlemler</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-neutral-100">
+        {productList.map(p => {
+          const imgUrl = p.imageId ? (mediaMap.get(p.imageId) || '') : '';
+          return (
+            <tr class="hover:bg-neutral-50 transition-colors">
+              <td class="px-6 py-4 flex items-center gap-4">
+                <div class="w-12 h-12 bg-neutral-100 rounded-lg overflow-hidden border border-neutral-200 flex-shrink-0">
+                  {imgUrl ? (
+                    <img src={imgUrl} alt={p.name} class="w-full h-full object-cover" />
+                  ) : (
+                    <div class="w-full h-full flex items-center justify-center text-neutral-400">?</div>
+                  )}
+                </div>
+                <div class="font-medium text-neutral-900">{p.name || 'İsimsiz Ürün'}</div>
+              </td>
+              <td class="px-6 py-4">{p.categoryName || '-'}</td>
+              <td class="px-6 py-4 font-semibold text-neutral-900">{p.price} ₺</td>
+              <td class="px-6 py-4">
+                <span class={`px-2.5 py-1 rounded-full text-xs font-semibold ${p.stock > 0 ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                  {p.stock > 0 ? p.stock + ' Adet' : 'Stokta Yok'}
+                </span>
+              </td>
+              <td class="px-6 py-4">
+                <span class={`px-2.5 py-1 rounded-full text-xs font-semibold ${p.status === 'published' ? 'bg-blue-50 text-blue-700' : 'bg-neutral-100 text-neutral-600'}`}>
+                  {p.status === 'published' ? 'Yayınlandı' : 'Taslak'}
+                </span>
+              </td>
+              <TableActions editUrl={`/admin/products/${p.id}`} deleteId={p.id} deleteUrl={`/api/products/${p.id}`} deleteMessage={`"${p.name || 'İsimsiz Ürün'}" ürününü silmek istediğinize emin misiniz?`} />
+            </tr>
+          );
+        })}
+        {productList.length === 0 && (
+          <tr>
+            <td colspan="6" class="px-6 py-12 text-center text-neutral-500">
+              Henüz ürün eklenmemiş.
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+</AdminLayout>

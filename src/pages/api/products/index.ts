@@ -7,11 +7,12 @@ import {
   media,
 } from "../../../db/schema";
 import { eq } from "drizzle-orm";
-import crypto from "node:crypto";
-import { isAdminRequest } from "../../../lib/admin-auth";
+import { requireAuth } from "../../../lib/auth-guard";
 
-export const GET = async ({ request }: { request: Request }) => {
-  if (!isAdminRequest(request)) return new Response("Unauthorized", { status: 401 });
+export const GET = async (context: import("astro").APIContext) => {
+  const request = context.request;
+  const auth = await requireAuth(request);
+  if (auth instanceof Response) return auth;
 
   // Get products with translations and their default variant for price
   const rows = await db
@@ -63,11 +64,18 @@ export const GET = async ({ request }: { request: Request }) => {
   });
 };
 
-export const POST = async ({ request }: { request: Request }) => {
-  if (!isAdminRequest(request)) return new Response("Unauthorized", { status: 401 });
+export const POST = async (context: import("astro").APIContext) => {
+  const request = context.request;
+  const env = context.locals.runtime?.env;
+
+  const auth = await requireAuth(request);
+  if (auth instanceof Response) return auth;
 
   const body = await request.json();
-  const { name, slug, description, price, oldPrice, categoryId, image } = body;
+  const { 
+    translations, price, oldPrice, categoryId, image,
+    sku, stock, status, occasions: occList
+  } = body;
 
   const prodId = `p-${crypto.randomUUID()}`;
   let mediaId: string | null = null;
@@ -89,28 +97,63 @@ export const POST = async ({ request }: { request: Request }) => {
   await db.insert(products).values({
     id: prodId,
     categoryId: categoryId || null,
+    status: status || "published",
   });
 
-  await db.insert(productTranslations).values({
-    id: `pt-${crypto.randomUUID()}`,
-    productId: prodId,
-    languageCode: "tr",
-    name: name || "",
-    slug: slug || "",
-    description: description || "",
-  });
+  if (translations && Array.isArray(translations)) {
+    const translationRows = translations.map(t => ({
+      id: `pt-${crypto.randomUUID()}`,
+      productId: prodId,
+      languageCode: t.languageCode,
+      name: t.name,
+      slug: t.slug,
+      description: t.description || null,
+      metaTitle: t.seoTitle || null,
+      metaDescription: t.seoDescription || null,
+    }));
+    
+    if (translationRows.length > 0) {
+      await db.insert(productTranslations).values(translationRows);
+    }
+  }
 
   await db.insert(productVariants).values({
     id: `v-${crypto.randomUUID()}`,
     productId: prodId,
-    sku: `SKU-${Date.now()}`,
+    sku: sku || `SKU-${Date.now()}`,
     price: price || 0,
     oldPrice: oldPrice || null,
+    stock: stock || 0,
+    manageStock: true,
     imageId: mediaId,
     isDefault: true,
   });
 
-  const product = { id: prodId, name, slug, description, price, oldPrice, categoryId, image };
+  if (occList && Array.isArray(occList)) {
+    // In a full implementation, we'd insert into productOccasions mapping table
+  }
+
+  // --- AI VECTORIZE INTEGRATION ---
+  if (env?.AI && env?.VECTOR_INDEX && translations && translations.length > 0) {
+    try {
+      // Metinleri birleştirip anlamsal bir blok oluşturuyoruz
+      const mainText = translations.map((t: any) => `${t.name} ${t.description || ''}`).join(" ");
+      
+      const aiResult = await env.AI.run('@cf/baai/bge-base-en-v1.5', { text: [mainText] });
+      const vector = aiResult.data[0];
+
+      await env.VECTOR_INDEX.upsert([{
+        id: prodId,
+        values: vector,
+      }]);
+      console.log(`[Vectorize] Product ${prodId} successfully vectorized.`);
+    } catch (err) {
+      console.error("[Vectorize] Failed to generate/upsert embedding:", err);
+    }
+  }
+  // --------------------------------
+
+  const product = { id: prodId, price, oldPrice, categoryId, image, translations };
 
   return new Response(JSON.stringify(product), {
     status: 201,

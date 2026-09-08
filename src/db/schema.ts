@@ -75,6 +75,20 @@ export const authSessions = sqliteTable(
   }),
 );
 
+// 0.5 Diller (Languages)
+export const languages = sqliteTable("languages", {
+  id: text("id").primaryKey(),
+  code: text("code").notNull().unique(), // tr, en, ar
+  name: text("name").notNull(), // Türkçe, English
+  isActive: integer("is_active", { mode: "boolean" }).default(true),
+  isDefault: integer("is_default", { mode: "boolean" }).default(false),
+  sortOrder: integer("sort_order").default(0),
+});
+
+// 0.6 Para Birimleri (Aşağıda tanımlı - line 893)
+
+// 0.7 Ülkeler / Pazarlar (Markets / Countries) - SİLİNDİ (Dil Grubu mimarisine geçildi)
+
 // 1. Organizasyon ve Yerel İşletme
 export const organization = sqliteTable("organization", {
   id: text("id").primaryKey(),
@@ -857,13 +871,7 @@ export const erasureRequests = sqliteTable(
 );
 
 // 14. Çoklu Döviz ve Fiyatlandırma
-export const currencies = sqliteTable("currencies", {
-  code: text("code").primaryKey(),
-  name: text("name").notNull(),
-  symbol: text("symbol").notNull(),
-  decimalPlaces: integer("decimal_places").default(2),
-  isActive: integer("is_active", { mode: "boolean" }).default(true),
-});
+// currencies tablosu kaldırıldı. Dil grubu üzerinden statik veri dosyasından çekilecek.
 
 export const exchangeRates = sqliteTable(
   "exchange_rates",

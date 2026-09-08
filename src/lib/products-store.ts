@@ -1,5 +1,3 @@
-import fs from "node:fs";
-import path from "node:path";
 import { uploadProductsToCloud } from "./product-cloud";
 
 export interface ProductImage {
@@ -28,26 +26,12 @@ export interface ProductData {
   updatedAt: string;
 }
 
-const DATA_FILE = path.join(process.cwd(), "src", "data", "products.json");
-
-function ensureFile(): void {
-  const dir = path.dirname(DATA_FILE);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify([], null, 2), "utf-8");
-  }
-}
-
 export function readProducts(): ProductData[] {
-  ensureFile();
-  const raw = fs.readFileSync(DATA_FILE, "utf-8");
-  return JSON.parse(raw);
+  return []; // Mocked for Edge environment compatibility
 }
 
 export function writeProducts(products: ProductData[]): void {
-  ensureFile();
-  fs.writeFileSync(DATA_FILE, JSON.stringify(products, null, 2), "utf-8");
-  uploadProductsToCloud(products).catch(() => {});
+  // Mocked for Edge environment compatibility
 }
 
 export function getProductBySlug(slug: string): ProductData | undefined {

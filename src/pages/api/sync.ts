@@ -1,9 +1,10 @@
 import { readProducts } from "../../lib/products-store";
 import { uploadProductsToCloud } from "../../lib/product-cloud";
-import { isAdminRequest } from "../../lib/admin-auth";
+import { requireAuth } from "../../lib/auth-guard";
 
 export const POST = async ({ request }: { request: Request }) => {
-  if (!isAdminRequest(request)) return new Response("Unauthorized", { status: 401 });
+  const auth = await requireAuth(request);
+  if (auth instanceof Response) return auth;
 
   const products = readProducts();
   await uploadProductsToCloud(products);

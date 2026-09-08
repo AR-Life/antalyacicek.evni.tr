@@ -1,15 +1,32 @@
 import { defineMiddleware } from "astro:middleware";
 import { DEFAULT_LOCALE, isValidLocale, type Locale } from "./i18n/config";
 
-export const onRequest = defineMiddleware((context: any, next: any) => {
+import { verifyToken } from "./lib/jwt";
+
+export const onRequest = defineMiddleware(async (context: any, next: any) => {
   const { request, url, cookies, redirect, locals } = context;
   const pathname = url.pathname;
 
-  // Ignore static assets, images, API, admin routes, and file extensions
+  // Check admin authentication
+  if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
+    const token = cookies.get("admin_token")?.value;
+    if (!token) {
+      return redirect("/admin/login", 302);
+    }
+    const payload = await verifyToken(token);
+    if (!payload) {
+      cookies.delete("admin_token", { path: "/" });
+      return redirect("/admin/login", 302);
+    }
+    locals.adminUser = payload;
+  }
+
+  // Ignore static assets, images, admin routes, API, and file extensions for i18n
   if (
     pathname.startsWith("/_astro/") ||
     pathname.startsWith("/images/") ||
-    pathname.startsWith("/admin") ||
+    pathname.startsWith("/admin/") ||
+    pathname === "/admin" ||
     pathname.startsWith("/api/") ||
     pathname.includes(".")
   ) {

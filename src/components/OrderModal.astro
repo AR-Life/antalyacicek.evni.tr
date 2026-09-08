@@ -151,7 +151,7 @@ const locale = (Astro.locals.locale as Locale) || DEFAULT_LOCALE;
       var senderPhone = document.getElementById('order-sender-phone').value.trim();
 
       if (!name || !phone || !address || !senderName || !senderPhone) {
-        alert(validationErrorMsg);
+        showToast(validationErrorMsg, 'error');
         return;
       }
 

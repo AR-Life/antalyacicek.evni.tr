@@ -4,6 +4,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import WhatsAppButton from "../components/WhatsAppButton.astro";
 import OrderModal from "../components/OrderModal.astro";
+import Toast from "../components/ui/Toast.astro";
 import "../styles/global.css";
 import { SITE } from "../data/site.config";
 import { LOCALES, DEFAULT_LOCALE, type Locale, localePath, getBasePath } from "../i18n/config";
@@ -86,5 +87,6 @@ const basePath = getBasePath(Astro.url.pathname);
     <Footer locale={locale} />
     <WhatsAppButton />
     {locale === "tr" && <OrderModal />}
+    <Toast />
   </body>
 </html>

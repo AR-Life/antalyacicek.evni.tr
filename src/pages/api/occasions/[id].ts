@@ -2,11 +2,11 @@ import { db } from "../../../db";
 import { occasions, occasionTranslations, media } from "../../../db/schema";
 import { eq } from "drizzle-orm";
 import type { APIContext } from "astro";
-import crypto from "node:crypto";
-import { isAdminRequest } from "../../../lib/admin-auth";
+import { requireAuth } from "../../../lib/auth-guard";
 
 export const PUT = async ({ request, params }: APIContext) => {
-  if (!isAdminRequest(request)) return new Response("Unauthorized", { status: 401 });
+  const auth = await requireAuth(request);
+  if (auth instanceof Response) return auth;
 
   const id = params.id;
   if (!id) return new Response("Missing ID", { status: 400 });
@@ -66,7 +66,8 @@ export const PUT = async ({ request, params }: APIContext) => {
 };
 
 export const DELETE = async ({ request, params }: APIContext) => {
-  if (!isAdminRequest(request)) return new Response("Unauthorized", { status: 401 });
+  const auth = await requireAuth(request);
+  if (auth instanceof Response) return auth;
 
   const id = params.id;
   if (!id) return new Response("Missing ID", { status: 400 });

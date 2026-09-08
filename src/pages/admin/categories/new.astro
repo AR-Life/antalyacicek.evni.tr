@@ -1,0 +1,180 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { db } from "../../../db";
+import { categories, categoryTranslations, languages } from "../../../db/schema";
+import { eq, desc } from "drizzle-orm";
+import ImagePicker from "../../../components/admin/ImagePicker.astro";
+
+const activeLangs = await db.select().from(languages).where(eq(languages.isActive, true)).orderBy(desc(languages.isDefault), languages.sortOrder);
+
+const cats = await db
+  .select({ id: categories.id, name: categoryTranslations.name })
+  .from(categories)
+  .leftJoin(categoryTranslations, eq(categories.id, categoryTranslations.categoryId))
+  .where(eq(categoryTranslations.languageCode, "tr"));
+---
+
+<AdminLayout title="Yeni Kategori Ekle">
+  <div class="mb-6 flex items-center justify-between">
+    <div>
+      <a href="/admin/categories" class="text-sm text-neutral-500 hover:text-neutral-800 flex items-center mb-2">
+        &larr; Kategorilere Dön
+      </a>
+      <h1 class="text-2xl font-bold text-neutral-900">Yeni Kategori</h1>
+    </div>
+    <div class="flex gap-3">
+      <a href="/admin/categories" class="px-5 py-2.5 bg-white border border-neutral-200 text-neutral-700 font-semibold rounded-xl hover:bg-neutral-50 transition-colors">İptal</a>
+      <button form="category-form" type="submit" class="px-5 py-2.5 bg-forest-700 hover:bg-forest-800 text-white font-semibold rounded-xl shadow-md shadow-forest-700/20 transition-all">Kaydet</button>
+    </div>
+  </div>
+
+  <form id="category-form" class="flex flex-col lg:flex-row gap-8 items-start">
+    <div class="flex-1 space-y-8">
+
+      <div class="flex gap-2 mb-2 border-b border-neutral-200 pb-px">
+        {activeLangs.map((lang, index) => (
+          <button 
+            type="button" 
+            class={`lang-tab px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${index === 0 ? 'border-forest-600 text-forest-700' : 'border-transparent text-neutral-500 hover:text-neutral-700'}`}
+            data-target={`lang-pane-${lang.code}`}
+          >
+            <span class="mr-1"></span> {lang.name} ({lang.code.toUpperCase()})
+          </button>
+        ))}
+      </div>
+
+      {activeLangs.map((lang, index) => (
+        <div id={`lang-pane-${lang.code}`} class={`lang-pane space-y-8 ${index !== 0 ? 'hidden' : ''}`}>
+          
+          <section class="bg-white p-6 rounded-2xl shadow-sm border border-neutral-200">
+            <h2 class="text-lg font-semibold text-neutral-800 mb-4 border-b border-neutral-100 pb-2">Kategori Bilgileri</h2>
+            
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Kategori Adı {lang.isDefault ? '*' : ''}</label>
+                <input name={`name_${lang.code}`} type="text" required={lang.isDefault} class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" />
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Açıklama</label>
+                <textarea name={`description_${lang.code}`} rows="3" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm resize-none"></textarea>
+              </div>
+            </div>
+          </section>
+
+          <section class="bg-white p-6 rounded-2xl shadow-sm border border-neutral-200">
+            <h2 class="text-lg font-semibold text-neutral-800 mb-4 border-b border-neutral-100 pb-2">Arama Motoru (SEO)</h2>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Meta Başlık</label>
+                <input name={`seoTitle_${lang.code}`} type="text" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm" />
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-neutral-700 mb-1.5">Meta Açıklama</label>
+                <textarea name={`seoDescription_${lang.code}`} rows="2" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 focus:ring-4 focus:ring-forest-50 outline-none transition-all text-sm resize-none"></textarea>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      ))}
+      
+      <section class="bg-white p-6 rounded-2xl shadow-sm border border-neutral-200">
+        <h2 class="text-lg font-semibold text-neutral-800 mb-4 border-b border-neutral-100 pb-2">Sabit Medya</h2>
+        <ImagePicker name="image" label="İkon veya Resim" />
+      </section>
+
+    </div>
+
+    <div class="w-full lg:w-80 space-y-8">
+      <section class="bg-white p-6 rounded-2xl shadow-sm border border-neutral-200">
+        <h2 class="text-sm font-semibold text-neutral-800 mb-3 border-b border-neutral-100 pb-2">Durum & Ayarlar</h2>
+        
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-neutral-500 mb-1.5 uppercase">Durum</label>
+            <select name="status" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 outline-none text-sm bg-white">
+              <option value="published">Yayınlandı</option>
+              <option value="draft">Taslak</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-neutral-500 mb-1.5 uppercase">Üst Kategori</label>
+            <select name="parentId" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 outline-none text-sm bg-white">
+              <option value="">Yok (Ana Kategori)</option>
+              {cats.map(c => <option value={c.id}>{c.name}</option>)}
+            </select>
+          </div>
+          <div>
+             <label class="block text-xs font-semibold text-neutral-500 mb-1.5 uppercase">Sıra (Sort Order)</label>
+             <input name="sortOrder" type="number" value="0" class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:border-forest-400 outline-none text-sm" />
+          </div>
+        </div>
+      </section>
+    </div>
+  </form>
+
+  <script>
+    const tabs = document.querySelectorAll('.lang-tab');
+    const panes = document.querySelectorAll('.lang-pane');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => {
+          t.classList.remove('border-forest-600', 'text-forest-700');
+          t.classList.add('border-transparent', 'text-neutral-500');
+        });
+        panes.forEach(p => p.classList.add('hidden'));
+
+        tab.classList.remove('border-transparent', 'text-neutral-500');
+        tab.classList.add('border-forest-600', 'text-forest-700');
+        
+        const targetId = tab.getAttribute('data-target');
+        document.getElementById(targetId || '')?.classList.remove('hidden');
+      });
+    });
+
+    document.getElementById('category-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target as HTMLFormElement;
+      const formData = new FormData(form);
+      
+      const activeLangs = Array.from(document.querySelectorAll('.lang-tab')).map(t => t.getAttribute('data-target')?.replace('lang-pane-', ''));
+      const translations: any[] = [];
+      
+      activeLangs.forEach(lang => {
+        if(!lang) return;
+        const name = formData.get(`name_${lang}`);
+        if(name) {
+          translations.push({
+            languageCode: lang,
+            name: name,
+            description: formData.get(`description_${lang}`),
+            seoTitle: formData.get(`seoTitle_${lang}`),
+            seoDescription: formData.get(`seoDescription_${lang}`),
+            slug: (name as string).toLowerCase().replace(/[^a-z0-9ğüşöçı]/gi, '-').replace(/(^-|-$)+/g, '')
+          });
+        }
+      });
+      
+      const payload = {
+        translations,
+        image: formData.get('image'),
+        status: formData.get('status'),
+        parentId: formData.get('parentId') || null,
+        sortOrder: parseInt(formData.get('sortOrder') as string) || 0,
+      };
+
+      const res = await fetch('/api/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        window.location.href = '/admin/categories';
+      } else {
+        showToast('Kaydetme başarısız!', 'error');
+      }
+    });
+  </script>
+</AdminLayout>

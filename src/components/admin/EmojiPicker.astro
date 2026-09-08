@@ -1,0 +1,32 @@
+---
+const emojis = [
+  "🌸", "🌺", "🌻", "🌹", "🌷", "🌼", "💐", "🥀",
+  "🎉", "🎊", "🎀", "🎁", "🎂", "🍰", "🎈", "🎄",
+  "❤️", "💖", "💕", "💝", "💗", "💓", "💞", "🩷",
+  "😍", "🥰", "😘", "💋", "✨", "🌟", "⭐", "💫",
+  "🌙", "☀️", "🔥", "💎", "👑", "🏆", "🥇", "🌈",
+  "🦋", "🐝", "🍀", "🕊️", "💍", "🎵", "🍷", "☕",
+  "🥂", "🍾", "🧸", "📿", "🫶", "🤍", "🧡", "💚",
+];
+---
+
+<div class="emoji-picker" data-target={Astro.props.target || "icon"}>
+  <div class="emoji-grid flex flex-wrap gap-1">
+    {emojis.map(emoji => (
+      <button type="button" class="emoji-btn w-10 h-10 flex items-center justify-center text-xl rounded-lg hover:bg-neutral-100 transition-colors" data-emoji={emoji}>{emoji}</button>
+    ))}
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.emoji-picker').forEach(picker => {
+    const targetName = picker.dataset.target || 'icon';
+    picker.querySelectorAll('.emoji-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const emoji = btn.dataset.emoji || '';
+        const field = (picker.closest('form') || document).querySelector(`[name="${targetName}"]`) as HTMLInputElement;
+        if (field) field.value = emoji;
+      });
+    });
+  });
+</script>

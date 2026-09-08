@@ -15,6 +15,13 @@
       "when": 1786112962185,
       "tag": "0001_heavy_pestilence",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1786133529208,
+      "tag": "0002_dear_frightful_four",
+      "breakpoints": true
     }
   ]
 }

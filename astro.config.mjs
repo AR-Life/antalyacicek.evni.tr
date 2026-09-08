@@ -1,13 +1,13 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
-import node from '@astrojs/node';
+import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://antalyacicek.evni.tr',
   output: 'server',
-  adapter: node({ mode: 'standalone' }),
+  adapter: cloudflare(),
   i18n: {
     defaultLocale: 'tr',
     locales: ['tr', 'en', 'ru', 'de', 'pl', 'nl', 'ro', 'cs', 'uk', 'lt'],
@@ -37,5 +37,10 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      watch: {
+        ignored: ['**/*.db', '**/*.db-*', '**/.wrangler/**', '**/.data/**', '**/dist/**']
+      }
+    }
   },
 });

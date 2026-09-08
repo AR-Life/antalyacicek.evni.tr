@@ -1,0 +1,82 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { db } from "../../../db";
+import { occasions, occasionTranslations, media } from "../../../db/schema";
+import { eq } from "drizzle-orm";
+import TableActions from "../../../components/admin/TableActions.astro";
+
+const rows = await db
+  .select({
+    id: occasions.id,
+    name: occasionTranslations.name,
+    slug: occasionTranslations.slug,
+    status: occasions.status,
+    imageId: occasions.imageId,
+  })
+  .from(occasions)
+  .leftJoin(occasionTranslations, eq(occasions.id, occasionTranslations.occasionId))
+  .where(eq(occasionTranslations.languageCode, "tr"));
+
+// Get unique occasions
+const occMap = new Map();
+for (const row of rows) {
+  if (!occMap.has(row.id)) occMap.set(row.id, row);
+}
+const occList = Array.from(occMap.values());
+
+const allMedia = await db.select().from(media);
+const mediaMap = new Map(allMedia.map(m => [m.id, m.url]));
+---
+
+<AdminLayout title="Özel Gün Yönetimi">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-bold text-neutral-900">Özel Günler</h1>
+      <p class="text-sm text-neutral-500 mt-1">Sevgililer günü, anneler günü gibi sınıflandırmalar.</p>
+    </div>
+    <a href="/admin/occasions/new" class="px-5 py-2.5 bg-forest-700 hover:bg-forest-800 text-white font-semibold rounded-xl transition-all shadow-md shadow-forest-700/20">
+      + Yeni Özel Gün
+    </a>
+  </div>
+
+  <div class="bg-white border border-neutral-200 rounded-2xl shadow-sm overflow-hidden">
+    <table class="w-full text-left text-sm text-neutral-600">
+      <thead class="bg-neutral-50 text-neutral-700 font-semibold border-b border-neutral-200">
+        <tr>
+          <th class="px-6 py-4">İkon</th>
+          <th class="px-6 py-4">Özel Gün Adı</th>
+          <th class="px-6 py-4">URL (Slug)</th>
+          <th class="px-6 py-4">Durum</th>
+          <th class="px-6 py-4 text-right">İşlemler</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-neutral-100">
+        {occList.map(o => {
+          const imgUrl = o.imageId ? (mediaMap.get(o.imageId) || '') : '';
+          return (
+            <tr class="hover:bg-neutral-50 transition-colors">
+              <td class="px-6 py-4">
+                <div class="w-10 h-10 bg-neutral-100 rounded-lg flex items-center justify-center border border-neutral-200 text-lg">
+                  {imgUrl && !imgUrl.startsWith('/') && !imgUrl.startsWith('http') ? imgUrl : (imgUrl ? <img src={imgUrl} class="w-6 h-6 object-contain" /> : '🎉')}
+                </div>
+              </td>
+              <td class="px-6 py-4 font-medium text-neutral-900">{o.name}</td>
+              <td class="px-6 py-4 text-neutral-500">/{o.slug}</td>
+              <td class="px-6 py-4">
+                <span class={`px-2.5 py-1 rounded-full text-xs font-semibold ${o.status === 'published' ? 'bg-blue-50 text-blue-700' : 'bg-neutral-100 text-neutral-600'}`}>
+                  {o.status === 'published' ? 'Yayınlandı' : 'Taslak'}
+                </span>
+              </td>
+              <TableActions editUrl={`/admin/occasions/${o.id}`} deleteId={o.id} deleteUrl={`/api/occasions/${o.id}`} deleteMessage={`"${o.name}" özel gününü silmek istediğinize emin misiniz?`} />
+            </tr>
+          );
+        })}
+        {occList.length === 0 && (
+          <tr>
+            <td colspan="5" class="px-6 py-12 text-center text-neutral-500">Özel gün bulunamadı.</td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+</AdminLayout>
